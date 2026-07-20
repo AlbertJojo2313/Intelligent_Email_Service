@@ -123,7 +123,7 @@ The generator uses `asyncio.gather` to execute LLM API requests concurrently, si
 
 ### 2. Strict Chronological Timestamps
 
-Timestamps (`created_datetime`, `last_modifiedDateTime`, `recievedDateTime`, and `sentDateTime`) are guaranteed to be in strict chronological order for each reply within a thread (spaced by configurable hour intervals).
+Timestamps (`createdDateTime`, `lastModifiedDateTime`, `receivedDateTime`, and `sentDateTime`) are guaranteed to be in strict chronological order for each reply within a thread (spaced by configurable hour intervals).
 
 ### 3. Unmodified vs. Modified Threads
 
@@ -142,12 +142,12 @@ The generated JSON file mirrors the Microsoft Graph API `/me/messages` list resp
   "value": [
     {
       "id": "AAMkAGa1b2c3d4e5f6",
-      "created_datetime": "2026-07-16T18:00:00Z",
-      "last_modifiedDateTime": "2026-07-16T18:00:00Z",
+      "createdDateTime": "2026-07-16T18:00:00Z",
+      "lastModifiedDateTime": "2026-07-16T18:00:00Z",
       "categories": [],
-      "recievedDateTime": "2026-07-16T18:00:00Z",
+      "receivedDateTime": "2026-07-16T18:00:00Z",
       "sentDateTime": "2026-07-16T18:00:00Z",
-      "hasAttachemnts": false,
+      "hasAttachments": false,
       "conversation_id": "807e0e68-1234-5678-9abc-def012345678",
       "message_id": "AAMkAGa1b2c3d4e5f6",
       "subject": "Portfolio Rebalancing",
