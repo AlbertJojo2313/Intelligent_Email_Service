@@ -4,3 +4,5 @@
 *.pytest_cache/
 *.venv
 uv.lock
+data/
+src/
