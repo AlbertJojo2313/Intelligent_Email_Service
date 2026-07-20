@@ -38,7 +38,7 @@ class SyntheticEmailGenerator:
         """
         quoted_text = email_body
         for msg in reversed(previous_messages):
-            sent_str = msg["recievedDateTime"]
+            sent_str = msg["receivedDateTime"]
             sender = msg["from"]["emailAddress"]["name"]
             email = msg["from"]["emailAddress"]["address"]
             body_content = msg["body"]["content"]
@@ -51,7 +51,7 @@ class SyntheticEmailGenerator:
         self, topic: str, client: ClientProfile, thread_length: int
     ) -> list[dict[str, Any]]:
         """
-        Attempts to generate thread content via OpenRouter, falling back to local template generator if it fails.
+        Attempts to generate thread content via NVIDIA API, falling back to local template generator if it fails.
         """
         if self.nvidia_client:
             try:
@@ -63,7 +63,7 @@ class SyntheticEmailGenerator:
                 )
             except Exception as e:
                 logger.warning(
-                    "OpenRouter generation failed: %s. Falling back to template-based generation.",
+                    "NVIDIA API generation failed: %s. Falling back to template-based generation.",
                     e,
                 )
 
@@ -119,12 +119,12 @@ class SyntheticEmailGenerator:
 
             message_obj = {
                 "id": msg_id,
-                "created_datetime": received_time,
-                "last_modifiedDateTime": received_time,
+                "createdDateTime": received_time,
+                "lastModifiedDateTime": received_time,
                 "categories": [],
-                "recievedDateTime": received_time,
+                "receivedDateTime": received_time,
                 "sentDateTime": received_time,
-                "hasAttachemnts": False,
+                "hasAttachments": False,
                 "conversation_id": conversation_id,
                 "message_id": msg_id,
                 "subject": item.get("subject", topic.replace("_", " ").title()),
