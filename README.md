@@ -25,6 +25,39 @@ For details on local mock server configuration, synthetic dataset generation, an
 
 ---
 
+## Installation & Environment Setup
+
+This project uses [`uv`](https://docs.astral.sh/uv/) for fast, reliable Python package and dependency management using `pyproject.toml` and `uv.lock`.
+
+### Prerequisites
+
+- Python >= 3.11
+- [`uv`](https://docs.astral.sh/uv/getting-started/installation/) (`curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`)
+
+### Setup & Install Dependencies
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd email_service
+
+# Install all dependencies (including dev tools) into virtual environment
+uv sync --all-extras
+```
+
+Alternatively, if managing virtual environments manually:
+
+```bash
+# Create and activate virtual environment
+uv venv
+source .venv/bin/activate
+
+# Install package in editable mode with dev dependencies
+uv pip install -e ".[dev]"
+```
+
+---
+
 ## Architecture Overview
 
 ```
@@ -58,8 +91,15 @@ See [`docs/architecture.md`](docs/architecture.md) for detailed data flow diagra
 
 ## Testing & Quality Assurance
 
-Run test suite using `pytest`:
+Run the test suite using `uv`:
+
+```bash
+uv run pytest
+```
+
+Or inside an activated virtual environment:
 
 ```bash
 pytest
 ```
+
