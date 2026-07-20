@@ -1,0 +1,70 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "intelligent-email-service"  # lowercase, hyphenated for PyPI
+version = "0.1.0"
+description = "A compression package for email data"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    {name = "Albert Jojo"}
+]
+dependencies = [
+    "httpx>=0.27.0",
+    "faker>=25.0.0",
+    "python-dotenv>=1.0.1",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "deepeval>=1.0.0",
+]
+
+[tool.ruff]
+line-length = 90
+target-version = "py312"          # drives pyupgrade (UP) and bugbear (B) suggestions
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W", "F", "I", "C90", "N", "UP",
+    "B",    # flake8-bugbear (likely bugs, bad practices)
+    "SIM",  # flake8-simplify (redundant code)
+    "C4",   # flake8-comprehensions
+    "PIE",  # flake8-pie (misc lints)
+    "RET",  # flake8-return (return-flow issues)
+    "PTH",  # flake8-use-pathlib (prefer pathlib over os.path)
+    "RUF",  # Ruff-specific rules
+    "ARG",  # flake8-unused-arguments
+    "TID",  # flake8-tidy-imports
+    "PL",   # Pylint (PLC/PLE/PLR/PLW)
+    "S",    # flake8-bandit (security)
+]
+ignore = []
+mccabe = { max-complexity = 15 }
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "ARG", "PLR2004"]  # allow asserts, unused fixtures, magic values
+"__init__.py" = ["F401"]                       # allow re-exports
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"   # only applies if you enable "D" docstring rules
+
+[tool.ruff.lint.isort]
+known-first-party = ["intelligent_email_service"]  # your import package name (underscored)
+
+[tool.ruff.format]
+preview = true
+quote-style = "double"
+docstring-code-format = true   # format code blocks inside docstrings
