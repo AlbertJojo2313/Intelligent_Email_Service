@@ -1,59 +1,102 @@
 # Architecture
 
-_Last updated: [DATE]
+_Last updated: 2026-07-20_
 
-**Status: Planning phase — no code has been written yet.** Everything in
-this document describes the intended design, not an implemented system.
-Treat every step, decision, and "resolved" label as a plan to be validated
-during implementation, not a description of working behavior. Update this
-note once implementation begins.
+> [!IMPORTANT]
+> **Implementation Status**: The current architecture for Microsoft Graph API support is **just a planned outline and is not implemented yet**. The project is currently using a **Mockoon server** to simulate the API endpoints. Anything in the architecture and specifications **may change**.
 
+The Intelligent Email Service is designed to ingest email mailbox data (via local mock endpoints or planned Microsoft Graph API integration), resolve and filter thread history, preprocess and compress email contents, and output structured data optimized for downstream LLM context windows.
 
+---
 
 ## Overview
 
-This project is an email intelligence service. Given an advisor's mailbox and a client's (household's) email address, it retrieves the relevant historical correspondence, filters and groups it, and compresses the content, and outputs structured data suitable for LLM prompting.
-
-See the diagram below for the full data flow, and the numbered steps for the implementation-level detail.
-
-
-## ⚠️ Current integration status: Mocked
-
-See [`docs/graph-api-integration.md`](./graph-api-integration.md) for full detail. Short version: this project currently runs against a **Mockoon** simulation of the Microsoft Graph API, not the live API.
-
-
-## Identity model (For myself)
-
-This service involves **two distinct identities**:
-
-- **Advisor mailbox**: the actual Outlook/Graph mailbox being queried. This is what the service authenticates against.
-- **ClientID**: the client/household's email address. This is not a mailbox the service accesses directly, it is an identifier used to **filter** for relevant messages **within** the advisor's mailbox. Furthermore, this is identifier is shared across various other platforms.
-
-**Request Scope**: Currently supports for one request = one advisor mailbox + one `ClientID`. Would add the feature for multiple clients once MVP is working.
+Given a financial advisor's mailbox and a target client (or household) email address, this service:
+1. Connects to the mailbox via an extensible provider interface (`EmailProvider`).
+2. Queries historical email messages matching client identifiers (From/To/Cc).
+3. Groups correspondence by topic/subject and resolves multi-message email threads (handling both modified and unmodified quote formats).
+4. Preprocesses and compresses email message bodies while handling attachments.
+5. Emits structured JSON payloads tailored for LLM prompt context injection.
 
 ---
 
-## Diagram
+## System Component Architecture
 
-[ADD DIAGRAM HERE]
+```mermaid
+flowchart TD
+    subgraph Core Package [intelligent_email_service]
+        PM[EmailProviderManager] -->|instantiates| Provider{EmailProvider Interface}
+        Provider --> MGP[MockGraphProvider (Active)]
+        Provider --> MSGP[MicrosoftGraphProvider (Planned Outline)]
+        
+        MGP -->|GET /v1.0/me/messages| MockServer[Mockoon / Local Mock Server]
+        MSGP -.->|Graph API REST (Planned)| MSGraph[Microsoft Graph API (Unimplemented)]
+        
+        MGP --> DataPipeline[Ingestion & Thread Resolution]
+        MSGP -.-> DataPipeline
+        
+        DataPipeline --> Prep[Preprocessing Module]
+        subgraph Preprocessing [intelligent_email_service.preprocessing]
+            Prep --> Cleaner[cleaner.py: HTML / Quote Stripper]
+            Prep --> Compressor[compressor.py: Context Compressor]
+        end
+        
+        Compressor --> Output[Structured JSON / LLM Prompt Payload]
+    end
+    
+    subgraph Tools [tools/]
+        SynthGen[synthetic_generator] -->|NvidiaClient / LLM| NVIDIA[NVIDIA NIM Cloud API]
+        SynthGen -->|FallbackGenerator| Fallback[Local Templates]
+        SynthGen -->|generates| MockData[mock_emails.json]
+        MockData -->|feeds| MockServer
+    end
+```
 
 ---
 
-## Data Flow
+## Data Flow Pipeline
 
-1. Request comes in with: an advisor mailbox identity, and a single client ID.
-2. Authenticate/query against the **advisor credentials**.
-3. Search the advisor's mailbox for all messages over a 3 to 5 yrs window where the client id appears (From/To/Cc).
-4. Group the matched messages by subject.
-5. For each subject group, take the **most recent email**.
-6. Determine whether the latest email in the subject group is **modified** or **unmodified**:
+1. **Request Reception**: Input parameters specify the Advisor mailbox credentials, target `ClientID` (client/household email address), and date search window (e.g., 3–5 years).
+2. **Provider Selection**: `EmailProviderManager` initializes either `MockGraphProvider` (for local simulation) or `MicrosoftGraphProvider` (for live Azure/Graph API access).
+3. **Mailbox Search & Retrieval**: Query the advisor's mailbox for messages where `ClientID` appears in sender (`from`), recipient (`toRecipients`), or CC fields.
+4. **Subject & Thread Grouping**:
+   - Group matched messages by conversation identifier (`conversation_id`) and subject.
+   - Analyze thread structure for **unmodified** vs. **modified** messages:
+     - **Unmodified Thread**: The latest email retains the full trailing quoted history (`On [Date], X wrote: > ...`). No extra thread fetch required.
+     - **Modified Thread**: Quoted history is stripped/absent. Retrieve all messages under `conversation_id`, sort chronologically, and merge.
+5. **Preprocessing & Cleaning** (`intelligent_email_service.preprocessing.cleaner`):
+   - Strip HTML formatting, signatures, and redundant email headers.
+   - Extract raw text bodies and attachment metadata.
+6. **Compression & Optimization** (`intelligent_email_service.preprocessing.compressor`):
+   - Perform rule-based token reduction and hybrid LLM prompt compression (e.g., LLMLingua / summary heuristic).
+   - Preserve attachment metadata while excluding binary payloads from LLM context.
+7. **Structured Output**: Produce JSON structured output containing client metadata, chronological thread history, and compressed message content.
 
-  - **Unmodified:** (still contains full quoted/trailing history), this is detected via presence of quote markers such as  `>`[ "On [date], X wrote:"]-> no further API calls necessary.
+---
 
-  - **Modified:** (quote markers absent) -> fetch the full history via `conversationId`. Since a single `conversationId` can span **multiple threads** (Graph API does not guarantee one thread = one conversation, especially if participants change or messages get split) this means fetching all threads under that conversationId and merging chronologically ordering the resulting messages.
+## Identity & Integration Model
 
-7. For each email in the resolved thread: extract the body (via HTML scraper) and attachments if present.
+- **Advisor Mailbox**: The mailbox authenticated by the service (Outlook / Azure AD app registration).
+- **Client ID**: The target client/household email address used strictly as a search and filtering criterion within the advisor's mailbox.
+- **Provider Layer**:
+  - `EmailProvider`: Abstract base class defining the connector contract (`get_emails`).
+  - `MockGraphProvider`: Active provider fetching mock message payloads from local Mockoon server (`http://localhost:3000`).
+  - `MicrosoftGraphProvider`: Planned outline for live Graph API integration (currently unimplemented; specifications may change).
 
-8. Compress the body only, using a hybrid approach: rule-based compression first, followed by LLMLingua. Attachments are preserved but not compressed or fed into the LLM pipeline(attachment types vary too much to handle reliably in the MVP).
+---
 
-9. Output a structured JSON object metadata + compressed_body + ClientID(email) so downstream consumers know which household (client) the record belongs to.
+## Synthetic Data & Testing Tooling
+
+For testing and local development without active Microsoft Graph API credentials, the project includes a synthetic dataset generator located in `tools/synthetic_generator`:
+- Generates realistic advisor-client conversation threads.
+- Uses `NvidiaClient` (NVIDIA AI Cloud / LLM) with local `FallbackGenerator` templates.
+- Supports randomized or custom client pools via `ClientPool` and Faker.
+- Emits schema-compliant Graph API JSON arrays (`mock_emails.json`) for Mockoon ingestion.
+
+---
+
+## Related Documentation
+
+- [`docs/mock-setup.md`](./mock-setup.md): Guide for Mockoon local API simulation setup.
+- [`docs/preprocessing.md`](./preprocessing.md): Detailed cleaner and compressor module specifications.
+- [`docs/synthetic-generator.md`](./synthetic-generator.md): Usage guide for the synthetic email dataset generator.

@@ -1,8 +1,32 @@
 # Synthetic Email Generator
 
-The synthetic email generator is a tool designed to simulate advisor-client email conversations. It programmatically constructs mock email datasets that match the schema expected by the Microsoft Graph API connector.
+_Last updated: 2026-07-20_
 
-The tool utilizes **OpenRouter** (for realistic, LLM-generated conversation bodies) combined with **Faker** and rule-based constraints (for deterministic headers, IDs, and chronological dates). It also includes a rule-based template fallback mechanism if OpenRouter is not configured or fails.
+> [!IMPORTANT]
+> **Implementation Status**: Microsoft Graph API support is currently **just a planned outline and is not implemented yet**. The generator constructs datasets to feed a **Mockoon server** simulating the endpoints, and specs **may change**.
+
+The Synthetic Email Generator is a utility tool designed to simulate advisor-client email conversations. It programmatically constructs mock email datasets matching the schema expected by the Microsoft Graph API connector.
+
+The tool utilizes the **NVIDIA AI Cloud / NIM API** (for realistic, LLM-generated conversation bodies) combined with **Faker** and rule-based constraints (for deterministic headers, IDs, and chronological timestamps). It includes a rule-based template fallback mechanism (`FallbackGenerator`) if an NVIDIA API key is not configured or if an API call fails.
+
+---
+
+## Architecture & Code Structure
+
+The generator modules are located in `tools/synthetic_generator/`:
+
+```
+tools/
+├── generate_synthetic_emails.py   # CLI entry point script
+├── topics.json                    # Conversation topics configuration
+└── synthetic_generator/
+    ├── __init__.py                # Package exports
+    ├── client_pool.py             # ClientPool generator (Faker / JSON loader)
+    ├── fallback_generator.py      # Local template fallback generator
+    ├── generator.py               # SyntheticEmailGenerator orchestrator
+    ├── llm_client.py              # BaseLLMClient & NvidiaClient HTTP client
+    └── models.py                 # ClientProfile data class
+```
 
 ---
 
@@ -10,7 +34,7 @@ The tool utilizes **OpenRouter** (for realistic, LLM-generated conversation bodi
 
 ### 1. Install Dependencies
 
-Before running the generator, ensure the required Python packages are installed:
+Ensure project dependencies are installed (using `uv` or `pip`):
 
 ```bash
 pip install faker python-dotenv httpx
@@ -24,23 +48,25 @@ Copy `.env.example` to `.env` in the root of the project:
 cp .env.example .env
 ```
 
-Inside `.env`, configure the OpenRouter connection parameters:
+Inside `.env`, configure the NVIDIA API parameters:
 
 ```env
-OPENROUTER_API_KEY=your_openrouter_api_key_here
-OPENROUTER_MODEL=meta-llama/llama-3-8b-instruct:free
-OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+NVIDIA_API_KEY=nvapi-your_nvidia_api_key_here
+NVIDIA_MODEL=meta/llama-3.1-70b-instruct
+NVIDIA_BASE_URL=https://integrate.api.nvidia.com/v1
 ```
+
+> **Note**: If `NVIDIA_API_KEY` is omitted, the tool automatically falls back to local template-based generation (`FallbackGenerator`) without throwing errors.
 
 ### 3. Customize Topics
 
-You can modify the conversation topics in [`tools/topics.json`](../tools/topics.json). The generator selects topics randomly from this list to guide the LLM's drafting context (e.g. portfolio rebalancing, IRA contributions, quarterly scheduling).
+You can modify conversation topics in [`tools/topics.json`](../tools/topics.json). The generator selects topics randomly from this list to guide LLM thread drafting (e.g., portfolio rebalancing, IRA contributions, onboarding documents).
 
 ---
 
 ## Usage
 
-Run the generator script using Python:
+Run the generator CLI script from the project root:
 
 ```bash
 python3 tools/generate_synthetic_emails.py [options]
@@ -54,29 +80,31 @@ python3 tools/generate_synthetic_emails.py [options]
 | `--conversations` | Number of conversation threads to generate | `5` |
 | `--advisor-email` | Email address of the financial advisor | `advisor@example.com` |
 | `--advisor-name` | Name of the financial advisor | `John Advisor` |
-| `--client-email` | Email address of the client (fallback for single-client mode) | `client@example.com` |
-| `--client-name` | Name of the client (fallback for single-client mode) | `Sarah Client` |
+| `--client-email` | Email address of the client (for single-client fallback) | `client@example.com` |
+| `--client-name` | Name of the client (for single-client fallback) | `Sarah Client` |
 | `--num-clients` | Number of distinct clients to dynamically generate in the pool | `5` |
-| `--client-pool` | Path to a JSON file containing a predefined list of clients | `None` |
-| `--openrouter-key` | OpenRouter API key | `$OPENROUTER_API_KEY` |
-| `--model` | OpenRouter model to invoke | `$OPENROUTER_MODEL` (or `meta-llama/llama-3-8b-instruct:free`) |
-| `--url` | Base URL of the OpenRouter API | `$OPENROUTER_BASE_URL` (or `https://openrouter.ai/api/v1`) |
+| `--client-pool` | Path to a custom JSON file containing a predefined client pool | `None` |
+| `--nvidia-key` | NVIDIA API key | `$NVIDIA_API_KEY` |
+| `--model` | NVIDIA NIM model to invoke | `$NVIDIA_MODEL` (`meta/llama-3.1-70b-instruct`) |
+| `--url` | Base URL of the NVIDIA API | `$NVIDIA_BASE_URL` (`https://integrate.api.nvidia.com/v1`) |
 
-### Examples
+---
 
-**Generate a mailbox for a pool of 5 clients:**
+## Usage Examples
 
-```bash
-python3 tools/generate_synthetic_emails.py --conversations 10 --num-clients 5 --output docs/mock_emails.json
-```
-
-**Generate a mailbox for predefined specific clients loaded from a file:**
+**Generate a dataset with 10 conversation threads across a pool of 5 synthetic clients:**
 
 ```bash
-python3 tools/generate_synthetic_emails.py --conversations 8 --client-pool path/to/clients.json --output docs/mock_emails.json
+python3 tools/generate_synthetic_emails.py --conversations 10 --num-clients 5 --output mock_emails.json
 ```
 
-The client pool JSON format should be:
+**Generate threads for predefined specific clients loaded from a JSON file:**
+
+```bash
+python3 tools/generate_synthetic_emails.py --conversations 8 --client-pool path/to/clients.json --output mock_emails.json
+```
+
+The client pool JSON format should be structured as a JSON array of objects:
 
 ```json
 [
@@ -89,40 +117,39 @@ The client pool JSON format should be:
 
 ## Features
 
-### 1. Concurrent Generation
+### 1. Concurrent Async Generation
 
-The script uses `asyncio.gather` to send LLM requests to OpenRouter concurrently, significantly speeding up generation times for large datasets.
+The generator uses `asyncio.gather` to execute LLM API requests concurrently, significantly speeding up dataset generation.
 
-### 2. Chronological Threading
+### 2. Strict Chronological Timestamps
 
-Timestamps (`created_datetime`, `last_modifiedDateTime`, `recievedDateTime`, and `sentDateTime`) are guaranteed to be in strict chronological order for each reply in a thread (spaced by several hours/days).
+Timestamps (`created_datetime`, `last_modifiedDateTime`, `recievedDateTime`, and `sentDateTime`) are guaranteed to be in strict chronological order for each reply within a thread (spaced by configurable hour intervals).
 
 ### 3. Unmodified vs. Modified Threads
 
-To test the email parser's thread-resolution logic:
-* **Unmodified threads** (50% probability): The latest message in the thread contains the full trailing quoted history of all previous messages in standard email format (`On [Date], [Sender] wrote: > ...`).
-
-* **Modified threads** (50% probability): Messages are saved individually with clean bodies. The downstream system must fetch all messages sharing the same `conversation_id` and merge them chronologically.
+To validate the email parser's thread-resolution logic:
+- **Unmodified threads** (50% probability): The latest message in the thread contains the full trailing quoted history of all previous messages in standard format (`On [Date], [Sender] wrote: > ...`).
+- **Modified threads** (50% probability): Messages are stored as individual clean bodies sharing a common `conversation_id`.
 
 ---
 
 ## Output JSON Schema
 
-The generated JSON file mirrors the Microsoft Graph API `/me/messages` list response format, wrapped in a `"value"` array:
+The generated JSON file mirrors the Microsoft Graph API `/me/messages` list response format wrapped in a `"value"` array:
 
 ```json
 {
   "value": [
     {
-      "id": "AAMkAG...",
+      "id": "AAMkAGa1b2c3d4e5f6",
       "created_datetime": "2026-07-16T18:00:00Z",
       "last_modifiedDateTime": "2026-07-16T18:00:00Z",
       "categories": [],
       "recievedDateTime": "2026-07-16T18:00:00Z",
       "sentDateTime": "2026-07-16T18:00:00Z",
       "hasAttachemnts": false,
-      "conversation_id": "807e0e68-...",
-      "message_id": "AAMkAG...",
+      "conversation_id": "807e0e68-1234-5678-9abc-def012345678",
+      "message_id": "AAMkAGa1b2c3d4e5f6",
       "subject": "Portfolio Rebalancing",
       "body": {
         "content_type": "html",
