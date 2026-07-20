@@ -1,0 +1,6 @@
+*.env
+*__pycache__/
+*.deepeval
+*.pytest_cache/
+*.venv
+uv.lock
