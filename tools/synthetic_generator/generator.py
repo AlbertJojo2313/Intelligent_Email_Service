@@ -1,8 +1,9 @@
 import logging
 import random
 import uuid
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional
+from dataclasses import dataclass, field
+from datetime import UTC, datetime, timedelta
+from typing import Any, Optional
 
 from .fallback_generator import FallbackGenerator
 from .llm_client import NvidiaClient
@@ -11,27 +12,34 @@ from .models import ClientProfile
 logger = logging.getLogger(__name__)
 
 
+@dataclass(frozen=True)
+class AdvisorProfile:
+    name: str
+    email: str
+
+
+@dataclass(frozen=True)
+class EmailGenerationConfig:
+    base_date_range_days: int = 30
+    message_gap_hours_min: int = 1
+    message_gap_hours_max: int = 6
+    fallback_templates: dict[str, list[str]] = field(default_factory=dict)
+
+
 class SyntheticEmailGenerator:
     def __init__(
         self,
-        advisor_name: str,
-        advisor_email: str,
+        advisor: AdvisorProfile,
+        config: EmailGenerationConfig,
         nvidia_client: Optional[NvidiaClient] = None,
-        fallback_templates: Optional[Dict[str, List[str]]] = None,
-        base_date_range_days: int = 30,
-        message_gap_hours_min: int = 1,
-        message_gap_hours_max: int = 6,
     ):
-        self.advisor_name = advisor_name
-        self.advisor_email = advisor_email
+        self.advisor = advisor
+        self.config = config
         self.nvidia_client = nvidia_client
-        self.fallback_generator = FallbackGenerator(fallback_templates or {})
-        self.base_date_range_days = base_date_range_days
-        self.message_gap_hours_min = message_gap_hours_min
-        self.message_gap_hours_max = message_gap_hours_max
+        self.fallback_generator = FallbackGenerator(config.fallback_templates)
 
     def _format_as_quoted_body(
-        self, email_body: str, previous_messages: List[Dict[str, Any]]
+        self, email_body: str, previous_messages: list[dict[str, Any]]
     ) -> str:
         """
         Appends previous messages in standard email reply quote format
@@ -57,7 +65,7 @@ class SyntheticEmailGenerator:
             try:
                 return await self.nvidia_client.generate_email_thread(
                     topic=topic,
-                    advisor_name=self.advisor_name,
+                    advisor_name=self.advisor.name,
                     client_name=client.name,
                     thread_count=thread_length,
                 )
@@ -69,14 +77,18 @@ class SyntheticEmailGenerator:
 
         return self.fallback_generator.generate(
             topic=topic,
-            advisor_name=self.advisor_name,
+            advisor_name=self.advisor.name,
             client_name=client.name,
             thread_count=thread_length,
         )
 
     async def generate_thread(
-        self, topic: str, client: ClientProfile, thread_length: int, is_unmodified: bool
-    ) -> List[Dict[str, Any]]:
+        self,
+        topic: str,
+        client: ClientProfile,
+        thread_length: int,
+        include_quoted_history: bool,
+    ) -> list[dict[str, Any]]:
         """
         Generates thread emails for a specific client and topic, then formats them with
         unique Microsoft Graph API-like IDs, timestamps, and quotes if unmodified.
@@ -86,8 +98,8 @@ class SyntheticEmailGenerator:
 
         messages = []
         # Start at a random date in the configured range (UTC time)
-        base_time = datetime.now(timezone.utc) - timedelta(
-            days=random.randint(1, self.base_date_range_days)
+        base_time = datetime.now(UTC) - timedelta(
+            days=random.randint(1, self.config.base_date_range_days)
         )
 
         for i, item in enumerate(bodies):
@@ -97,16 +109,18 @@ class SyntheticEmailGenerator:
                 sender_role = "client" if i % 2 == 0 else "advisor"
 
             if sender_role == "advisor":
-                from_name, from_email = self.advisor_name, self.advisor_email
+                from_name, from_email = self.advisor.name, self.advisor.email
                 to_name, to_email = client.name, client.email
             else:
                 from_name, from_email = client.name, client.email
-                to_name, to_email = self.advisor_name, self.advisor_email
+                to_name, to_email = self.advisor.name, self.advisor.email
 
             # Ensure chronological ordering: each message is generated at a later time than the previous one
             msg_time = base_time + timedelta(
                 hours=i * 2
-                + random.randint(self.message_gap_hours_min, self.message_gap_hours_max)
+                + random.randint(
+                    self.config.message_gap_hours_min, self.config.message_gap_hours_max
+                )
             )
             received_time = msg_time.isoformat().replace("+00:00", "Z")
 
@@ -114,7 +128,7 @@ class SyntheticEmailGenerator:
             body_content = raw_body
 
             # If this is an unmodified thread, the last email has the quoted history of previous emails
-            if is_unmodified and i == len(bodies) - 1 and len(messages) > 0:
+            if include_quoted_history and i == len(bodies) - 1 and len(messages) > 0:
                 body_content = self._format_as_quoted_body(raw_body, messages)
 
             message_obj = {
