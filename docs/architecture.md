@@ -29,7 +29,7 @@ flowchart TD
         Provider --> MGP[MockGraphProvider (Active)]
         Provider --> MSGP[MicrosoftGraphProvider (Planned Outline)]
         
-        MGP -->|GET /v1.0/me/messages| MockServer[Mockoon / Local Mock Server]
+        MGP -->|GET /v1.0/users/{user_id}/messages| MockServer[Mockoon / Local Mock Server]
         MSGP -.->|Graph API REST (Planned)| MSGraph[Microsoft Graph API (Unimplemented)]
         
         MGP --> DataPipeline[Ingestion & Thread Resolution]

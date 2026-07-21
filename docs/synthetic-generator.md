@@ -135,7 +135,7 @@ To validate the email parser's thread-resolution logic:
 
 ## Output JSON Schema
 
-The generated JSON file mirrors the Microsoft Graph API `/me/messages` list response format wrapped in a `"value"` array:
+The generated JSON file mirrors the Microsoft Graph API `/v1.0/users/{user_id}/messages` list response format wrapped in a `"value"` array:
 
 ```json
 {

@@ -2,10 +2,8 @@
 
 _Last updated: 2026-07-20_
 
-> [!IMPORTANT]
-> **Implementation Status**: Microsoft Graph API support is currently **just a planned outline and is not implemented yet**. The project currently relies entirely on a **Mockoon server** to simulate endpoints, and all specifications **may change**.
-
 This document outlines the local mock environment for the Intelligent Email Service, enabling development and testing without live Microsoft Azure / Graph API credentials.
+
 
 ---
 
@@ -15,7 +13,15 @@ Until production Microsoft Graph API credentials are configured, the service uti
 
 The mock environment consists of three components:
 1. **Synthetic Email Generator** (`tools/generate_synthetic_emails.py`): Programmatically produces Graph API-formatted message JSON datasets.
-2. **Mock Server Endpoint**: Hosts the generated dataset at `http://localhost:3000/v1.0/me/messages`.
+
+2. **Mockoon Server**: Exposes endpoints to simulate advisors and Graph API mailbox resources:
+
+    - **Users Endpoint**: Retrieves all the advisors `http://localhost:3000/v1.0/users`.
+
+    - **Advisor Info Endpoint**: Retrieves advisor info `{BASE_URL}/v1.0/users/:user_id`.
+
+    - **Mailbox Info Endpoint**: Retrieves corresponding messages `{BASE_URL}/v1.0/users/:user_id/messages`.
+
 3. **Mock Client Provider** (`intelligent_email_service.email_connectors.MockGraphProvider`): Asynchronously fetches email messages from the local mock server.
 
 ---
@@ -31,13 +37,13 @@ Generate a realistic mock email dataset containing threaded conversations using 
 python3 tools/generate_synthetic_emails.py --conversations 10 --num-clients 5 --output mock_emails.json
 ```
 
-For full options and configuration (such as using NVIDIA LLM vs template fallbacks), see [`docs/synthetic-generator.md`](./synthetic-generator.md).
+For full options and configuration (such as using NVIDIA LLM vs template fallbacks), see [`synthetic-generator.md`](./synthetic-generator.md).
 
 ### Step 2: Configure Mock Server (Mockoon)
 
 1. Download and install [Mockoon](https://mockoon.com/) or run Mockoon CLI.
 2. Create a new Mockoon environment listening on port `3000`.
-3. Add a GET route: `/v1.0/me/messages`.
+3. Add a GET route: `/v1.0/users/:user_id/messages`.
 4. Set the response body type to `JSON` and paste the contents of `mock_emails.json` (or reference the file as a dynamic mock response).
 5. Set HTTP Response Code to `200 OK` and Header `Content-Type: application/json`.
 6. Start the environment server (`http://localhost:3000`).
@@ -52,13 +58,15 @@ Use `EmailProviderManager` to instantiate the provider in Python:
 import asyncio
 from intelligent_email_service.email_connectors import EmailProviderManager
 
+
 async def main():
     # Instantiate the provider ('mock' connects to http://localhost:3000)
     provider = EmailProviderManager.create("mock")
-    
+
     # Fetch messages from the mock endpoint
     messages = await provider.get_emails(user_id="advisor@example.com")
     print(f"Retrieved {len(messages)} messages from mock provider.")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -72,7 +80,7 @@ if __name__ == "__main__":
 |---|---|---|
 | **Endpoint Base URL** | `http://localhost:3000` | `https://graph.microsoft.com/v1.0` |
 | **Authentication** | None (Local dev) | OAuth2 Bearer Tokens (MSAL / Azure AD) |
-| **Message Retrieval** | `GET /v1.0/me/messages` | `GET /users/{user-id}/messages` or `/me/messages` |
+| **Message Retrieval** | `GET /v1.0/users/{user-id}/messages` | `GET /users/{user-id}/messages` |
 | **OData Search / Filtering** | Full list in memory | `$filter=contains(singleValueExtendedProperties/...)` |
 | **Pagination** | Single response payload | Handled via `@odata.nextLink` tokens |
 | **Delta Sync** | Not implemented in mock | Handled via `@odata.deltaLink` |

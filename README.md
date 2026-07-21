@@ -19,7 +19,7 @@ Given a financial advisor's mailbox and a target client's (household's) email ad
 ## ⚠️ Current Integration Status: Mocked (Planned Graph API Outline)
 
 > [!IMPORTANT]
-> The current architecture for Microsoft Graph API support is **just a planned outline and is not implemented yet**. Currently, the project is using a **Mockoon server** to simulate the API endpoints (`GET /v1.0/me/messages`), allowing offline development. Anything in the architecture and specifications **may change**.
+> The current architecture for Microsoft Graph API support is **just a planned outline and is not implemented yet**. Currently, the project is using a **Mockoon server** to simulate the API endpoints (`GET /v1.0/users/{user-id}/messages`), allowing offline development. Anything in the architecture and specifications **may change**.
 
 For details on local mock server configuration, synthetic dataset generation, and the planned transition to Microsoft Graph API access, see [`docs/mock-setup.md`](docs/mock-setup.md).
 
