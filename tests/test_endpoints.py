@@ -2,20 +2,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from intelligent_email_service.email_connectors import (
-    EmailProvider,
-    EmailProviderManager,
-    MicrosoftGraphProvider,
-    MockGraphProvider,
-)
-
-
-def test_imports():
-    """Verify that all main submodules and classes can be imported correctly."""
-    assert EmailProvider is not None
-    assert EmailProviderManager is not None
-    assert MockGraphProvider is not None
-    assert MicrosoftGraphProvider is not None
+from intelligent_email_service.email_connectors import MockGraphProvider
 
 
 @pytest.mark.asyncio
@@ -66,14 +53,52 @@ async def test_mock_graph_provider_endpoint():
         )
 
 
-@pytest.mark.asyncio
-async def test_mock_graph_users_endpoint():
+def test_mock_graph_users_endpoint():
     provider = MockGraphProvider(base_url="http://localhost:3000")
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.raise_for_status = MagicMock()
-    mock_response.json.return_value = {"value": []}
+    mock_response.json.return_value = {
+        "value": [
+            {
+                "id": "tst_ad-001",
+                "displayName": "Advisor One",
+                "mail": "advisor1@contoso.com",
+            },
+            {
+                "id": "tst_ad-002",
+                "displayName": "Advisor Two",
+                "mail": "advisor2@contoso.com",
+            },
+        ]
+    }
+
+    with patch("httpx.Client.get", new_callable=MagicMock) as mock_get:
+        mock_get.return_value = mock_response
+        advisors = provider.get_advisors_list()
+        assert advisors[0]["id"] == "tst_ad-001"
+        assert advisors[1]["id"] == "tst_ad-002"
+        mock_get.assert_called_once_with("http://localhost:3000/v1.0/users/")
 
 
 @pytest.mark.asyncio
-async def test_mock_graph_advisor_info_endpoint(): ...
+async def test_mock_graph_advisor_info_endpoint():
+    provider = MockGraphProvider(base_url="http://localhost:3000")
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.raise_for_status = MagicMock()
+    mock_response.json.return_value = {
+        "value": [
+            {
+                "id": "tst_ad-001",
+                "displayName": "Advisor One",
+                "mail": "advisor1@contoso.com",
+            }
+        ]
+    }
+
+    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
+        mock_get.return_value = mock_response
+        advisor_info = await provider.get_advisor_info(user_id="tst_ad-001")
+        assert len(advisor_info) == 1
+        mock_get.assert_called_once_with("http://localhost:3000/v1.0/users/tst_ad-001")
