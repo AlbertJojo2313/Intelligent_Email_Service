@@ -13,6 +13,7 @@ from synthetic_generator import (
     NvidiaClient,
     SyntheticEmailGenerator,
 )
+from synthetic_generator.generator import AdvisorProfile, EmailGenerationConfig
 
 ## Default Constants
 DEFAULT_NUM_CLIENTS = 5
@@ -134,6 +135,18 @@ def _parser_config():
         help="Path to a JSON file containing a predefined pool of clients",
     )
 
+    # Email Gen_Config
+    parser.add_argument(
+        "--thread-format",
+        choices=["full_quoted", "modified"],
+        default="full_quoted",
+        help=(
+            "Email thread formatting mode. "
+            "'full_quoted' includes previous messages as quoted history "
+            "in every reply; 'modified' contains only the new message content"
+        ),
+    )
+
     # NVIDIA LLM Configuration
     parser.add_argument(
         "--nvidia-key",
@@ -175,9 +188,12 @@ async def main():
 
     # 3. Initialize Orchestrator
     generator = SyntheticEmailGenerator(
-        advisor_name=args.advisor_name,
-        advisor_email=args.advisor_email,
-        fallback_templates=FALLBACK_TEMPLATES,
+        advisor=AdvisorProfile(
+            name=args.advisor_name,
+            email=args.advisor_email,
+        ),
+        config=EmailGenerationConfig(fallback_templates=FALLBACK_TEMPLATES),
+        nvidia_client=llm_client,
     )
 
     all_messages = []
@@ -189,8 +205,8 @@ async def main():
     tasks = []
     for idx in range(args.conversations):
         topic = random.choice(topics)
-        thread_length = random.randint(2, 4)
-        is_unmodified = random.choice([True, False])
+        thread_length = random.randint(5, 20)
+        thread_format = args.thread_format
 
         # Select client from the pool using round-robin index
         client = client_pool.get_client(idx)
@@ -198,13 +214,19 @@ async def main():
         print(
             f" - Scheduling Thread {idx + 1}: Topic='{topic}', Client='{client.name}' ({client.email}), Unmodified={is_unmodified}"
         )
+        print(
+            f" - Scheduling Thread {idx + 1}: "
+            f"Topics='{topic}', "
+            f"Client='{client.name}' ({client.email}), "
+            f"Format='{thread_format}'"
+        )
 
         tasks.append(
             generator.generate_thread(
                 topic=topic,
                 client=client,
                 thread_length=thread_length,
-                is_unmodified=is_unmodified,
+                thread_format=thread_format,
             )
         )
 

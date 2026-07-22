@@ -83,20 +83,26 @@ class SyntheticEmailGenerator:
         )
 
     async def generate_thread(
-        self,
-        topic: str,
-        client: ClientProfile,
-        thread_length: int,
-        include_quoted_history: bool,
+        self, topic: str, client: ClientProfile, thread_length: int, thread_format: str
     ) -> list[dict[str, Any]]:
         """
-        Generates thread emails for a specific client and topic, then formats them with
-        unique Microsoft Graph API-like IDs, timestamps, and quotes if unmodified.
+        Generates a synthetic email thread
+
+        thread_format:
+            - full_quoted: Every reply includes previous messages as quoted history.
+            - modified: Each message contains only its own content.
         """
+        if thread_format not in {"full_quoted", "modified"}:
+            raise ValueError(f"Invalid thread_format: {thread_format}")
+
         conversation_id = str(uuid.uuid4())
         bodies = await self._fetch_raw_thread_messages(topic, client, thread_length)
 
         messages = []
+
+        # Stores raw messages separtely so quotes don't become recursive
+        raw_messages: list[dict[str, Any]] = []
+
         # Start at a random date in the configured range (UTC time)
         base_time = datetime.now(UTC) - timedelta(
             days=random.randint(1, self.config.base_date_range_days)
@@ -105,7 +111,7 @@ class SyntheticEmailGenerator:
         for i, item in enumerate(bodies):
             msg_id = f"AAMkAG{uuid.uuid4().hex[:12]}"
             sender_role = item.get("sender")
-            if sender_role not in ["advisor", "client"]:
+            if sender_role not in {"advisor", "client"}:
                 sender_role = "client" if i % 2 == 0 else "advisor"
 
             if sender_role == "advisor":
@@ -117,19 +123,24 @@ class SyntheticEmailGenerator:
 
             # Ensure chronological ordering: each message is generated at a later time than the previous one
             msg_time = base_time + timedelta(
-                hours=i * 2
-                + random.randint(
-                    self.config.message_gap_hours_min, self.config.message_gap_hours_max
+                hours=(
+                    i * 2
+                    + random.randint(
+                        self.config.message_gap_hours_min,
+                        self.config.message_gap_hours_max,
+                    )
                 )
             )
             received_time = msg_time.isoformat().replace("+00:00", "Z")
 
             raw_body = item.get("body", "")
-            body_content = raw_body
+            body_content = raw_body  # Default: only the new email content
 
             # If this is an unmodified thread, the last email has the quoted history of previous emails
-            if include_quoted_history and i == len(bodies) - 1 and len(messages) > 0:
-                body_content = self._format_as_quoted_body(raw_body, messages)
+            if thread_format == "full_quoted" and raw_messages:
+                body_content = self._format_as_quoted_body(
+                    email_body=raw_body, previous_messages=raw_messages
+                )
 
             message_obj = {
                 "id": msg_id,
@@ -150,4 +161,11 @@ class SyntheticEmailGenerator:
                 ],
             }
             messages.append(message_obj)
+
+            # Store raw content separately for future quoting
+            raw_messages.append({
+                "sentDateTime": received_time,
+                "raw_body": raw_body,
+                "from": {"emailAddress": {"name": from_name, "address": from_email}},
+            })
         return messages
