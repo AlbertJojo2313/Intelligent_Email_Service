@@ -9,10 +9,11 @@ Given a financial advisor's mailbox and a target client's (household's) email ad
 ## Key Features & Capabilities
 
 - **Mailbox Ingestion**: Pulls email metadata, message bodies, and attachment descriptors via Microsoft Graph API abstraction (`EmailProvider`).
+- **Domain Exception Handling**: Uniform error handling mapping HTTP status codes (401/403, 404, 429 rate limits) into domain exceptions (`EmailServiceError`, `EmailProviderError`, `ProviderRateLimitError`).
 - **Thread Resolution**: Handles both **unmodified threads** (containing inline quoted history) and **modified threads** (split individual messages sharing a `conversation_id`).
 - **Preprocessing & Cleaning**: Strips HTML tags, email headers, disclaimers, and signature blocks ([`docs/preprocessing.md`](docs/preprocessing.md)).
 - **Context Compression**: Applies rule-based and hybrid summarization/compression to minimize token consumption and API cost.
-- **Synthetic Email Generator**: Includes an asynchronous multi-client generator using the **NVIDIA AI Cloud / NIM API** and template fallbacks to build Graph API-compliant test datasets ([`docs/synthetic-generator.md`](docs/synthetic-generator.md)).
+- **Synthetic Email Generator**: Includes an asynchronous multi-client generator using the **NVIDIA AI Cloud / NIM API** (`deepseek-ai/deepseek-v4-flash`) and template fallbacks to build Graph API-compliant test datasets ([`docs/synthetic-generator.md`](docs/synthetic-generator.md)).
 
 ---
 
@@ -64,13 +65,16 @@ uv pip install -e ".[dev]"
 Connector Layer (EmailProvider / MockGraphProvider / MicrosoftGraphProvider)
        │
        ▼
+Exception Layer (Domain Exceptions: EmailProviderError / ProviderRateLimitError)
+       │
+       ▼
 Thread Grouping & Resolution (Unmodified vs Modified email threads)
        │
        ▼
-Preprocessing & Cleaning (HTML Stripping / Quote Parsing)
+Preprocessing & Cleaning (HTML Stripping / Quote Parsing Specification)
        │
        ▼
-Compression (Rule-based & LLM context reduction)
+Compression (Rule-based & LLM context reduction Specification)
        │
        ▼
 Structured JSON Output (LLM Context Prompt Payload)
@@ -82,7 +86,7 @@ See [`docs/architecture.md`](docs/architecture.md) for detailed data flow diagra
 
 ## Documentation Quick Links
 
-- [**Architecture & System Design**](docs/architecture.md): Data flow pipeline, identity model, and component interactions.
+- [**Architecture & System Design**](docs/architecture.md): Data flow pipeline, identity model, exception layer, and component interactions.
 - [**Mock Setup & Local Development**](docs/mock-setup.md): Guide for running Mockoon and local API simulation.
 - [**Preprocessing & Compression**](docs/preprocessing.md): Detailed cleaner and compressor module specifications.
 - [**Synthetic Email Generator**](docs/synthetic-generator.md): Usage guide for synthetic email thread generation with NVIDIA LLM / Fallback templates.
@@ -102,4 +106,3 @@ Or inside an activated virtual environment:
 ```bash
 pytest
 ```
-
