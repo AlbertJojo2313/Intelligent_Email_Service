@@ -1,189 +1,148 @@
 import json
 import logging
-from typing import Any, Optional
+from typing import Any
 
-import httpx
+from openai import AsyncOpenAI
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 logger = logging.getLogger(__name__)
 
-HTTP_SUCCESS_CODE = 200
 DEFAULT_NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
-DEFAULT_NVIDIA_MODEL = "meta/llama-3.1-70b-instruct"
+DEFAULT_NVIDIA_MODEL = "deepseek-ai/deepseek-v4-flash"
 
 
-def clean_json_content(raw_content: str) -> str:
-    """Strips markdown code blocks and returns clean JSON string."""
-    cleaned = raw_content.strip()
-    if cleaned.startswith("```"):
-        lines = cleaned.splitlines()
-        if lines and lines[0].startswith("```"):
-            lines = lines[1:]
-        if lines and lines[-1].startswith("```"):
-            lines = lines[:-1]
-        cleaned = "\n".join(lines).strip()
-    return cleaned
-
-
-def build_email_thread_prompts(
-    topic: str, advisor_name: str, client_name: str, thread_count: int
-) -> tuple[str, str]:
-    """Builds system and user prompts for email thread generation."""
-    system_prompt = (
-        "You are a synthetic email thread generator. Your task is to output a chronological conversation "
-        "between a financial advisor and a client. You must format the output strictly as a JSON array "
-        "of objects representing the chronological messages. Each object must contain:\n"
-        "- 'sender': either 'advisor' or 'client'\n"
-        "- 'body': the clean text body of the email (without any trailing quoted history or headers, just the new message content)\n"
-        "- 'subject': the subject line of the email (starting with 'Re:' for replies)"
-    )
-
-    user_prompt = (
-        f"Generate a thread of exactly {thread_count} realistic back-and-forth emails discussing the topic: '{topic}'.\n"
-        f"Financial Advisor: '{advisor_name}'\n"
-        f"Client: '{client_name}'\n\n"
-        "Format the output strictly as a JSON array. Example structure:\n"
-        "[\n"
-        f'  {{"sender": "client", "subject": "{topic.title()}", "body": "Hello..."}},\n'
-        f'  {{"sender": "advisor", "subject": "Re: {topic.title()}", "body": "Hi..."}}\n'
-        "]"
-    )
-    return system_prompt, user_prompt
-
-
-def parse_email_thread_response(
-    raw_content: str, provider_name: str = "LLM"
-) -> list[dict[str, Any]]:
-    """Cleans raw response string and parses it into a list of message dictionaries."""
-    clean_content = clean_json_content(raw_content)
-    data = json.loads(clean_content)
-
-    if isinstance(data, dict):
-        for val in data.values():
-            if isinstance(val, list):
-                return val
-    if isinstance(data, list):
-        return data
-
-    raise ValueError(
-        f"{provider_name} response JSON did not resolve to a list of messages."
-    )
-
-
-class BaseLLMClient:
-    """Base client for OpenAI-compatible LLM services."""
-
-    def __init__(
-        self,
-        api_key: str,
-        model: str,
-        base_url: str,
-        provider_name: str = "LLM",
-    ):
-        if not api_key:
-            raise ValueError(f"{provider_name} API key must be provided.")
-        self.api_key = api_key
-        self.model = model
-        self.base_url = base_url.rstrip("/")
-        self.provider_name = provider_name
-
-    def _clean_json_content(self, raw_content: str) -> str:
-        """Strips markdown code blocks and returns clean JSON string."""
-        return clean_json_content(raw_content)
-
-    def _build_headers(self) -> dict[str, str]:
-        """Constructs default HTTP headers for requests."""
-        return {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-        }
-
-    def _build_payload(
-        self,
-        system_prompt: str,
-        user_prompt: str,
-        response_format: Optional[dict[str, Any]] = None,
-    ) -> dict[str, Any]:
-        """Constructs request payload for chat completion."""
-        payload: dict[str, Any] = {
-            "model": self.model,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-        }
-        if response_format:
-            payload["response_format"] = response_format
-        return payload
-
-    async def _send_request(
-        self,
-        payload: dict[str, Any],
-        headers: dict[str, str],
-        timeout: float = 45.0,
-    ) -> dict[str, Any]:
-        """Executes the HTTP POST request to the chat completion endpoint."""
-        url = f"{self.base_url}/chat/completions"
-        logger.info(
-            "Requesting email thread from %s (model: %s)...",
-            self.provider_name,
-            self.model,
-        )
-
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            response = await client.post(url, json=payload, headers=headers)
-
-            if response.status_code != HTTP_SUCCESS_CODE:
-                raise httpx.HTTPStatusError(
-                    f"{self.provider_name} returned HTTP {response.status_code}. Status: {response.text}",
-                    request=response.request,
-                    response=response,
-                )
-
-            result = response.json()
-            if "choices" not in result or not result["choices"]:
-                raise ValueError(
-                    f"{self.provider_name} response does not contain 'choices': {result}"
-                )
-
-            return result
-
-    def _extract_content(self, response_data: dict[str, Any]) -> str:
-        """Extracts text content from the LLM response choices."""
-        return response_data["choices"][0]["message"]["content"]
-
-    async def generate_email_thread(
-        self, topic: str, advisor_name: str, client_name: str, thread_count: int
-    ) -> list[dict[str, Any]]:
-        """Calls the LLM API to generate raw email messages for a thread."""
-        system_prompt, user_prompt = build_email_thread_prompts(
-            topic, advisor_name, client_name, thread_count
-        )
-        headers = self._build_headers()
-        payload = self._build_payload(system_prompt, user_prompt)
-        response_data = await self._send_request(payload, headers)
-        raw_content = self._extract_content(response_data)
-        return parse_email_thread_response(raw_content, self.provider_name)
-
-
-class NvidiaClient(BaseLLMClient):
-    """Client for NVIDIA NIM / AI Cloud LLM generation."""
-
+class NvidiaClient:
     def __init__(
         self,
         api_key: str,
         model: str = DEFAULT_NVIDIA_MODEL,
         base_url: str = DEFAULT_NVIDIA_BASE_URL,
     ):
-        super().__init__(
-            api_key=api_key,
-            model=model,
+        if not api_key:
+            raise ValueError("NVIDIA API key must be provided.")
+
+        self.client = AsyncOpenAI(
             base_url=base_url,
-            provider_name="NVIDIA",
+            api_key=api_key,
         )
 
-    def _build_headers(self) -> dict[str, str]:
-        headers = super()._build_headers()
-        headers["Accept"] = "application/json"
-        return headers
+        self.model = model
 
+    @retry(
+        retry=retry_if_exception_type(Exception),
+        wait=wait_exponential(multiplier=2, min=2, max=30),
+        stop=stop_after_attempt(5),
+        reraise=True,
+    )
+    async def generate_email_thread(
+        self,
+        topic: str,
+        advisor_name: str,
+        client_name: str,
+        thread_count: int,
+    ) -> list[dict[str, Any]]:
+        completion = await self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": self._build_system_prompt(),
+                },
+                {
+                    "role": "user",
+                    "content": self._build_user_prompt(
+                        topic=topic,
+                        advisor_name=advisor_name,
+                        client_name=client_name,
+                        thread_count=thread_count,
+                    ),
+                },
+            ],
+            temperature=0.7,
+            top_p=0.95,
+            max_tokens=4096,
+        )
 
+        content = completion.choices[0].message.content
+
+        if not content:
+            raise ValueError("NVIDIA returned an empty response.")
+
+        return self._parse_response(content)
+
+    @staticmethod
+    def _build_system_prompt() -> str:
+        return """
+You generate realistic synthetic email conversations
+between a financial advisor and a client.
+
+Return ONLY a valid JSON array.
+
+Each array element must contain:
+- "sender": either "advisor" or "client"
+- "subject": the email subject
+- "body": only the new content of the email
+
+Do NOT include:
+- quoted previous messages
+- email headers
+- timestamps
+- Markdown code fences
+
+The messages must form a chronological,
+coherent back-and-forth conversation.
+
+Replies should use "Re:" in the subject.
+""".strip()
+
+    @staticmethod
+    def _build_user_prompt(
+        topic: str,
+        advisor_name: str,
+        client_name: str,
+        thread_count: int,
+    ) -> str:
+        return f"""
+Generate exactly {thread_count} realistic emails
+about the following topic:
+
+Topic: {topic}
+
+Financial Advisor: {advisor_name}
+Client: {client_name}
+
+Alternate naturally between the client and advisor.
+
+Each email should respond naturally to the
+previous email and maintain a coherent conversation.
+
+Return only a JSON array.
+""".strip()
+
+    @staticmethod
+    def _parse_response(
+        content: str,
+    ) -> list[dict[str, Any]]:
+        content = content.strip()
+
+        # Remove accidental Markdown code fences.
+        if content.startswith("```"):
+            lines = content.splitlines()
+
+            if lines and lines[0].startswith("```"):
+                lines.pop(0)
+
+            if lines and lines[-1].startswith("```"):
+                lines.pop()
+
+            content = "\n".join(lines).strip()
+
+        try:
+            data = json.loads(content)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"NVIDIA returned invalid JSON:\n{content}") from e
+
+        if not isinstance(data, list):
+            raise ValueError("NVIDIA response must be a JSON array.")
+
+        return data

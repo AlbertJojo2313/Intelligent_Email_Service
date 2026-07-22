@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import random
 import uuid
@@ -31,12 +32,14 @@ class SyntheticEmailGenerator:
         self,
         advisor: AdvisorProfile,
         config: EmailGenerationConfig,
-        nvidia_client: Optional[NvidiaClient] = None,
+        nvidia_client: Optional[NvidiaClient],
+        fallback_templates: Optional[dict[str, list[str]]] = None,
     ):
         self.advisor = advisor
         self.config = config
         self.nvidia_client = nvidia_client
-        self.fallback_generator = FallbackGenerator(config.fallback_templates)
+        self.fallback_generator = FallbackGenerator(self.config.fallback_templates)
+        self._llm_semaphore = asyncio.Semaphore(3)
 
     def _format_as_quoted_body(
         self, email_body: str, previous_messages: list[dict[str, Any]]
@@ -63,12 +66,13 @@ class SyntheticEmailGenerator:
         """
         if self.nvidia_client:
             try:
-                return await self.nvidia_client.generate_email_thread(
-                    topic=topic,
-                    advisor_name=self.advisor.name,
-                    client_name=client.name,
-                    thread_count=thread_length,
-                )
+                async with self._llm_semaphore:
+                    return await self.nvidia_client.generate_email_thread(
+                        topic=topic,
+                        advisor_name=self.advisor.name,
+                        client_name=client.name,
+                        thread_count=thread_length,
+                    )
             except Exception as e:
                 logger.warning(
                     "NVIDIA API generation failed: %s. Falling back to template-based generation.",
@@ -83,7 +87,11 @@ class SyntheticEmailGenerator:
         )
 
     async def generate_thread(
-        self, topic: str, client: ClientProfile, thread_length: int, thread_format: str
+        self,
+        topic: str,
+        client: ClientProfile,
+        thread_length: int,
+        thread_format: str,
     ) -> list[dict[str, Any]]:
         """
         Generates a synthetic email thread
@@ -93,22 +101,23 @@ class SyntheticEmailGenerator:
             - modified: Each message contains only its own content.
         """
         if thread_format not in {"full_quoted", "modified"}:
-            raise ValueError(f"Invalid thread_format: {thread_format}")
+            raise ValueError(
+                f"Invalid thread_format: {thread_format!r}."
+                "Expected 'full_quoted' or 'modified'."
+            )
 
         conversation_id = str(uuid.uuid4())
         bodies = await self._fetch_raw_thread_messages(topic, client, thread_length)
 
         messages = []
 
-        # Stores raw messages separtely so quotes don't become recursive
-        raw_messages: list[dict[str, Any]] = []
-
         # Start at a random date in the configured range (UTC time)
         base_time = datetime.now(UTC) - timedelta(
             days=random.randint(1, self.config.base_date_range_days)
         )
 
-        for i, item in enumerate(bodies):
+        for i, raw_item in enumerate(bodies):
+            item = {"body": raw_item} if isinstance(raw_item, str) else dict(raw_item)
             msg_id = f"AAMkAG{uuid.uuid4().hex[:12]}"
             sender_role = item.get("sender")
             if sender_role not in {"advisor", "client"}:
@@ -125,7 +134,7 @@ class SyntheticEmailGenerator:
             msg_time = base_time + timedelta(
                 hours=(
                     i * 2
-                    + random.randint(
+                    + random.randint(  # noqa: S311
                         self.config.message_gap_hours_min,
                         self.config.message_gap_hours_max,
                     )
@@ -137,9 +146,9 @@ class SyntheticEmailGenerator:
             body_content = raw_body  # Default: only the new email content
 
             # If this is an unmodified thread, the last email has the quoted history of previous emails
-            if thread_format == "full_quoted" and raw_messages:
+            if thread_format == "full_quoted" and messages:
                 body_content = self._format_as_quoted_body(
-                    email_body=raw_body, previous_messages=raw_messages
+                    email_body=raw_body, previous_messages=messages
                 )
 
             message_obj = {
@@ -161,11 +170,4 @@ class SyntheticEmailGenerator:
                 ],
             }
             messages.append(message_obj)
-
-            # Store raw content separately for future quoting
-            raw_messages.append({
-                "sentDateTime": received_time,
-                "raw_body": raw_body,
-                "from": {"emailAddress": {"name": from_name, "address": from_email}},
-            })
         return messages

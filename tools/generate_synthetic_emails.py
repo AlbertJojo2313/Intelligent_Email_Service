@@ -155,7 +155,7 @@ def _parser_config():
     )
     parser.add_argument(
         "--model",
-        default=os.getenv("NVIDIA_MODEL", "meta/llama-3.1-70b-instruct"),
+        default=os.getenv("NVIDIA_MODEL"),
         help="NVIDIA model to use",
     )
     parser.add_argument(
@@ -211,9 +211,6 @@ async def main():
         # Select client from the pool using round-robin index
         client = client_pool.get_client(idx)
 
-        print(
-            f" - Scheduling Thread {idx + 1}: Topic='{topic}', Client='{client.name}' ({client.email}), Unmodified={is_unmodified}"
-        )
         print(
             f" - Scheduling Thread {idx + 1}: "
             f"Topics='{topic}', "
