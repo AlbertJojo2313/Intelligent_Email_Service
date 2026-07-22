@@ -1,11 +1,9 @@
-# Email Preprocessing & Compression Module
+# Email Preprocessing & Compression Module Specification
 
-_Last updated: 2026-07-20_
-
-This document specifies the design, requirements, and data pipelines for the email preprocessing and compression module (`intelligent_email_service.preprocessing`).
+_Last updated: 2026-07-22_
 
 > [!IMPORTANT]
-> **Implementation Status**: The current architecture for Microsoft Graph API support is **just a planned outline and is not implemented yet**. Currently, the project uses a **Mockoon server** to simulate endpoints, and anything **may change**.
+> **Implementation Status**: The preprocessing and compression modules (`cleaner.py` and `compressor.py`) are currently **planned architecture specifications and skeleton modules**. This document defines the design and interfaces for their upcoming implementation.
 
 ---
 
@@ -28,8 +26,8 @@ The package consists of two primary modules within `src/intelligent_email_servic
 ```
 src/intelligent_email_service/preprocessing/
 ├── __init__.py        # Module exports
-├── cleaner.py         # HTML stripping, header parsing, quote detection
-└── compressor.py      # Rule-based & LLM context compression
+├── cleaner.py         # HTML stripping, header parsing, quote detection (Skeleton)
+└── compressor.py      # Rule-based & LLM context compression (Skeleton)
 ```
 
 ---

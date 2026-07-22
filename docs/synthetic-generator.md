@@ -1,6 +1,6 @@
 # Synthetic Email Generator
 
-_Last updated: 2026-07-20_
+_Last updated: 2026-07-22_
 
 > [!IMPORTANT]
 > **Implementation Status**: Microsoft Graph API support is currently **just a planned outline and is not implemented yet**. The generator constructs datasets to feed a **Mockoon server** simulating the endpoints, and specs **may change**.
@@ -24,7 +24,7 @@ tools/
     ├── client_pool.py             # ClientPool generator (Faker / JSON loader)
     ├── fallback_generator.py      # Local template fallback generator
     ├── generator.py               # SyntheticEmailGenerator orchestrator
-    ├── llm_client.py              # BaseLLMClient & NvidiaClient HTTP client
+    ├── llm_client.py              # NvidiaClient HTTP client (OpenAI SDK integration)
     └── models.py                 # ClientProfile data class
 ```
 
@@ -37,7 +37,7 @@ tools/
 Ensure project dependencies are installed (using `uv` or `pip`):
 
 ```bash
-pip install faker python-dotenv httpx
+pip install faker python-dotenv httpx openai tenacity
 ```
 
 ### 2. Configure Environment Variables
@@ -52,7 +52,7 @@ Inside `.env`, configure the NVIDIA API parameters:
 
 ```env
 NVIDIA_API_KEY=nvapi-your_nvidia_api_key_here
-NVIDIA_MODEL=meta/llama-3.1-70b-instruct
+NVIDIA_MODEL=deepseek-ai/deepseek-v4-flash
 NVIDIA_BASE_URL=https://integrate.api.nvidia.com/v1
 ```
 
@@ -85,7 +85,7 @@ python3 tools/generate_synthetic_emails.py [options]
 | `--num-clients` | Number of distinct clients to dynamically generate in the pool | `5` |
 | `--client-pool` | Path to a custom JSON file containing a predefined client pool | `None` |
 | `--nvidia-key` | NVIDIA API key | `$NVIDIA_API_KEY` |
-| `--model` | NVIDIA NIM model to invoke | `$NVIDIA_MODEL` (`meta/llama-3.1-70b-instruct`) |
+| `--model` | NVIDIA NIM model to invoke | `$NVIDIA_MODEL` (`deepseek-ai/deepseek-v4-flash`) |
 | `--url` | Base URL of the NVIDIA API | `$NVIDIA_BASE_URL` (`https://integrate.api.nvidia.com/v1`) |
 
 ---
