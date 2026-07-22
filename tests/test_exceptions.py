@@ -5,8 +5,6 @@ import pytest
 
 from intelligent_email_service.email_connectors import MockGraphProvider
 from intelligent_email_service.exceptions import (
-    EmailProviderError,
-    EmailRetrievalError,
     ProviderAuthenticationError,
     ProviderNotFoundError,
     ProviderRateLimitError,
