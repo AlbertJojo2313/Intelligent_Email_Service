@@ -1,0 +1,174 @@
+from collections.abc import Iterable
+from datetime import datetime, timezone
+from typing import Any, NoReturn
+
+import httpx
+
+from ..exceptions import (
+    EmailProviderError,
+    ProviderAuthenticationError,
+    ProviderNotFoundError,
+    ProviderRateLimitError,
+)
+from .base import EmailProvider
+
+
+def _handle_httpx_error(exc: httpx.HTTPError, context_msg: str) -> NoReturn:
+    """Map raw httpx exceptions to domain-specific EmailProviderError subclasses using pattern matching."""
+    if not isinstance(exc, httpx.HTTPStatusError):
+        raise EmailProviderError(
+            f"{context_msg}: Network request failed - {exc}"
+        ) from exc
+
+    status = exc.response.status_code
+    body = exc.response.text
+
+    match status:
+        case 401 | 403:
+            raise ProviderAuthenticationError(
+                f"{context_msg}: Authentication failed ({status})",
+                status_code=status,
+                response_body=body,
+            ) from exc
+        case 404:
+            raise ProviderNotFoundError(
+                f"{context_msg}: Resource not found ({status})",
+                status_code=status,
+                response_body=body,
+            ) from exc
+        case 429:
+            retry_header = exc.response.headers.get("Retry-After")
+            retry_after = (
+                int(retry_header) if retry_header and retry_header.isdigit() else None
+            )
+            raise ProviderRateLimitError(
+                f"{context_msg}: Rate limit exceeded ({status})",
+                retry_after=retry_after,
+                status_code=status,
+                response_body=body,
+            ) from exc
+        case _:
+            raise EmailProviderError(
+                f"{context_msg}: Provider HTTP error ({status})",
+                status_code=status,
+                response_body=body,
+            ) from exc
+
+
+class MockGraphProvider(EmailProvider):
+    def __init__(self, base_url: str = "http://localhost:3000"):
+        self.base_url = base_url.rstrip("/")
+
+    async def get_emails(
+        self,
+        user_id: str = "advisor@example.com",
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+    ) -> list[dict[str, Any]]:
+        """Retrieve messages from an advisor's mailbox with error handling and date filtering."""
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"{self.base_url}/v1.0/users/{user_id}/messages"
+                )
+                response.raise_for_status()
+                messages = response.json()["value"]
+        except httpx.HTTPError as exc:
+            _handle_httpx_error(exc, f"Failed to retrieve messages for user '{user_id}'")
+
+        return self._filter_by_date(
+            messages=messages,
+            start_date=start_date,
+            end_date=end_date,
+        )
+
+    async def get_advisors_list(self) -> list[dict[str, Any]]:
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(f"{self.base_url}/v1.0/users/")
+                response.raise_for_status()
+                return response.json()["value"]
+        except httpx.HTTPError as exc:
+            _handle_httpx_error(exc, "Failed to retrieve advisors list")
+
+    async def get_advisor_info(
+        self,
+        user_id: str,
+    ) -> dict[str, Any]:
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(f"{self.base_url}/v1.0/users/{user_id}")
+                response.raise_for_status()
+                res_data = response.json()
+                return (
+                    res_data.get("value", res_data)
+                    if isinstance(res_data, dict)
+                    else res_data
+                )
+        except httpx.HTTPError as exc:
+            _handle_httpx_error(exc, f"Failed to retrieve info for advisor '{user_id}'")
+
+    async def get_emails_by_conversation_id(
+        self, user_id: str, conversation_id: str
+    ) -> list[dict[str, Any]]:
+        """
+        Retrieve all messages belonging to a conversation.
+
+        Mockoon endpoint:
+            GET /v1.0/users/{user-id}/messages?$filter=conversationId eq '{conversation_id}'
+        """
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"{self.base_url}/v1.0/users/{user_id}/messages",
+                    params={"$filter": f"conversationId eq '{conversation_id}'"},
+                )
+                response.raise_for_status()
+                return response.json()["value"]
+        except httpx.HTTPError as exc:
+            _handle_httpx_error(
+                exc, f"Failed to retrieve conversation '{conversation_id}'"
+            )
+
+    get_messages_by_conversation_id = get_emails_by_conversation_id
+
+    @staticmethod
+    def _normalize_date(date: datetime):
+        if date.tzinfo is None:
+            return date.replace(tzinfo=timezone.utc)
+        return date.astimezone(timezone.utc)
+
+    @staticmethod
+    def _in_date_range(
+        message_date: datetime,
+        start_date: datetime | None,
+        end_date: datetime | None,
+    ) -> bool:
+        message_date = MockGraphProvider._normalize_date(message_date)
+        if start_date:
+            start_date = MockGraphProvider._normalize_date(start_date)
+        if end_date:
+            end_date = MockGraphProvider._normalize_date(end_date)
+        if start_date and message_date < start_date:
+            return False
+        return not (end_date and message_date > end_date)
+
+    @staticmethod
+    def _filter_by_date(
+        messages: Iterable[dict[str, Any]],
+        start_date: datetime | None,
+        end_date: datetime | None,
+    ) -> list[dict[str, Any]]:
+        if start_date is None and end_date is None:
+            return list(messages)
+
+        return [
+            message
+            for message in messages
+            if (received_at := message.get("receivedDateTime"))
+            and MockGraphProvider._in_date_range(
+                datetime.fromisoformat(received_at.replace("Z", "+00:00")),
+                start_date,
+                end_date,
+            )
+        ]
