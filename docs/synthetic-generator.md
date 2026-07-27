@@ -1,6 +1,6 @@
 # Synthetic Email Generator
 
-_Last updated: 2026-07-22_
+_Last updated: 2026-07-27_
 
 > [!IMPORTANT]
 > **Implementation Status**: Microsoft Graph API support is currently **just a planned outline and is not implemented yet**. The generator constructs datasets to feed a **Mockoon server** simulating the endpoints, and specs **may change**.

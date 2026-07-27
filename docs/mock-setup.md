@@ -1,6 +1,6 @@
 # Mock Graph API Setup & Local Development Guide
 
-_Last updated: 2026-07-20_
+_Last updated: 2026-07-27_
 
 This document outlines the local mock environment for the Intelligent Email Service, enabling development and testing without live Microsoft Azure / Graph API credentials.
 
@@ -52,25 +52,47 @@ For full options and configuration (such as using NVIDIA LLM vs template fallbac
 
 ## Code Usage Example
 
-Use `EmailProviderManager` to instantiate the provider in Python:
+Use `EmailProviderManager`, `EmailRetrievalService`, and `ThreadProcessor` to retrieve and process client threads:
 
 ```python
 import asyncio
-from intelligent_email_service.email_connectors import EmailProviderManager
+from intelligent_email_service import (
+    EmailProviderManager,
+    EmailRetrievalService,
+    ThreadProcessor,
+)
 
 
 async def main():
-    # Instantiate the provider ('mock' connects to http://localhost:3000)
-    provider = EmailProviderManager.create("mock")
+    advisor_id = "tst_ad-001"
+    client_id = "jessica.ayala@example.com"
 
-    # Fetch messages from the mock endpoint
-    messages = await provider.get_emails(user_id="advisor@example.com")
-    print(f"Retrieved {len(messages)} messages from mock provider.")
+    # Instantiate provider ('mock' connects to http://localhost:3000)
+    provider = EmailProviderManager.create("mock")
+    retrieval_service = EmailRetrievalService(provider=provider)
+
+    # Initialize ThreadProcessor with client_id context for strict isolation
+    processor = ThreadProcessor(
+        provider=provider,
+        user_id=advisor_id,
+        client_id=client_id,
+    )
+
+    # Retrieve client emails and group by subject
+    messages = await retrieval_service.get_client_emails(advisor_id, client_id)
+    subject_groups = retrieval_service._group_by_subject(messages)
+
+    # Process each subject thread safely
+    for subject, group in subject_groups.items():
+        thread = await processor.process_subject_group(group)
+        if thread:
+            print(f"Subject: {thread.subject} | Format: {thread.format.value} | Messages: {len(thread.messages)}")
 
 
 if __name__ == "__main__":
     asyncio.run(main())
 ```
+
 
 ---
 

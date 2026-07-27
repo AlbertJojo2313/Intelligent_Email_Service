@@ -1,6 +1,6 @@
 # Email Preprocessing & Compression Module Specification
 
-_Last updated: 2026-07-22_
+_Last updated: 2026-07-27_
 
 > [!IMPORTANT]
 > **Implementation Status**: The preprocessing and compression modules (`cleaner.py` and `compressor.py`) are currently **planned architecture specifications and skeleton modules**. This document defines the design and interfaces for their upcoming implementation.
