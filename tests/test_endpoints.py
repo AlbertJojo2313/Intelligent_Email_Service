@@ -53,7 +53,8 @@ async def test_mock_graph_provider_endpoint():
         )
 
 
-def test_mock_graph_users_endpoint():
+@pytest.mark.asyncio
+async def test_mock_graph_users_endpoint():
     provider = MockGraphProvider(base_url="http://localhost:3000")
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -73,9 +74,9 @@ def test_mock_graph_users_endpoint():
         ]
     }
 
-    with patch("httpx.Client.get", new_callable=MagicMock) as mock_get:
+    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
         mock_get.return_value = mock_response
-        advisors = provider.get_advisors_list()
+        advisors = await provider.get_advisors_list()
         assert advisors[0]["id"] == "tst_ad-001"
         assert advisors[1]["id"] == "tst_ad-002"
         mock_get.assert_called_once_with("http://localhost:3000/v1.0/users/")

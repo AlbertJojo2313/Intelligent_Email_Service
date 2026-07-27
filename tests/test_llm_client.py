@@ -1,15 +1,8 @@
-import sys
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-# Ensure tools directory is on path for synthetic_generator imports
-tools_dir = str(Path(__file__).parent.parent / "tools")
-if tools_dir not in sys.path:
-    sys.path.insert(0, tools_dir)
-
-from synthetic_generator.llm_client import (  # type: ignore[import-not-found, reportMissingImports]
+from synthetic_generator.llm_client import (
     DEFAULT_NVIDIA_BASE_URL,
     DEFAULT_NVIDIA_MODEL,
     NvidiaClient,
@@ -17,7 +10,7 @@ from synthetic_generator.llm_client import (  # type: ignore[import-not-found, r
 
 
 def test_missing_api_key_validation():
-    with pytest.raises(ValueError, match="NVIDIA API key must be provided."):
+    with pytest.raises(ValueError, match=r"NVIDIA API key must be provided\."):
         NvidiaClient(api_key="")
 
 
@@ -54,7 +47,11 @@ def test_parse_response_valid_json_array():
 
 
 def test_parse_response_markdown_fences():
-    raw_markdown = "```json\n[{\"sender\": \"client\", \"subject\": \"Hi\", \"body\": \"Hello\"}]\n```"
+    raw_markdown = (
+        "```json\n"
+        '[{"sender": "client", "subject": "Hi", "body": "Hello"}]\n'
+        "```"
+    )
     result = NvidiaClient._parse_response(raw_markdown)
     assert len(result) == 1
     assert result[0]["body"] == "Hello"
@@ -86,7 +83,7 @@ async def test_nvidia_client_generate_email_thread():
     with patch.object(
         client.client.chat.completions, "create", new_callable=AsyncMock
     ) as mock_create:
-        mock_create.return_value = mock_create.return_value = mock_completion
+        mock_create.return_value = mock_completion
 
         messages = await client.generate_email_thread(
             topic="Test Topic",

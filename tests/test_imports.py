@@ -1,79 +1,40 @@
-from unittest.mock import AsyncMock, MagicMock, patch
+"""Unit tests for validating top-level package imports and public API exports."""
 
-import pytest
-
-from intelligent_email_service.email_connectors import (
+from intelligent_email_service import (
     EmailProvider,
+    EmailProviderError,
     EmailProviderManager,
+    EmailRetrievalError,
+    EmailRetrievalService,
+    EmailServiceError,
     MicrosoftGraphProvider,
     MockGraphProvider,
+    ProcessedThread,
+    ProviderAuthenticationError,
+    ProviderNotFoundError,
+    ProviderRateLimitError,
+    ThreadFormat,
+    ThreadProcessor,
 )
+from synthetic_generator import NvidiaClient, SyntheticEmailGenerator
 
 
-def test_imports():
-    """Verify that all main submodules and classes can be imported correctly."""
+def test_package_imports():
+    """Verify top-level submodules, exceptions, and provider exports."""
     assert EmailProvider is not None
     assert EmailProviderManager is not None
     assert MockGraphProvider is not None
     assert MicrosoftGraphProvider is not None
+    assert EmailRetrievalService is not None
+    assert ThreadProcessor is not None
+    assert ProcessedThread is not None
+    assert ThreadFormat is not None
+    assert EmailServiceError is not None
+    assert EmailProviderError is not None
+    assert EmailRetrievalError is not None
+    assert ProviderAuthenticationError is not None
+    assert ProviderRateLimitError is not None
+    assert ProviderNotFoundError is not None
+    assert NvidiaClient is not None
+    assert SyntheticEmailGenerator is not None
 
-
-@pytest.mark.asyncio
-async def test_mock_graph_provider_endpoint():
-    """Test for Mockoon"""
-    provider = MockGraphProvider(base_url="http://localhost:3000")
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_response.raise_for_status = MagicMock()
-    mock_response.json.return_value = {
-        "value": [
-            {
-                "id": "msg-001",
-                "subject": "Portfolio Rebalance Q2",
-                "conversationId": "conv-abc-123",
-                "receivedDateTime": "2026-05-02T14:00:00Z",
-                "from": {
-                    "emailAddress": {
-                        "name": "Jane Client",
-                        "address": "jane.household@example-clients.com",
-                    }
-                },
-                "toRecipients": [
-                    {
-                        "emailAddress": {
-                            "name": "Advisor One",
-                            "address": "advisor1@contoso.com",
-                        }
-                    }
-                ],
-                "hasAttachments": False,
-                "body": {
-                    "contentType": "html",
-                    "content": "<p>Sounds good, thanks for confirming.</p>",
-                },
-            }
-        ]
-    }
-
-    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
-        mock_get.return_value = mock_response
-        emails = await provider.get_emails(user_id="tst_ad-001")
-        assert len(emails) == 1
-        assert emails[0]["id"] == "msg-001"
-        assert emails[0]["subject"] == "Portfolio Rebalance Q2"
-        mock_get.assert_called_once_with(
-            "http://localhost:3000/v1.0/users/tst_ad-001/messages"
-        )
-
-
-@pytest.mark.asyncio
-async def test_mock_graph_users_endpoint():
-    provider = MockGraphProvider(base_url="http://localhost:3000")
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_response.raise_for_status = MagicMock()
-    mock_response.json.return_value = {"value": []}
-
-
-@pytest.mark.asyncio
-async def test_mock_graph_advisor_info_endpoint(): ...
