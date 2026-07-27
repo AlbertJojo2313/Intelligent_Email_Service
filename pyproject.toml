@@ -2,6 +2,12 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/intelligent_email_service",
+    "tools/synthetic_generator",
+]
+
 [project]
 name = "intelligent-email-service"  # lowercase, hyphenated for PyPI
 version = "0.1.0"
@@ -29,12 +35,13 @@ classifiers = [
 dev = [
     "pytest>=8.0.0",
     "deepeval>=1.0.0",
+    "ruff>=0.4.0",
 ]
 
 [tool.ruff]
 line-length = 90
 target-version = "py312"          # drives pyupgrade (UP) and bugbear (B) suggestions
-src = ["src", "tests"]
+src = ["src", "tests", "tools"]
 
 [tool.ruff.lint]
 select = [
@@ -62,7 +69,12 @@ mccabe = { max-complexity = 15 }
 convention = "google"   # only applies if you enable "D" docstring rules
 
 [tool.ruff.lint.isort]
-known-first-party = ["intelligent_email_service"]  # your import package name (underscored)
+known-first-party = ["intelligent_email_service", "synthetic_generator"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "tools"]
+testpaths = ["tests"]
+
 
 [tool.ruff.format]
 preview = true
