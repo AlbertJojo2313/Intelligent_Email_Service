@@ -1,7 +1,6 @@
 import json
 import random
 from pathlib import Path
-from typing import Optional
 
 from faker import Faker
 
@@ -12,8 +11,8 @@ class ClientPool:
     def __init__(
         self,
         size: int = 5,
-        custom_pool_path: Optional[str] = None,
-        faker_instance: Optional[Faker] = None,
+        custom_pool_path: str | None = None,
+        faker_instance: Faker | None = None,
     ):
         self.fake = faker_instance or Faker()
         self.clients: list[ClientProfile] = []

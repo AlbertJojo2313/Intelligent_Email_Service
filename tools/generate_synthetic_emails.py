@@ -6,21 +6,21 @@ import random
 from pathlib import Path
 
 from dotenv import load_dotenv
-from faker import Faker
+
 from synthetic_generator import (
+    AdvisorProfile,
     ClientPool,
     ClientProfile,
+    EmailGenerationConfig,
     NvidiaClient,
     SyntheticEmailGenerator,
 )
-from synthetic_generator.generator import AdvisorProfile, EmailGenerationConfig
 
 ## Default Constants
 DEFAULT_NUM_CLIENTS = 5
 
 load_dotenv()
 
-fake = Faker()
 
 # Predefined templates for rule-based fallback
 FALLBACK_TEMPLATES = {
@@ -48,9 +48,9 @@ FALLBACK_TEMPLATES = {
 
 def load_topics():
     topics_path = Path(__file__).parent / "topics.json"
-    if Path.exists(topics_path):
+    if topics_path.exists():
         try:
-            with Path.open(topics_path, "r") as f:
+            with topics_path.open("r") as f:
                 return json.load(f)
         except Exception as e:
             print(f"Error loading topics.json: {e}. Using fallback keys.")
@@ -69,7 +69,7 @@ def _ensure_client_pool(args):
         and args.client_pool is None
     ):
         # Fall back to single custom client if explicitly configured
-        client_pool = ClientPool(size=1, faker_instance=fake)
+        client_pool = ClientPool(size=1)
         # Manually overwrite the generated single client with CLI parameters
         client_pool.clients = [
             ClientProfile(name=args.client_name, email=args.client_email)
@@ -79,7 +79,6 @@ def _ensure_client_pool(args):
         client_pool = ClientPool(
             size=args.num_clients,
             custom_pool_path=args.client_pool,
-            faker_instance=fake,
         )
         print(f"Initialized client pool with {len(client_pool.clients)} clients.")
     return client_pool
@@ -180,7 +179,12 @@ async def main():
     nvidia_key = args.nvidia_key or os.getenv("NVIDIA_API_KEY")
     llm_client = None
     if nvidia_key:
-        llm_client = NvidiaClient(api_key=nvidia_key, model=args.model, base_url=args.url)
+        kwargs = {"api_key": nvidia_key}
+        if args.model:
+            kwargs["model"] = args.model
+        if args.url:
+            kwargs["base_url"] = args.url
+        llm_client = NvidiaClient(**kwargs)
     else:
         print(
             "Warning: --nvidia-key (or NVIDIA_API_KEY env var) is missing. Falling back to template-based generation."
@@ -237,7 +241,7 @@ async def main():
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with Path.open(output_path, "w") as f:
+    with output_path.open("w") as f:
         json.dump(response_wrapper, f, indent=2)
 
     print(

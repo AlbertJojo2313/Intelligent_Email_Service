@@ -4,11 +4,13 @@ import random
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from .fallback_generator import FallbackGenerator
-from .llm_client import NvidiaClient
 from .models import ClientProfile
+
+if TYPE_CHECKING:
+    from .llm_client import NvidiaClient
 
 logger = logging.getLogger(__name__)
 
@@ -32,8 +34,7 @@ class SyntheticEmailGenerator:
         self,
         advisor: AdvisorProfile,
         config: EmailGenerationConfig,
-        nvidia_client: Optional[NvidiaClient],
-        fallback_templates: Optional[dict[str, list[str]]] = None,
+        nvidia_client: "NvidiaClient | None" = None,
     ):
         self.advisor = advisor
         self.config = config
