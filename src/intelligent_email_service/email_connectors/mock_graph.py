@@ -1,5 +1,5 @@
 from collections.abc import Iterable
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any, NoReturn
 
 import httpx
@@ -56,8 +56,28 @@ def _handle_httpx_error(exc: httpx.HTTPError, context_msg: str) -> NoReturn:
 
 
 class MockGraphProvider(EmailProvider):
-    def __init__(self, base_url: str = "http://localhost:3000"):
+    def __init__(
+        self,
+        base_url: str = "http://localhost:3000",
+        client: httpx.AsyncClient | None = None,
+    ):
         self.base_url = base_url.rstrip("/")
+        self._client = client
+
+    def _get_client(self) -> httpx.AsyncClient:
+        if self._client is None or self._client.is_closed:
+            self._client = httpx.AsyncClient()
+        return self._client
+
+    async def close(self) -> None:
+        if self._client is not None and not self._client.is_closed:
+            await self._client.aclose()
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
 
     async def get_emails(
         self,
@@ -67,12 +87,12 @@ class MockGraphProvider(EmailProvider):
     ) -> list[dict[str, Any]]:
         """Retrieve messages from an advisor's mailbox with error handling and date filtering."""
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"{self.base_url}/v1.0/users/{user_id}/messages"
-                )
-                response.raise_for_status()
-                messages = response.json()["value"]
+            client = self._get_client()
+            response = await client.get(
+                f"{self.base_url}/v1.0/users/{user_id}/messages"
+            )
+            response.raise_for_status()
+            messages = response.json()["value"]
         except httpx.HTTPError as exc:
             _handle_httpx_error(exc, f"Failed to retrieve messages for user '{user_id}'")
 
@@ -84,10 +104,10 @@ class MockGraphProvider(EmailProvider):
 
     async def get_advisors_list(self) -> list[dict[str, Any]]:
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(f"{self.base_url}/v1.0/users/")
-                response.raise_for_status()
-                return response.json()["value"]
+            client = self._get_client()
+            response = await client.get(f"{self.base_url}/v1.0/users/")
+            response.raise_for_status()
+            return response.json()["value"]
         except httpx.HTTPError as exc:
             _handle_httpx_error(exc, "Failed to retrieve advisors list")
 
@@ -96,15 +116,15 @@ class MockGraphProvider(EmailProvider):
         user_id: str,
     ) -> dict[str, Any]:
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(f"{self.base_url}/v1.0/users/{user_id}")
-                response.raise_for_status()
-                res_data = response.json()
-                return (
-                    res_data.get("value", res_data)
-                    if isinstance(res_data, dict)
-                    else res_data
-                )
+            client = self._get_client()
+            response = await client.get(f"{self.base_url}/v1.0/users/{user_id}")
+            response.raise_for_status()
+            res_data = response.json()
+            return (
+                res_data.get("value", res_data)
+                if isinstance(res_data, dict)
+                else res_data
+            )
         except httpx.HTTPError as exc:
             _handle_httpx_error(exc, f"Failed to retrieve info for advisor '{user_id}'")
 
@@ -118,13 +138,13 @@ class MockGraphProvider(EmailProvider):
             GET /v1.0/users/{user-id}/messages?$filter=conversationId eq '{conversation_id}'
         """
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"{self.base_url}/v1.0/users/{user_id}/messages",
-                    params={"$filter": f"conversationId eq '{conversation_id}'"},
-                )
-                response.raise_for_status()
-                return response.json()["value"]
+            client = self._get_client()
+            response = await client.get(
+                f"{self.base_url}/v1.0/users/{user_id}/messages",
+                params={"$filter": f"conversationId eq '{conversation_id}'"},
+            )
+            response.raise_for_status()
+            return response.json()["value"]
         except httpx.HTTPError as exc:
             _handle_httpx_error(
                 exc, f"Failed to retrieve conversation '{conversation_id}'"
@@ -132,11 +152,12 @@ class MockGraphProvider(EmailProvider):
 
     get_messages_by_conversation_id = get_emails_by_conversation_id
 
+
     @staticmethod
     def _normalize_date(date: datetime):
         if date.tzinfo is None:
-            return date.replace(tzinfo=timezone.utc)
-        return date.astimezone(timezone.utc)
+            return date.replace(tzinfo=UTC)
+        return date.astimezone(UTC)
 
     @staticmethod
     def _in_date_range(

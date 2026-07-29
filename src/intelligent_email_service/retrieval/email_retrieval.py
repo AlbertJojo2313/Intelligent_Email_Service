@@ -1,7 +1,7 @@
 import re
 from collections import defaultdict
 from collections.abc import Iterable
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from itertools import chain
 from typing import Any
 
@@ -9,8 +9,9 @@ from intelligent_email_service.email_connectors.base import EmailProvider
 from intelligent_email_service.exceptions import EmailProviderError, EmailRetrievalError
 
 # Pre-compile regex at module level to avoid re-compiling per function invocation
-RE_SUBJECT_PREFIX = re.compile(
-    r"^(?:\[[^\]]+\]\s*)*(?:re|fwd|fw|aw|sv|wg|tr|rv)(?:\[\d+\])?:\s*", re.IGNORECASE
+RE_ALL_PREFIXES = re.compile(
+    r"^(?:(?:\[[^\]]+\]\s*)|(?:re|fwd|fw|aw|sv|wg|tr|rv)(?:\[\d+\])?:\s*)+",
+    re.IGNORECASE,
 )
 RE_BRACKETS = re.compile(r"^\[[^\]]+\]\s*", re.IGNORECASE)
 
@@ -76,12 +77,12 @@ class EmailRetrievalService:
     @staticmethod
     def _parse_dt(dt_str: str | None) -> datetime:
         if not dt_str:
-            return datetime.min.replace(tzinfo=timezone.utc)
+            return datetime.min.replace(tzinfo=UTC)
         try:
             dt = datetime.fromisoformat(dt_str.replace("Z", "+00:00"))
-            return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+            return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
         except (ValueError, AttributeError):
-            return datetime.min.replace(tzinfo=timezone.utc)
+            return datetime.min.replace(tzinfo=UTC)
 
     @staticmethod
     def _message_matches_client(message: dict[str, Any], client_id: str) -> bool:
@@ -118,12 +119,19 @@ class EmailRetrievalService:
             normalized_subject = EmailRetrievalService._normalize_subject(subject)
             groups[normalized_subject].append(message)
 
+        parse_dt = EmailRetrievalService._parse_dt
         for thread_messages in groups.values():
-            thread_messages.sort(
-                key=lambda msg: EmailRetrievalService._parse_dt(
-                    msg.get("receivedDateTime") or msg.get("recievedDateTime")
+            decorated = [
+                (
+                    parse_dt(
+                        msg.get("receivedDateTime") or msg.get("recievedDateTime")
+                    ),
+                    msg,
                 )
-            )
+                for msg in thread_messages
+            ]
+            decorated.sort(key=lambda item: item[0])
+            thread_messages[:] = [msg for _, msg in decorated]
 
         return dict(groups)
 
@@ -131,11 +139,5 @@ class EmailRetrievalService:
     def _normalize_subject(subject: str | None) -> str:
         if not subject:
             return ""
-        cleaned = subject.strip()
-        while True:
-            stripped = RE_SUBJECT_PREFIX.sub("", cleaned).strip()
-            stripped = RE_BRACKETS.sub("", stripped).strip()
-            if stripped == cleaned:
-                break
-            cleaned = stripped
-        return cleaned.lower()
+        return RE_ALL_PREFIXES.sub("", subject.strip()).strip().lower()
+

@@ -1,11 +1,12 @@
+import asyncio
 import re
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any
+from typing import Any, ClassVar
 
 from ..email_connectors.base import EmailProvider
 from .email_retrieval import EmailRetrievalService
-
 
 
 class ThreadFormat(StrEnum):
@@ -56,7 +57,7 @@ class ThreadProcessor:
                  Sort chronologically
     """
 
-    QUOTED_HEADER_PATTERNS = [
+    QUOTED_HEADER_PATTERNS: ClassVar = [
         re.compile(r"(?:<p>|<div>)?\s*On\s+.+?\s+wrote:", re.IGNORECASE | re.DOTALL),
         re.compile(r"-----Original Message-----", re.IGNORECASE),
         re.compile(r"(?:From|De):\s*.+?\n\s*(?:Sent|Date|Envoyé):", re.IGNORECASE),
@@ -67,10 +68,12 @@ class ThreadProcessor:
         provider: EmailProvider,
         user_id: str,
         client_id: str | None = None,
+        max_concurrency: int = 10,  # cap parallel network requests
     ):
         self.provider = provider
         self.user_id = user_id
         self.client_id = client_id
+        self._semaphore = asyncio.Semaphore(max_concurrency)
 
     async def process_subject_group(
         self,
@@ -96,7 +99,9 @@ class ThreadProcessor:
         self._sort_chronologically(messages)
 
         latest_message = messages[-1]
-        conv_id = latest_message.get("conversationId") or latest_message.get("conversation_id")
+        conv_id = latest_message.get("conversationId") or latest_message.get(
+            "conversation_id"
+        )
 
         if self._is_full_quoted(latest_message):
             return ProcessedThread(
@@ -134,7 +139,9 @@ class ThreadProcessor:
         content = body.get("content", "")
         if not isinstance(content, str):
             return False
-        return any(pattern.search(content) is not None for pattern in cls.QUOTED_HEADER_PATTERNS)
+        return any(
+            pattern.search(content) is not None for pattern in cls.QUOTED_HEADER_PATTERNS
+        )
 
     async def _reconstruct_conversation(
         self, conversation_id: str | None, fallback_messages: list[dict[str, Any]]
@@ -146,11 +153,11 @@ class ThreadProcessor:
         if not conversation_id:
             # Cannot reconstruct the conversation without an ID.
             return fallback_messages
-
-        messages = await self.provider.get_emails_by_conversation_id(
-            self.user_id,
-            conversation_id,
-        )
+        async with self._semaphore:
+            messages = await self.provider.get_emails_by_conversation_id(
+                self.user_id,
+                conversation_id,
+            )
 
         if self.client_id:
             messages = [
@@ -163,24 +170,37 @@ class ThreadProcessor:
 
         return messages or fallback_messages
 
+    async def process_subject_groups(
+        self,
+        subject_groups: dict[str, list[dict[str, Any]]],
+    ) -> list[ProcessedThread]:
+        """Process multiple subject groups concurrently."""
+        tasks = [
+            self.process_subject_group(messages)
+            for messages in subject_groups.values()
+        ]
+        results = await asyncio.gather(*tasks)
+        return [res for res in results if res is not None]
 
     @staticmethod
     def _sort_chronologically(
         messages: list[dict[str, Any]],
     ) -> None:
         """
-        Sort messages in-place from oldest to newest.
+        Sort messages in-place from oldest to newest using Schwartzian transform.
         """
-        from datetime import datetime, timezone
 
         def _get_dt(msg: dict[str, Any]) -> datetime:
             dt_str = msg.get("receivedDateTime")
             if not dt_str:
-                return datetime.min.replace(tzinfo=timezone.utc)
+                return datetime.min.replace(tzinfo=UTC)
             try:
                 dt = datetime.fromisoformat(dt_str.replace("Z", "+00:00"))
-                return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+                return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
             except (ValueError, AttributeError):
-                return datetime.min.replace(tzinfo=timezone.utc)
+                return datetime.min.replace(tzinfo=UTC)
 
-        messages.sort(key=_get_dt)
+        decorated = [(_get_dt(msg), msg) for msg in messages]
+        decorated.sort(key=lambda item: item[0])
+        messages[:] = [msg for _, msg in decorated]
+
