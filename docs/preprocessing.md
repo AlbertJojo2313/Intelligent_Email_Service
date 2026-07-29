@@ -1,21 +1,21 @@
 # Email Preprocessing & Compression Module Specification
 
-_Last updated: 2026-07-27_
+_Last updated: 2026-07-28_
 
-> [!IMPORTANT]
-> **Implementation Status**: The preprocessing and compression modules (`cleaner.py` and `compressor.py`) are currently **planned architecture specifications and skeleton modules**. This document defines the design and interfaces for their upcoming implementation.
+> [!NOTE]
+> **Implementation Status**: The cleaning module (`cleaner.py`) is fully implemented with `EmailCleaner`. The compression module (`compressor.py`) remains a planned architecture specification.
 
 ---
 
 ## Purpose
 
-Raw email payloads retrieved via the Microsoft Graph API contain significant noise:
+Raw email payloads retrieved via email providers contain significant noise:
 - Complex HTML/CSS formatting tags
-- Quoted email reply chains (`> On [Date], [User] wrote:...`)
+- Quoted email reply chains (`On [Date]... wrote:`, `From:... Sent:...`)
 - Corporate signature blocks, legal disclaimers, and footers
-- Redundant header lines across multi-turn threads
+- Excess whitespace and redundant formatting
 
-Feeding raw email HTML into LLM context windows causes excessive token consumption, higher API latency, and degraded prompt adherence. The preprocessing module strips noise and compresses body text into a clean, structured representation designed for downstream LLM context windows.
+Feeding raw email HTML into LLM context windows causes excessive token consumption, higher API latency, and degraded prompt adherence. The preprocessing module strips noise and normalizes body text into a clean representation designed for downstream LLM context windows.
 
 ---
 
@@ -25,87 +25,132 @@ The package consists of two primary modules within `src/intelligent_email_servic
 
 ```
 src/intelligent_email_service/preprocessing/
-├── __init__.py        # Module exports
-├── cleaner.py         # HTML stripping, header parsing, quote detection (Skeleton)
-└── compressor.py      # Rule-based & LLM context compression (Skeleton)
+├── __init__.py        # Module exports (EmailCleaner)
+├── cleaner.py         # EmailCleaner: HTML stripping, signature/quote removal, normalization
+└── compressor.py      # Rule-based & LLM context compression (Planned)
 ```
 
 ---
 
 ## 1. Cleaner Module (`cleaner.py`)
 
-The cleaning pipeline processes individual email message bodies to extract clean text.
+The `EmailCleaner` class processes individual email message bodies to extract normalized text.
 
-### Key Responsibilities:
+### `EmailCleaner` Interface & Configuration
 
-1. **HTML Parsing & Tag Stripping**:
-   - Converts HTML email bodies (`"content_type": "html"`) to clean plain text using HTML parser utilities (e.g., BeautifulSoup or `html2text`).
-   - Normalizes inline links and table formatting while removing scripts, styles, and decorative elements.
+```python
+from intelligent_email_service.preprocessing import EmailCleaner
 
-2. **Quoted History Detection & Extraction**:
-   - Identifies quote markers (e.g., lines starting with `>`, `From:`, `Sent:`, `On [Date]... wrote:`).
-   - Differentiates between **unmodified threads** (where trailing quote chains are present) and **modified threads** (clean individual responses).
-   - Strips redundant trailing quotes when assembling full conversation thread histories.
+cleaner = EmailCleaner(
+    strip_signatures=True,
+    strip_quotes=True,
+    max_blank_lines=1,
+    preserve_links=False,
+    custom_signature_patterns=None
+)
+```
 
-3. **Signature & Boilerplate Removal**:
-   - Uses heuristic regex patterns to trim common advisor/firm email sign-offs (e.g., "Best regards,", "CONFIDENTIALITY NOTICE:", phone numbers, physical addresses).
+#### Initialization Arguments:
 
-4. **Text Normalization**:
-   - Collapses duplicate newlines, trailing spaces, and unicode control characters.
-
----
-
-## 2. Compressor Module (`compressor.py`)
-
-The compressor optimizes clean email threads for LLM prompt context windows.
-
-### Key Responsibilities:
-
-1. **Rule-Based Compression**:
-   - Eliminates conversational filler while retaining key financial entities (dollar amounts, account types, ticker symbols, dates, key requests).
-   - Prunes duplicate subject prefix lines (`Re: Re: Re:` -> `Re:`).
-
-2. **Hybrid LLM Prompt Compression**:
-   - Applies extractive summarization or prompt compression techniques (such as LLMLingua) for lengthy historical email chains.
-   - Preserves high-density information points while reducing total token count by up to 50–70%.
-
-3. **Attachment Metadata Preservation**:
-   - Preserves attachment metadata (filename, MIME type, size, attachment ID) in output metadata.
-   - Binary attachment payloads are excluded from LLM context to prevent window overflow.
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `strip_signatures` | `bool` | `True` | Whether to truncate text at detected email signature blocks. |
+| `strip_quotes` | `bool` | `True` | Whether to truncate text at quoted conversation history boundaries. |
+| `max_blank_lines` | `int` | `1` | Maximum consecutive blank lines allowed (`-1` disables collapsing). |
+| `preserve_links` | `bool` | `False` | Whether to extract and format HTML links (e.g. `Link Text (https://example.com)`). |
+| `custom_signature_patterns` | `list[re.Pattern]` | `None` | Optional list of additional compiled regex patterns for signature matching. |
 
 ---
 
-## Input / Output Schemas
+### Core Pipeline Steps
 
-### Input (Raw Graph API Message Body)
+1. **HTML Parsing & Tag Stripping (`_clean_html`)**:
+   - Parses HTML using BeautifulSoup (`lxml` parser).
+   - Decomposes non-content elements (`script`, `style`, `head`, `title`, `meta`, `noscript`).
+   - Formats `<a>` links if `preserve_links=True` (e.g., `Text (URL)`).
+   - Decodes HTML entities (`html.unescape`).
+
+2. **Quoted History Truncation (`QUOTED_PATTERNS`)**:
+   - Matches standard quote headers:
+     - `On <date> <user> wrote:`
+     - `--- Original Message ---`
+     - `From: ... Sent: ...`
+
+3. **Signature Block Removal (`DEFAULT_SIGNATURE_PATTERNS`)**:
+   - Removes common advisor/firm sign-offs, disclaimers, and mobile device notices:
+     - `^--(?: \r?\n|\r?\n)`
+     - `CONFIDENTIALITY NOTICE:...`
+     - `This email and any attachments are intended only for...`
+     - `Sent from my iPhone / Android`
+     - `Best regards, / Sincerely, / Regards, / Thanks,`
+
+4. **Whitespace Normalization (`_normalize_whitespace`)**:
+   - Replaces non-breaking space characters (`&nbsp;`, `\xa0`) with standard spaces.
+   - Trims trailing whitespace from each line.
+   - Collapses consecutive blank lines exceeding `max_blank_lines`.
+
+---
+
+## 2. Usage Examples
+
+### Cleaning a Raw Message Object
+
+```python
+from intelligent_email_service.preprocessing import EmailCleaner
+
+cleaner = EmailCleaner(strip_signatures=True, strip_quotes=True)
+
+raw_message = {
+    "id": "AAMkAG123...",
+    "subject": "Re: Portfolio Rebalancing",
+    "body": {
+        "contentType": "html",
+        "content": "<div>Hi John,<br><br>Let's proceed with rebalancing.<br><br>Best regards,<br>Jane</div>"
+    }
+}
+
+cleaned_message = cleaner.clean_message(raw_message)
+print(cleaned_message["cleaned_body"])
+# Output: "Hi John,\n\nLet's proceed with rebalancing."
+```
+
+---
+
+## 3. Input / Output Schemas
+
+### Input (Message Object with Body)
 
 ```json
 {
   "id": "AAMkAG123...",
   "subject": "Re: Portfolio Rebalancing",
   "body": {
-    "content_type": "html",
+    "contentType": "html",
     "content": "<div>Hi John,<br><br>Let's proceed with rebalancing.<br><br>On 2026-07-15, John wrote:<br>&gt; Should we rebalance?</div>"
   }
 }
 ```
 
-### Output (Processed & Compressed Object)
+### Output (Cleaned Message Object)
 
 ```json
 {
-  "message_id": "AAMkAG123...",
-  "conversation_id": "807e0e68-...",
-  "client_id": "client@example.com",
-  "subject": "Portfolio Rebalancing",
-  "timestamp": "2026-07-16T18:00:00Z",
-  "sender": "client@example.com",
-  "recipient": "advisor@example.com",
-  "cleaned_body": "Hi John, Let's proceed with rebalancing.",
-  "compressed_body": "Client approves portfolio rebalancing.",
-  "token_count_original": 145,
-  "token_count_compressed": 6,
-  "has_attachments": false,
-  "attachments": []
+  "id": "AAMkAG123...",
+  "subject": "Re: Portfolio Rebalancing",
+  "body": {
+    "contentType": "html",
+    "content": "<div>Hi John,<br><br>Let's proceed with rebalancing.<br><br>On 2026-07-15, John wrote:<br>&gt; Should we rebalance?</div>"
+  },
+  "cleaned_body": "Hi John,\n\nLet's proceed with rebalancing."
 }
 ```
+
+---
+
+## 4. Compressor Module (`compressor.py` - Planned)
+
+The compressor will optimize clean email threads for LLM prompt context windows:
+1. **Rule-Based Compression**: Eliminates filler words, duplicate subject prefixes, and retains financial entities.
+2. **Hybrid LLM Prompt Compression**: Applies prompt compression techniques (such as LLMLingua) for historical email chains.
+3. **Attachment Metadata Preservation**: Preserves metadata while excluding binary payloads.
+

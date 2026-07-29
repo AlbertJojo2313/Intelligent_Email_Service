@@ -1,6 +1,6 @@
 # Architecture
 
-_Last updated: 2026-07-27_
+_Last updated: 2026-07-28_
 
 > [!IMPORTANT]
 > **Implementation Status**: The current architecture for Microsoft Graph API support is **just a planned outline and is not implemented yet**. The project is currently using a **Mockoon server** to simulate the API endpoints. Anything in the architecture and specifications **may change**.
@@ -37,7 +37,7 @@ flowchart TD
         
         DataPipeline --> Prep[Preprocessing Module]
         subgraph Preprocessing [intelligent_email_service.preprocessing]
-            Prep --> Cleaner[cleaner.py: HTML / Quote Stripper]
+            Prep --> Cleaner[cleaner.py: EmailCleaner]
             Prep --> Compressor[compressor.py: Context Compressor]
         end
         
@@ -54,24 +54,27 @@ flowchart TD
 
 ---
 
-## Data Flow Pipeline
+## Data Flow Pipeline & Performance Design
 
 1. **Request Reception**: Input parameters specify the Advisor mailbox credentials (`user_id`), target `client_id` (client/household email address), and optional date search window.
-2. **Provider Selection**: `EmailProviderManager` initializes either `MockGraphProvider` (for local simulation) or `MicrosoftGraphProvider` (for live Azure/Graph API access).
+2. **Provider Selection & Connection Pooling**: `EmailProviderManager` initializes either `MockGraphProvider` (with HTTP connection pooling via persistent `httpx.AsyncClient`) or `MicrosoftGraphProvider`.
 3. **Mailbox Search & Retrieval**: Query the advisor's mailbox for messages where `client_id` appears in sender (`from`), recipient (`toRecipients`), or CC fields via `EmailRetrievalService.get_client_emails`.
 4. **Subject & Thread Grouping**:
-   - Group matched messages by normalized subject via `_group_by_subject`.
+   - Normalize subject lines using single-pass anchored regex `RE_ALL_PREFIXES`.
+   - Group matched messages by normalized subject via `_group_by_subject` using **Schwartzian transform** for single-pass $O(N)$ ISO date parsing.
    - Analyze thread structure for **unmodified** vs. **modified** messages using `ThreadProcessor(provider, user_id, client_id)`:
      - **Unmodified Thread (`FULL_QUOTED`)**: The latest email retains the full trailing quoted history (`On [Date], X wrote: > ...`). Returns the latest message containing full inline history.
-     - **Modified Thread (`MODIFIED`)**: Quoted history is stripped/absent. Retrieve all messages under `conversation_id`, apply `client_id` participant filtering to enforce client data isolation, and sort chronologically.
+     - **Modified Thread (`MODIFIED`)**: Quoted history is stripped/absent. Retrieve all messages under `conversation_id` concurrently across groups via `process_subject_groups()` bounded by semaphore, apply `client_id` participant filtering to enforce client data isolation, and sort chronologically.
 
 5. **Preprocessing & Cleaning** (`intelligent_email_service.preprocessing.cleaner`):
-   - Strip HTML formatting, signatures, and redundant email headers.
+   - Perform single-pass regex truncation for signature blocks and quoted threads via `EmailCleaner`.
+   - Convert HTML to clean text with BeautifulSoup and normalize whitespace/blank lines.
    - Extract raw text bodies and attachment metadata.
 6. **Compression & Optimization** (`intelligent_email_service.preprocessing.compressor`):
    - Perform rule-based token reduction and hybrid LLM prompt compression (e.g., LLMLingua / summary heuristic).
    - Preserve attachment metadata while excluding binary payloads from LLM context.
 7. **Structured Output**: Produce JSON structured output containing client metadata, chronological thread history, and compressed message content.
+
 
 ---
 
