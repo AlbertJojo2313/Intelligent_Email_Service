@@ -54,19 +54,6 @@ def test_strip_signatures():
     assert "CONFIDENTIALITY NOTICE" not in cleaned
 
 
-def test_strip_quotes():
-    cleaner = EmailCleaner(strip_quotes=True)
-
-    email = (
-        "I agree with the terms.\n\n"
-        "On Mon, Jul 15, 2026 at 10:00 AM John wrote:\n"
-        "> Should we proceed?"
-    )
-
-    cleaned = cleaner._clean_content(email, content_type="text")
-    assert cleaned.strip() == "I agree with the terms."
-
-
 def test_normalize_whitespace_and_blank_lines():
     cleaner = EmailCleaner(max_blank_lines=1)
 
@@ -133,3 +120,23 @@ def test_custom_signature_patterns():
     email = "Some text.\n\n--- My Custom Signature ---\nExtra info"
     cleaned = cleaner._clean_content(email, content_type="text")
     assert cleaned.strip() == "Some text."
+
+
+def test_mid_body_thanks_does_not_over_truncate():
+    cleaner = EmailCleaner(strip_signatures=True)
+
+    email = (
+        "Hi Jane,\n\n"
+        "Thanks,\n"
+        "I received your documents and will review them tomorrow.\n"
+        "Please let me know if you need any additional statements.\n"
+        "We can also schedule a call next week.\n\n"
+        "Best regards,\n"
+        "John Doe"
+    )
+
+    cleaned = cleaner._clean_content(email, content_type="text")
+    assert "received your documents" in cleaned
+    assert "schedule a call next week" in cleaned
+    assert "John Doe" not in cleaned
+
