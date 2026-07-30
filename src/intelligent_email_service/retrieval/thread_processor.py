@@ -31,6 +31,7 @@ class ProcessedThread:
     subject: str
     conversation_id: str | None
     format: ThreadFormat
+    reconstructed: bool
     messages: list[dict[str, Any]]
 
 
@@ -57,10 +58,14 @@ class ThreadProcessor:
                  Sort chronologically
     """
 
-    QUOTED_HEADER_PATTERNS: ClassVar = [
-        re.compile(r"(?:<p>|<div>)?\s*On\s+.+?\s+wrote:", re.IGNORECASE | re.DOTALL),
-        re.compile(r"-----Original Message-----", re.IGNORECASE),
-        re.compile(r"(?:From|De):\s*.+?\n\s*(?:Sent|Date|Envoyé):", re.IGNORECASE),
+    QUOTED_HEADER_PATTERNS: ClassVar[list[re.Pattern[str]]] = [
+        re.compile(r"(?:<p[^>]*>|<div[^>]*>)?\s*On\s+.+?\s+wrote:", re.IGNORECASE | re.DOTALL),
+        re.compile(r"-{3,}\s*Original Message\s*-{3,}", re.IGNORECASE),
+        re.compile(
+            r"(?:From|De):\s*.*?(?:<br\s*/?>|<\/div>|<\/p>|\n)\s*(?:Sent|Date|Envoyé):",
+            re.IGNORECASE | re.DOTALL,
+        ),
+        re.compile(r"id=[\"']?divRplyFwdMsg[\"']?", re.IGNORECASE),
     ]
 
     def __init__(
@@ -109,6 +114,7 @@ class ThreadProcessor:
                 conversation_id=conv_id,
                 format=ThreadFormat.FULL_QUOTED,
                 messages=[latest_message],
+                reconstructed=False,
             )
 
         complete_messages = await self._reconstruct_conversation(
@@ -121,6 +127,7 @@ class ThreadProcessor:
             conversation_id=conv_id,
             format=ThreadFormat.MODIFIED,
             messages=complete_messages,
+            reconstructed=True,
         )
 
     @classmethod
@@ -176,8 +183,7 @@ class ThreadProcessor:
     ) -> list[ProcessedThread]:
         """Process multiple subject groups concurrently."""
         tasks = [
-            self.process_subject_group(messages)
-            for messages in subject_groups.values()
+            self.process_subject_group(messages) for messages in subject_groups.values()
         ]
         results = await asyncio.gather(*tasks)
         return [res for res in results if res is not None]
@@ -203,4 +209,3 @@ class ThreadProcessor:
         decorated = [(_get_dt(msg), msg) for msg in messages]
         decorated.sort(key=lambda item: item[0])
         messages[:] = [msg for _, msg in decorated]
-

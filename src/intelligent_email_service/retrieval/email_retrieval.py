@@ -18,9 +18,9 @@ RE_BRACKETS = re.compile(r"^\[[^\]]+\]\s*", re.IGNORECASE)
 
 class EmailRetrievalService:
     """
-    Retrieve emails from an advisor's mailbox and organizes them by client and subject
+    Retrieve emails from an advisor's mailbox and organizes them by client and subject.
 
-    Responsibilites:
+    Responsibilities:
         1. Retrieve mailbox messages
         2. Filter messages associated with a client
         3. Group the client's messages by normalized subject
@@ -38,7 +38,7 @@ class EmailRetrievalService:
         start_date: datetime | None = None,
         end_date: datetime | None = None,
     ) -> list[dict[str, Any]]:
-        """Retrieve all emails involving a specific client"""
+        """Retrieve all emails involving a specific client with sanitized attachments."""
 
         try:
             messages = await self.provider.get_emails(
@@ -53,8 +53,10 @@ class EmailRetrievalService:
                 f"Failed to retrieve client emails for advisor '{advisor_id}': {err}"
             ) from err
 
+        messages = messages or []
+
         return [
-            message
+            self._sanitize_attachment_metadata(message)
             for message in messages
             if self._message_matches_client(message, client_id)
         ]
@@ -65,7 +67,8 @@ class EmailRetrievalService:
         client_id: str,
         start_date: datetime | None = None,
         end_date: datetime | None = None,
-    ):
+    ) -> dict[str, list[dict[str, Any]]]:
+        """Retrieve client emails and group them by normalized subject."""
         messages = await self.get_client_emails(
             advisor_id=advisor_id,
             client_id=client_id,
@@ -123,9 +126,7 @@ class EmailRetrievalService:
         for thread_messages in groups.values():
             decorated = [
                 (
-                    parse_dt(
-                        msg.get("receivedDateTime") or msg.get("recievedDateTime")
-                    ),
+                    parse_dt(msg.get("receivedDateTime") or msg.get("recievedDateTime")),
                     msg,
                 )
                 for msg in thread_messages
@@ -141,3 +142,31 @@ class EmailRetrievalService:
             return ""
         return RE_ALL_PREFIXES.sub("", subject.strip()).strip().lower()
 
+    @staticmethod
+    def _sanitize_attachment_metadata(message: dict[str, Any]) -> dict[str, Any]:
+        """Ensures message attachment objects only contain clean metadata."""
+        has_attachments = message.get("hasAttachments")
+        raw_attach = message.get("attachments")
+
+        # Fast path: Return immediately if there are no attachments
+        if not has_attachments and not raw_attach:
+            return message
+
+        clean_msg = dict(message)
+        clean_attach: list[dict[str, Any]] = []
+        if isinstance(raw_attach, list):
+            clean_attach = [
+                {
+                    "id": att.get("id"),
+                    "name": att.get("name") or att.get("fileName") or "attachment",
+                    "contentType": att.get("contentType")
+                    or att.get("content_type")
+                    or "application/octet-stream",
+                    "size": att.get("size") or 0,
+                    "isInline": att.get("isInline", False),
+                }
+                for att in raw_attach
+                if isinstance(att, dict)
+            ]
+        clean_msg["attachments"] = clean_attach
+        return clean_msg
