@@ -154,7 +154,18 @@ class MockGraphProvider(EmailProvider):
 
 
     @staticmethod
-    def _normalize_date(date: datetime):
+    def _parse_iso_date(dt_str: str | None) -> datetime | None:
+        """Safely parses ISO date strings into timezone-aware UTC datetime objects."""
+        if not dt_str or not isinstance(dt_str, str):
+            return None
+        try:
+            dt = datetime.fromisoformat(dt_str.replace("Z", "+00:00"))
+            return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
+        except (ValueError, AttributeError, TypeError):
+            return None
+
+    @staticmethod
+    def _normalize_date(date: datetime) -> datetime:
         if date.tzinfo is None:
             return date.replace(tzinfo=UTC)
         return date.astimezone(UTC)
@@ -183,13 +194,10 @@ class MockGraphProvider(EmailProvider):
         if start_date is None and end_date is None:
             return list(messages)
 
-        return [
-            message
-            for message in messages
-            if (received_at := message.get("receivedDateTime"))
-            and MockGraphProvider._in_date_range(
-                datetime.fromisoformat(received_at.replace("Z", "+00:00")),
-                start_date,
-                end_date,
-            )
-        ]
+        filtered: list[dict[str, Any]] = []
+        for message in messages:
+            received_at = message.get("receivedDateTime") or message.get("recievedDateTime")
+            dt = MockGraphProvider._parse_iso_date(received_at)
+            if dt and MockGraphProvider._in_date_range(dt, start_date, end_date):
+                filtered.append(message)
+        return filtered
