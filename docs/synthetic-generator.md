@@ -1,6 +1,6 @@
 # Synthetic Email Generator
 
-_Last updated: 2026-07-27_
+_Last updated: 2026-07-30_
 
 > [!IMPORTANT]
 > **Implementation Status**: Microsoft Graph API support is currently **just a planned outline and is not implemented yet**. The generator constructs datasets to feed a **Mockoon server** simulating the endpoints, and specs **may change**.
@@ -37,6 +37,8 @@ tools/
 Ensure project dependencies are installed (using `uv` or `pip`):
 
 ```bash
+uv sync --all-extras
+# or
 pip install faker python-dotenv httpx openai tenacity
 ```
 
@@ -84,6 +86,7 @@ python3 tools/generate_synthetic_emails.py [options]
 | `--client-name` | Name of the client (for single-client fallback) | `Sarah Client` |
 | `--num-clients` | Number of distinct clients to dynamically generate in the pool | `5` |
 | `--client-pool` | Path to a custom JSON file containing a predefined client pool | `None` |
+| `--thread-format` | Formatting mode: `full_quoted` (replies contain inline history) or `modified` (individual bodies) | `full_quoted` |
 | `--nvidia-key` | NVIDIA API key | `$NVIDIA_API_KEY` |
 | `--model` | NVIDIA NIM model to invoke | `$NVIDIA_MODEL` (`deepseek-ai/deepseek-v4-flash`) |
 | `--url` | Base URL of the NVIDIA API | `$NVIDIA_BASE_URL` (`https://integrate.api.nvidia.com/v1`) |
@@ -96,6 +99,12 @@ python3 tools/generate_synthetic_emails.py [options]
 
 ```bash
 python3 tools/generate_synthetic_emails.py --conversations 10 --num-clients 5 --output mock_emails.json
+```
+
+**Generate modified thread format dataset (messages without inline quoted history):**
+
+```bash
+python3 tools/generate_synthetic_emails.py --conversations 10 --thread-format modified --output mock_emails_modified.json
 ```
 
 **Generate threads for predefined specific clients loaded from a JSON file:**
@@ -112,6 +121,7 @@ The client pool JSON format should be structured as a JSON array of objects:
   {"name": "Bob Jones", "email": "bob.jones@example.com"}
 ]
 ```
+
 
 ---
 

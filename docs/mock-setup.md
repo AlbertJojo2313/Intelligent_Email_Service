@@ -1,6 +1,6 @@
 # Mock Graph API Setup & Local Development Guide
 
-_Last updated: 2026-07-27_
+_Last updated: 2026-07-30_
 
 This document outlines the local mock environment for the Intelligent Email Service, enabling development and testing without live Microsoft Azure / Graph API credentials.
 
@@ -37,7 +37,7 @@ Generate a realistic mock email dataset containing threaded conversations using 
 python3 tools/generate_synthetic_emails.py --conversations 10 --num-clients 5 --output mock_emails.json
 ```
 
-For full options and configuration (such as using NVIDIA LLM vs template fallbacks), see [`synthetic-generator.md`](./synthetic-generator.md).
+For full options and configuration (such as using NVIDIA LLM vs template fallbacks, or selecting `--thread-format full_quoted` / `modified`), see [`synthetic-generator.md`](./synthetic-generator.md).
 
 ### Step 2: Configure Mock Server (Mockoon)
 
@@ -52,11 +52,13 @@ For full options and configuration (such as using NVIDIA LLM vs template fallbac
 
 ## Code Usage Example
 
-Use `EmailProviderManager`, `EmailRetrievalService`, and `ThreadProcessor` to retrieve and process client threads:
+Use `EmailProviderManager`, `EmailRetrievalService`, `ThreadProcessor`, `EmailCleaner`, and `EmailCompressor` for an end-to-end email ingestion and context reduction workflow:
 
 ```python
 import asyncio
 from intelligent_email_service import (
+    EmailCleaner,
+    EmailCompressor,
     EmailProviderManager,
     EmailRetrievalService,
     ThreadProcessor,
@@ -67,26 +69,40 @@ async def main():
     advisor_id = "tst_ad-001"
     client_id = "jessica.ayala@example.com"
 
-    # Instantiate provider ('mock' connects to http://localhost:3000)
+    # 1. Instantiate provider ('mock' connects to http://localhost:3000)
     provider = EmailProviderManager.create("mock")
     retrieval_service = EmailRetrievalService(provider=provider)
+    cleaner = EmailCleaner(strip_signatures=True)
+    compressor = EmailCompressor(recent_full_count=2, max_older_chars=150)
 
-    # Initialize ThreadProcessor with client_id context for strict isolation
+    # 2. Retrieve client emails and group by subject
+    messages = await retrieval_service.get_client_emails(advisor_id, client_id)
+    subject_groups = retrieval_service._group_by_subject(messages)
+
+    # 3. Process, clean, and compress each thread
     processor = ThreadProcessor(
         provider=provider,
         user_id=advisor_id,
         client_id=client_id,
     )
 
-    # Retrieve client emails and group by subject
-    messages = await retrieval_service.get_client_emails(advisor_id, client_id)
-    subject_groups = retrieval_service._group_by_subject(messages)
-
-    # Process each subject thread safely
     for subject, group in subject_groups.items():
         thread = await processor.process_subject_group(group)
-        if thread:
-            print(f"Subject: {thread.subject} | Format: {thread.format.value} | Messages: {len(thread.messages)}")
+        if not thread:
+            continue
+
+        # Clean messages in thread
+        thread.messages = [cleaner.clean_message(msg) for msg in thread.messages]
+
+        # Compress thread context for LLM prompt payload
+        compressed = compressor.compress_processed_thread(thread)
+
+        print(
+            f"Subject: {compressed.subject} | "
+            f"Format: {thread.format.value} | "
+            f"Messages: {compressed.total_messages} | "
+            f"Est. Tokens: {compressed.estimated_tokens}"
+        )
 
 
 if __name__ == "__main__":
@@ -119,3 +135,4 @@ When production Microsoft Graph API access is granted:
 ```python
 provider = EmailProviderManager.create("microsoft")
 ```
+

@@ -10,9 +10,9 @@ Given a financial advisor's mailbox and a target client's (household's) email ad
 
 - **Mailbox Ingestion**: Pulls email metadata, message bodies, and attachment descriptors via Microsoft Graph API abstraction (`EmailProvider`).
 - **Domain Exception Handling**: Uniform error handling mapping HTTP status codes (401/403, 404, 429 rate limits) into domain exceptions (`EmailServiceError`, `EmailProviderError`, `ProviderRateLimitError`).
-- **Thread Resolution**: Handles both **unmodified threads** (containing inline quoted history) and **modified threads** (split individual messages sharing a `conversation_id`).
-- **Preprocessing & Cleaning**: Strips HTML tags, email headers, disclaimers, and signature blocks ([`docs/preprocessing.md`](docs/preprocessing.md)).
-- **Context Compression**: Applies rule-based and hybrid summarization/compression to minimize token consumption and API cost.
+- **Thread Resolution**: Handles both **unmodified threads** (containing inline quoted history) and **modified threads** (split individual messages sharing a `conversation_id`) via `ThreadProcessor`.
+- **Preprocessing & Cleaning**: Strips HTML tags, email signatures, disclaimers, and normalizes whitespace via `EmailCleaner` ([`docs/preprocessing.md`](docs/preprocessing.md)).
+- **Context Compression**: Applies rule-based character truncation and hybrid prompt compression via **LLMLingua** (`EmailCompressor`) to minimize token consumption while keeping recent context intact ([`docs/preprocessing.md`](docs/preprocessing.md)).
 - **Synthetic Email Generator**: Includes an asynchronous multi-client generator using the **NVIDIA AI Cloud / NIM API** (`deepseek-ai/deepseek-v4-flash`) and template fallbacks to build Graph API-compliant test datasets ([`docs/synthetic-generator.md`](docs/synthetic-generator.md)).
 
 ---
@@ -20,7 +20,7 @@ Given a financial advisor's mailbox and a target client's (household's) email ad
 ## ⚠️ Current Integration Status: Mocked (Planned Graph API Outline)
 
 > [!IMPORTANT]
-> The current architecture for Microsoft Graph API support is **just a planned outline and is not implemented yet**. Currently, the project is using a **Mockoon server** to simulate the API endpoints (`GET /v1.0/users/{user-id}/messages`), allowing offline development. Anything in the architecture and specifications **may change**.
+> The current architecture for Microsoft Graph API support is **a planned outline (`MicrosoftGraphProvider`) and is not implemented for live endpoints yet**. Currently, the project uses a **Mockoon server** (`MockGraphProvider`) to simulate the API endpoints (`GET /v1.0/users/{user-id}/messages`), allowing offline development. Core processing modules (`EmailRetrievalService`, `ThreadProcessor`, `EmailCleaner`, `EmailCompressor`) are fully implemented.
 
 For details on local mock server configuration, synthetic dataset generation, and the planned transition to Microsoft Graph API access, see [`docs/mock-setup.md`](docs/mock-setup.md).
 
@@ -62,22 +62,22 @@ uv pip install -e ".[dev]"
 ## Architecture Overview
 
 ```
-Connector Layer (EmailProvider / MockGraphProvider / MicrosoftGraphProvider)
+Connector Layer (EmailProvider / MockGraphProvider / MicrosoftGraphProvider Outline)
        │
        ▼
 Exception Layer (Domain Exceptions: EmailProviderError / ProviderRateLimitError)
        │
        ▼
-Thread Grouping & Resolution (Unmodified vs Modified email threads)
+Thread Grouping & Resolution (ThreadProcessor: Unmodified vs Modified email threads)
        │
        ▼
-Preprocessing & Cleaning (HTML Stripping / Quote Parsing Specification)
+Preprocessing & Cleaning (EmailCleaner: HTML Stripping / Signature Removal)
        │
        ▼
-Compression (Rule-based & LLM context reduction Specification)
+Context Compression (EmailCompressor: LLMLingua & Character Truncation)
        │
        ▼
-Structured JSON Output (LLM Context Prompt Payload)
+Structured Payload Output (CompressedThread / LLM Context Prompt Payload)
 ```
 
 See [`docs/architecture.md`](docs/architecture.md) for detailed data flow diagrams and component design specifications.
