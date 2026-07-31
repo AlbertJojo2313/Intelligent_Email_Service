@@ -25,32 +25,32 @@ Given a financial advisor's mailbox and a target client (or household) email add
 
 ```mermaid
 flowchart TD
-    subgraph Core Package [intelligent_email_service]
-        Config[config.py: EmailQueryFilter & PipelineConfig] --> Pipeline[pipeline.py: process_client_emails]
-        PM[EmailProviderManager] -->|instantiates| Provider{EmailProvider Interface}
-        Provider --> MGP[MockGraphProvider (Active)]
-        Provider --> MSGP[MicrosoftGraphProvider (Planned Outline)]
+    subgraph Core_Package ["intelligent_email_service"]
+        Config["config.py: EmailQueryFilter & PipelineConfig"] --> Pipeline["pipeline.py: process_client_emails"]
+        PM["EmailProviderManager"] -->|instantiates| Provider{"EmailProvider Interface"}
+        Provider --> MGP["MockGraphProvider (Active)"]
+        Provider --> MSGP["MicrosoftGraphProvider (Planned Outline)"]
         
-        MGP -->|GET /v1.0/users/{user_id}/messages| MockServer[Mockoon / Local Mock Server]
-        MSGP -.->|Graph API REST (Planned)| MSGraph[Microsoft Graph API (Unimplemented)]
+        MGP -->|"GET /v1.0/users/{user_id}/messages"| MockServer["Mockoon / Local Mock Server"]
+        MSGP -.->|"Graph API REST (Planned)"| MSGraph["Microsoft Graph API (Unimplemented)"]
         
-        Pipeline -->|1. Fetch & Filter| MGP
-        Pipeline -->|2. Resolve Threads| DataPipeline[EmailRetrievalService & ThreadProcessor]
-        Pipeline -->|3. Clean & Compress| Prep[Preprocessing Module]
+        Pipeline -->|"1. Fetch & Filter"| MGP
+        Pipeline -->|"2. Resolve Threads"| DataPipeline["EmailRetrievalService & ThreadProcessor"]
+        Pipeline -->|"3. Clean & Compress"| Prep["Preprocessing Module"]
         
-        subgraph Preprocessing [intelligent_email_service.preprocessing]
-            Prep --> Cleaner[cleaner.py: EmailCleaner]
-            Prep --> Compressor[compressor.py: EmailCompressor]
+        subgraph Preprocessing ["intelligent_email_service.preprocessing"]
+            Prep --> Cleaner["cleaner.py: EmailCleaner"]
+            Prep --> Compressor["compressor.py: EmailCompressor"]
         end
         
-        Compressor --> Output[CompressedThread / LLM Context Payload]
+        Compressor --> Output["CompressedThread / LLM Context Payload"]
     end
     
-    subgraph Tools [tools/]
-        SynthGen[synthetic_generator] -->|NvidiaClient / LLM| NVIDIA[NVIDIA NIM Cloud API]
-        SynthGen -->|FallbackGenerator| Fallback[Local Templates]
-        SynthGen -->|generates| MockData[mock_emails.json]
-        MockData -->|feeds| MockServer
+    subgraph Tools ["tools/"]
+        SynthGen["synthetic_generator"] -->|"NvidiaClient / LLM"| NVIDIA["NVIDIA NIM Cloud API"]
+        SynthGen -->|"FallbackGenerator"| Fallback["Local Templates"]
+        SynthGen -->|"generates"| MockData["mock_emails.json"]
+        MockData -->|"feeds"| MockServer
     end
 ```
 
