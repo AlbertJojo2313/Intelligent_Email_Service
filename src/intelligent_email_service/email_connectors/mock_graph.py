@@ -10,7 +10,14 @@ from ..exceptions import (
     ProviderNotFoundError,
     ProviderRateLimitError,
 )
+from ..utils import get_message_datetime, parse_iso_datetime
 from .base import EmailProvider
+
+
+HTTP_UNAUTHORIZED: int = 401
+HTTP_FORBIDDEN: int = 403
+HTTP_NOT_FOUND: int = 404
+HTTP_TOO_MANY_REQUESTS: int = 429
 
 
 def _handle_httpx_error(exc: httpx.HTTPError, context_msg: str) -> NoReturn:
@@ -24,19 +31,19 @@ def _handle_httpx_error(exc: httpx.HTTPError, context_msg: str) -> NoReturn:
     body = exc.response.text
 
     match status:
-        case 401 | 403:
+        case status if status in (HTTP_UNAUTHORIZED, HTTP_FORBIDDEN):
             raise ProviderAuthenticationError(
                 f"{context_msg}: Authentication failed ({status})",
                 status_code=status,
                 response_body=body,
             ) from exc
-        case 404:
+        case status if status == HTTP_NOT_FOUND:
             raise ProviderNotFoundError(
                 f"{context_msg}: Resource not found ({status})",
                 status_code=status,
                 response_body=body,
             ) from exc
-        case 429:
+        case status if status == HTTP_TOO_MANY_REQUESTS:
             retry_header = exc.response.headers.get("Retry-After")
             retry_after = (
                 int(retry_header) if retry_header and retry_header.isdigit() else None
@@ -150,19 +157,7 @@ class MockGraphProvider(EmailProvider):
                 exc, f"Failed to retrieve conversation '{conversation_id}'"
             )
 
-    get_messages_by_conversation_id = get_emails_by_conversation_id
-
-
-    @staticmethod
-    def _parse_iso_date(dt_str: str | None) -> datetime | None:
-        """Safely parses ISO date strings into timezone-aware UTC datetime objects."""
-        if not dt_str or not isinstance(dt_str, str):
-            return None
-        try:
-            dt = datetime.fromisoformat(dt_str.replace("Z", "+00:00"))
-            return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
-        except (ValueError, AttributeError, TypeError):
-            return None
+    _parse_iso_date = staticmethod(parse_iso_datetime)
 
     @staticmethod
     def _normalize_date(date: datetime) -> datetime:
@@ -196,8 +191,7 @@ class MockGraphProvider(EmailProvider):
 
         filtered: list[dict[str, Any]] = []
         for message in messages:
-            received_at = message.get("receivedDateTime") or message.get("recievedDateTime")
-            dt = MockGraphProvider._parse_iso_date(received_at)
+            dt = get_message_datetime(message, default_to_min=False)
             if dt and MockGraphProvider._in_date_range(dt, start_date, end_date):
                 filtered.append(message)
         return filtered
