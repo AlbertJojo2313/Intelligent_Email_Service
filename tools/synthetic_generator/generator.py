@@ -46,18 +46,27 @@ class SyntheticEmailGenerator:
         self, email_body: str, previous_messages: list[dict[str, Any]]
     ) -> str:
         """
-        Appends previous messages in standard email reply quote format
+        Appends previous messages in standard email reply quote format with HTML tags.
         """
-        quoted_text = email_body
+        paragraphs = "".join(f"<p>{line}</p>" for line in email_body.split("\n\n") if line.strip())
+        html_body = f"<div>{paragraphs or f'<p>{email_body}</p>'}</div>"
+
         for msg in reversed(previous_messages):
             sent_str = msg["receivedDateTime"]
             sender = msg["from"]["emailAddress"]["name"]
             email = msg["from"]["emailAddress"]["address"]
-            body_content = msg["body"]["content"]
+            prev_content = msg["body"]["content"]
 
-            quoted_text += f"\n\nOn {sent_str}, {sender} <{email}> wrote:\n"
-            quoted_text += "\n".join(f"> {line}" for line in body_content.splitlines())
-        return quoted_text
+            html_body += (
+                f'<div id="divRplyFwdMsg" style="border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;">'
+                f"<b>From:</b> {sender} &lt;{email}&gt;<br>"
+                f"<b>Sent:</b> {sent_str}<br>"
+                f"<b>To:</b> {msg['toRecipients'][0]['emailAddress']['name']}<br>"
+                f"<b>Subject:</b> {msg.get('subject', '')}<br><br>"
+                f"<div>{prev_content}</div>"
+                f"</div>"
+            )
+        return html_body
 
     async def _fetch_raw_thread_messages(
         self, topic: str, client: ClientProfile, thread_length: int
@@ -144,7 +153,8 @@ class SyntheticEmailGenerator:
             received_time = msg_time.isoformat().replace("+00:00", "Z")
 
             raw_body = item.get("body", "")
-            body_content = raw_body  # Default: only the new email content
+            paragraphs = "".join(f"<p>{line}</p>" for line in raw_body.split("\n\n") if line.strip())
+            body_content = f"<div>{paragraphs or f'<p>{raw_body}</p>'}</div>"
 
             # If this is an unmodified thread, the last email has the quoted history of previous emails
             if thread_format == "full_quoted" and messages:
@@ -160,10 +170,16 @@ class SyntheticEmailGenerator:
                 "receivedDateTime": received_time,
                 "sentDateTime": received_time,
                 "hasAttachments": False,
+                "attachments": [],
+                "conversationId": conversation_id,
                 "conversation_id": conversation_id,
                 "message_id": msg_id,
                 "subject": item.get("subject", topic.replace("_", " ").title()),
-                "body": {"content_type": "html", "content": body_content},
+                "body": {
+                    "contentType": "html",
+                    "content_type": "html",
+                    "content": body_content,
+                },
                 "sender": {"emailAddress": {"name": from_name, "address": from_email}},
                 "from": {"emailAddress": {"name": from_name, "address": from_email}},
                 "toRecipients": [
