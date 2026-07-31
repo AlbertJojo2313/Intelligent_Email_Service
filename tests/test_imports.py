@@ -1,26 +1,36 @@
 """Unit tests for validating top-level package imports and public API exports."""
 
 from intelligent_email_service import (
+    CleanerConfig,
+    CompressorConfig,
     EmailProvider,
     EmailProviderError,
     EmailProviderManager,
+    EmailQueryFilter,
     EmailRetrievalError,
     EmailRetrievalService,
     EmailServiceError,
     MicrosoftGraphProvider,
     MockGraphProvider,
+    PipelineConfig,
     ProcessedThread,
     ProviderAuthenticationError,
     ProviderNotFoundError,
     ProviderRateLimitError,
     ThreadFormat,
     ThreadProcessor,
+    process_client_emails,
 )
 from synthetic_generator import NvidiaClient, SyntheticEmailGenerator
 
 
 def test_package_imports():
     """Verify top-level submodules, exceptions, and provider exports."""
+    assert process_client_emails is not None
+    assert CleanerConfig is not None
+    assert CompressorConfig is not None
+    assert EmailQueryFilter is not None
+    assert PipelineConfig is not None
     assert EmailProvider is not None
     assert EmailProviderManager is not None
     assert MockGraphProvider is not None

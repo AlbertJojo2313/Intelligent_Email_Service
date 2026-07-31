@@ -13,53 +13,28 @@ from intelligent_email_service.retrieval.email_retrieval import EmailRetrievalSe
 
 
 @pytest.mark.asyncio
-async def test_provider_authentication_error():
+@pytest.mark.parametrize(
+    "status_code, expected_exc",
+    [
+        (401, ProviderAuthenticationError),
+        (404, ProviderNotFoundError),
+        (429, ProviderRateLimitError),
+    ],
+)
+async def test_provider_http_status_exceptions(status_code, expected_exc):
     provider = MockGraphProvider(base_url="http://localhost:3000")
     mock_response = MagicMock()
-    mock_response.status_code = 401
-    mock_response.text = "Unauthorized"
+    mock_response.status_code = status_code
+    mock_response.headers = {"Retry-After": "30"} if status_code == 429 else {}
+    mock_response.text = "Error"
 
     with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
         mock_get.side_effect = httpx.HTTPStatusError(
-            "401 Unauthorized", request=MagicMock(), response=mock_response
+            f"{status_code} Error", request=MagicMock(), response=mock_response
         )
-        with pytest.raises(ProviderAuthenticationError) as exc_info:
+        with pytest.raises(expected_exc) as exc_info:
             await provider.get_emails(user_id="user1")
-        assert exc_info.value.status_code == 401
-
-
-@pytest.mark.asyncio
-async def test_provider_not_found_error():
-    provider = MockGraphProvider(base_url="http://localhost:3000")
-    mock_response = MagicMock()
-    mock_response.status_code = 404
-    mock_response.text = "Not Found"
-
-    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
-        mock_get.side_effect = httpx.HTTPStatusError(
-            "404 Not Found", request=MagicMock(), response=mock_response
-        )
-        with pytest.raises(ProviderNotFoundError) as exc_info:
-            await provider.get_emails(user_id="user1")
-        assert exc_info.value.status_code == 404
-
-
-@pytest.mark.asyncio
-async def test_provider_rate_limit_error():
-    provider = MockGraphProvider(base_url="http://localhost:3000")
-    mock_response = MagicMock()
-    mock_response.status_code = 429
-    mock_response.headers = {"Retry-After": "30"}
-    mock_response.text = "Rate limited"
-
-    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
-        mock_get.side_effect = httpx.HTTPStatusError(
-            "429 Rate Limit", request=MagicMock(), response=mock_response
-        )
-        with pytest.raises(ProviderRateLimitError) as exc_info:
-            await provider.get_emails(user_id="user1")
-        assert exc_info.value.status_code == 429
-        assert exc_info.value.retry_after == 30
+        assert exc_info.value.status_code == status_code
 
 
 @pytest.mark.asyncio
