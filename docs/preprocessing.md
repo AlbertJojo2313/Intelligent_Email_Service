@@ -1,6 +1,6 @@
 # Email Preprocessing & Compression Module Specification
 
-_Last updated: 2026-07-30_
+_Last updated: 2026-07-31_
 
 > [!NOTE]
 > **Implementation Status**: Both the cleaning module (`cleaner.py`: `EmailCleaner`) and the context compression module (`compressor.py`: `EmailCompressor`, `CompressedThread`) are fully implemented and exported in `intelligent_email_service.preprocessing`.
@@ -21,7 +21,7 @@ Feeding raw email HTML into LLM context windows causes excessive token consumpti
 
 ## Architecture & Module Overview
 
-The package consists of two primary modules within `src/intelligent_email_service/preprocessing/`:
+The package consists of core preprocessing submodules within `src/intelligent_email_service/preprocessing/`:
 
 ```
 src/intelligent_email_service/preprocessing/
@@ -34,27 +34,30 @@ src/intelligent_email_service/preprocessing/
 
 ## 1. Cleaner Module (`cleaner.py`)
 
-The `EmailCleaner` class processes individual email message bodies to extract normalized text.
+The `EmailCleaner` class processes individual email message bodies to extract normalized text using `CleanerConfig`.
 
 ### `EmailCleaner` Interface & Configuration
 
 ```python
+from intelligent_email_service import CleanerConfig
 from intelligent_email_service.preprocessing import EmailCleaner
 
-cleaner = EmailCleaner(
+config = CleanerConfig(
     strip_signatures=True,
     max_blank_lines=1,
     preserve_links=False,
     custom_signature_patterns=None,
 )
+
+cleaner = EmailCleaner(config=config)
 ```
 
-#### Initialization Arguments:
+#### `CleanerConfig` Attributes:
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `strip_signatures` | `bool` | `True` | Whether to truncate text at detected email signature blocks. |
-| `max_blank_lines` | `int` | `1` | Maximum consecutive blank lines allowed (`-1` disables collapsing). |
+| `max_blank_lines` | `int` | `1` | Maximum consecutive blank lines allowed. |
 | `preserve_links` | `bool` | `False` | Whether to extract and format HTML links (e.g. `Link Text (https://example.com)`). |
 | `custom_signature_patterns` | `list[re.Pattern]` | `None` | Optional list of additional compiled regex patterns for signature matching. |
 
@@ -88,9 +91,10 @@ cleaner = EmailCleaner(
 ## 2. Cleaner Usage Example
 
 ```python
+from intelligent_email_service import CleanerConfig
 from intelligent_email_service.preprocessing import EmailCleaner
 
-cleaner = EmailCleaner(strip_signatures=True, preserve_links=True)
+cleaner = EmailCleaner(config=CleanerConfig(strip_signatures=True, preserve_links=True))
 
 raw_message = {
     "id": "AAMkAG123...",
@@ -108,82 +112,36 @@ print(cleaned_message["cleaned_body"])
 
 ---
 
-## 3. Cleaner Schemas
+## 3. Compressor Module (`compressor.py`)
 
-### Input (Message Object with Body)
-
-```json
-{
-  "id": "AAMkAG123...",
-  "subject": "Re: Portfolio Rebalancing",
-  "body": {
-    "contentType": "html",
-    "content": "<div>Hi John,<br><br>Let's proceed with rebalancing.<br><br>Best regards,<br>Jane</div>"
-  }
-}
-```
-
-### Output (Cleaned Message Object)
-
-```json
-{
-  "id": "AAMkAG123...",
-  "subject": "Re: Portfolio Rebalancing",
-  "body": {
-    "contentType": "html",
-    "content": "<div>Hi John,<br><br>Let's proceed with rebalancing.<br><br>Best regards,<br>Jane</div>"
-  },
-  "cleaned_body": "Hi John,\n\nLet's proceed with rebalancing."
-}
-```
-
----
-
-## 4. Compressor Module (`compressor.py`)
-
-The `EmailCompressor` class optimizes reconstructed `ProcessedThread` objects for downstream LLM prompt context windows.
+The `EmailCompressor` class optimizes reconstructed `ProcessedThread` objects for downstream LLM prompt context windows using `CompressorConfig`.
 
 ### `EmailCompressor` Interface & Configuration
 
 ```python
+from intelligent_email_service import CompressorConfig
 from intelligent_email_service.preprocessing import EmailCompressor
 
-compressor = EmailCompressor(
+config = CompressorConfig(
     recent_full_count=2,
-    max_older_chars=300,
+    max_full_body_chars=300,
     use_llmlingua=True,
     llmlingua_rate=0.5,
     llmlingua_model="microsoft/llmlingua-2-bert-base-multilingual-cased-meeting",
 )
+
+compressor = EmailCompressor(config=config)
 ```
 
-#### Initialization Arguments:
+#### `CompressorConfig` Attributes:
 
 | Parameter | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `recent_full_count` | `int` | `2` | Number of most recent messages kept in full-text without truncation/compression. |
-| `max_older_chars` | `int` | `300` | Fallback character cap for older historical messages when LLMLingua is disabled or unavailable. |
+| `max_full_body_chars` | `int` | `300` | Fallback character cap for older historical messages or oversized bodies. |
 | `use_llmlingua` | `bool` | `True` | Whether to attempt prompt compression on older messages via `llmlingua.PromptCompressor`. |
 | `llmlingua_rate` | `float` | `0.5` | Compression target ratio for LLMLingua (e.g. 0.5 = 50% target token reduction). |
 | `llmlingua_model` | `str` | `"microsoft/llmlingua-2-..."` | Hugging Face model identifier for LLMLingua-2 context compression. |
-
----
-
-### Compression Pipeline Logic
-
-1. **Subject Prefix Normalization (`clean_subject`)**:
-   - Strips redundant leading `Re:`, `Fwd:`, `FW:` prefixes from thread subjects.
-2. **`FULL_QUOTED` & Short Thread Bypass**:
-   - If thread format is `FULL_QUOTED` or total message count is $\le$ `recent_full_count`, compression is bypassed and full cleaned body text is returned directly.
-3. **`MODIFIED` Multi-Message Thread Context Reduction**:
-   - Keeps the newest `recent_full_count` messages in full text (`is_historical=False`).
-   - For older historical messages (`is_historical=True`):
-     - Uses **LLMLingua** (`_compress_llmlingua`) if enabled and body length $\ge 100$ chars.
-     - Falls back to character truncation (`_truncate_text`) appending `[... truncated]` if LLMLingua fails or is disabled.
-4. **Attachment Metadata Extraction (`_extract_attachments`)**:
-   - Extracts attachment metadata (`id`, `name`, `contentType`, `size`) into `attachments_summary` while stripping binary payloads.
-5. **Token Estimation**:
-   - Estimates token count per message using `math.ceil(len(body) / 4.0)`.
 
 ---
 
@@ -206,10 +164,12 @@ class CompressedThread:
 ### Compressor Usage Example
 
 ```python
+from intelligent_email_service import CompressorConfig
 from intelligent_email_service.preprocessing import EmailCompressor
-from intelligent_email_service.retrieval import ProcessedThread, ThreadFormat
 
-compressor = EmailCompressor(recent_full_count=2, max_older_chars=100, use_llmlingua=False)
+compressor = EmailCompressor(
+    config=CompressorConfig(recent_full_count=2, max_full_body_chars=100, use_llmlingua=False)
+)
 
 # Assuming thread is a ProcessedThread returned from ThreadProcessor
 compressed = compressor.compress_processed_thread(thread)
@@ -220,5 +180,3 @@ print(f"Estimated Tokens: {compressed.estimated_tokens}")
 for msg in compressed.compressed_messages:
     print(f"Historical: {msg['is_historical']} | Body: {msg['compressed_body']}")
 ```
-
-
