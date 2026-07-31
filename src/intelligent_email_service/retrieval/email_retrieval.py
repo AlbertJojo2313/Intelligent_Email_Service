@@ -145,14 +145,9 @@ class EmailRetrievalService:
     @staticmethod
     def _sanitize_attachment_metadata(message: dict[str, Any]) -> dict[str, Any]:
         """Ensures message attachment objects only contain clean metadata."""
-        has_attachments = message.get("hasAttachments")
-        raw_attach = message.get("attachments")
-
-        # Fast path: Return immediately if there are no attachments
-        if not has_attachments and not raw_attach:
-            return message
-
         clean_msg = dict(message)
+        raw_attach = message.get("attachments") or []
+
         clean_attach: list[dict[str, Any]] = []
         if isinstance(raw_attach, list):
             clean_attach = [

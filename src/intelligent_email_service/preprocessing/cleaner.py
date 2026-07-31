@@ -4,6 +4,11 @@ from typing import Any, ClassVar
 
 import bs4
 
+from ..config import CleanerConfig
+
+# Max non-empty lines following a generic salutation (e.g. "Thanks,") before treating it as mid-body content
+MAX_SALUTATION_TRAILING_LINES: int = 3
+
 
 class EmailCleaner:
     """
@@ -38,22 +43,13 @@ class EmailCleaner:
 
     _SIGNATURE_RE: ClassVar[re.Pattern[str]]
 
-    def __init__(
-        self,
-        *,
-        strip_signatures: bool = True,
-        max_blank_lines: int = 1,
-        preserve_links: bool = False,
-        custom_signature_patterns: list[re.Pattern[str]] | None = None,
-    ):
-        self.strip_signatures = strip_signatures
-        self.max_blank_lines = max_blank_lines
-        self.preserve_links = preserve_links
+    def __init__(self, config: CleanerConfig | None = None):
+        self.config = config or CleanerConfig()
 
-        if custom_signature_patterns:
+        if self.config.custom_signature_patterns:
             patterns = [
                 *self.DEFAULT_SIGNATURE_PATTERNS,
-                *custom_signature_patterns,
+                *self.config.custom_signature_patterns,
             ]
             self._signature_re = self._combine_patterns(patterns)
         else:
@@ -113,7 +109,7 @@ class EmailCleaner:
         else:
             text = self._normalize_whitespace(raw_text)
 
-        if self.strip_signatures:
+        if self.config.strip_signatures:
             text = self._remove_signature(text)
 
         return text.strip()
@@ -138,7 +134,7 @@ class EmailCleaner:
         ]):
             tag.decompose()
 
-        if self.preserve_links:
+        if self.config.preserve_links:
             for a in soup.find_all("a", href=True):
                 href = a["href"].strip()
                 text = a.get_text().strip()
@@ -180,8 +176,8 @@ class EmailCleaner:
         lines = (line.rstrip() for line in text.splitlines())
         text = "\n".join(lines).strip()
 
-        pattern = r"\n{" + str(self.max_blank_lines + 2) + r",}"
-        replacement = "\n" * (self.max_blank_lines + 1)
+        pattern = r"\n{" + str(self.config.max_blank_lines + 2) + r",}"
+        replacement = "\n" * (self.config.max_blank_lines + 1)
 
         return re.sub(pattern, replacement, text)
 
@@ -202,8 +198,8 @@ class EmailCleaner:
                 remaining_lines = [
                     line for line in remaining_text.splitlines() if line.strip()
                 ]
-                # If more than 3 non-empty lines follow, "Thanks," is mid-body content
-                if len(remaining_lines) > 3:
+                # If more than MAX_SALUTATION_TRAILING_LINES non-empty lines follow, "Thanks," is mid-body content
+                if len(remaining_lines) > MAX_SALUTATION_TRAILING_LINES:
                     continue
 
             return text[: match.start()]

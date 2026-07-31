@@ -1,11 +1,11 @@
 import asyncio
 import re
 from dataclasses import dataclass
-from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any, ClassVar
 
 from ..email_connectors.base import EmailProvider
+from ..utils import get_message_datetime
 from .email_retrieval import EmailRetrievalService
 
 
@@ -33,6 +33,9 @@ class ProcessedThread:
     format: ThreadFormat
     reconstructed: bool
     messages: list[dict[str, Any]]
+
+
+DEFAULT_MAX_CONCURRENCY: int = 10
 
 
 class ThreadProcessor:
@@ -73,7 +76,7 @@ class ThreadProcessor:
         provider: EmailProvider,
         user_id: str,
         client_id: str | None = None,
-        max_concurrency: int = 10,  # cap parallel network requests
+        max_concurrency: int = DEFAULT_MAX_CONCURRENCY,  # cap parallel network requests
     ):
         self.provider = provider
         self.user_id = user_id
@@ -195,17 +198,8 @@ class ThreadProcessor:
         """
         Sort messages in-place from oldest to newest using Schwartzian transform.
         """
-
-        def _get_dt(msg: dict[str, Any]) -> datetime:
-            dt_str = msg.get("receivedDateTime")
-            if not dt_str:
-                return datetime.min.replace(tzinfo=UTC)
-            try:
-                dt = datetime.fromisoformat(dt_str.replace("Z", "+00:00"))
-                return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
-            except (ValueError, AttributeError):
-                return datetime.min.replace(tzinfo=UTC)
-
-        decorated = [(_get_dt(msg), msg) for msg in messages]
+        decorated = [
+            (get_message_datetime(msg, default_to_min=True), msg) for msg in messages
+        ]
         decorated.sort(key=lambda item: item[0])
         messages[:] = [msg for _, msg in decorated]

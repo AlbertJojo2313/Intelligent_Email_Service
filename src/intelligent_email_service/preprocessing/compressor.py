@@ -6,10 +6,17 @@ from typing import Any
 # Optional LLMLingua import with fallback
 try:
     from llmlingua import PromptCompressor  # type: ignore
+
     HAS_LLMLINGUA = True
 except ImportError:
     PromptCompressor = None
     HAS_LLMLINGUA = False
+
+
+from ..config import CompressorConfig
+
+# Average character count per estimated LLM token
+AVG_CHARS_PER_TOKEN: float = 4.0
 
 
 @dataclass
@@ -27,85 +34,53 @@ class CompressedThread:
 
 class EmailCompressor:
     """
-    Streamlined Context Compressor for Email Threads.
+    Context compressor for email threads of any shape.
 
-    - FULL_QUOTED threads (1 message): Bypasses LLMLingua, returning cleaned text directly.
-    - MODIFIED threads (multi-message): Keeps newest K messages full-text and applies LLMLingua
-      or heuristic truncation to older historical messages.
+    Every message is compressed the same way: the newest `recent_full_count`
+    messages are kept full-text *unless* they exceed `max_full_body_chars`,
+    in which case they're compressed too (via LLMLingua, falling back to
+    truncation). Older messages are always compressed. This means a
+    single-message "full_quoted" thread that embeds a huge quoted history
+    is no longer exempt just because it's one message.
     """
 
-    _llm_compressor: Any = None
+    # Cache of loaded LLMLingua models, keyed by model name, shared across
+    # instances so repeated construction doesn't reload the model, without
+    # differently-configured instances clobbering each other's model.
+    _llm_compressors: dict[str, Any] = {}
 
-    def __init__(
-        self,
-        recent_full_count: int = 2,
-        max_older_chars: int = 300,
-        use_llmlingua: bool = True,
-        llmlingua_rate: float = 0.5,
-        llmlingua_model: str = "microsoft/llmlingua-2-bert-base-multilingual-cased-meeting",
-    ):
-        self.recent_full_count = max(1, recent_full_count)
-        self.max_older_chars = max_older_chars
-        self.use_llmlingua = use_llmlingua and HAS_LLMLINGUA
-        self.llmlingua_rate = llmlingua_rate
-        self.llmlingua_model = llmlingua_model
+    def __init__(self, config: CompressorConfig | None = None):
+        self.config = config or CompressorConfig()
+        # Override use_llmlingua with HAS_LLMLINGUA availability
+        self.use_llmlingua = self.config.use_llmlingua and HAS_LLMLINGUA
 
     def compress_processed_thread(self, thread: Any) -> CompressedThread:
-        """Compresses a ProcessedThread instance."""
+        """Compresses a ProcessedThread instance, regardless of its format."""
         messages = getattr(thread, "messages", []) or []
-        thread_format = getattr(thread, "format", "full_quoted")
         conversation_id = getattr(thread, "conversation_id", None)
         subject = self.clean_subject(getattr(thread, "subject", ""))
+        cutoff = max(len(messages) - self.config.recent_full_count, 0)
 
-        # FULL_QUOTED or short threads: No compression needed, return cleaned messages directly
-        if str(thread_format) == "full_quoted" or len(messages) <= self.recent_full_count:
-            return self._build_uncompressed_payload(messages, subject, conversation_id)
-
-        # MODIFIED multi-message threads: Compress older historical messages
-        return self._compress_multi_message_thread(messages, subject, conversation_id)
-
-    def _build_uncompressed_payload(
-        self, messages: list[dict[str, Any]], subject: str, conversation_id: str | None
-    ) -> CompressedThread:
-        processed = []
-        attachments = []
-        for msg in messages:
-            cleaned = self._format_message(msg, is_historical=False)
-            processed.append(cleaned)
-            attachments.extend(cleaned["attachments"])
-
-        tokens = sum(m["estimated_tokens"] for m in processed)
-        return CompressedThread(
-            subject=subject,
-            conversation_id=conversation_id,
-            total_messages=len(messages),
-            compressed_messages=processed,
-            attachments_summary=attachments,
-            estimated_tokens=tokens,
-            used_llmlingua=False,
-        )
-
-    def _compress_multi_message_thread(
-        self, messages: list[dict[str, Any]], subject: str, conversation_id: str | None
-    ) -> CompressedThread:
-        cutoff = len(messages) - self.recent_full_count
         processed = []
         attachments = []
         used_lingua = False
 
         for idx, msg in enumerate(messages):
+            text = self._extract_body(msg)
             is_historical = idx < cutoff
-            if is_historical and self.use_llmlingua:
-                compressed_body = self._compress_llmlingua(msg)
-                used_lingua = True
-            elif is_historical:
-                compressed_body = self._truncate_text(msg)
-            else:
-                compressed_body = self._extract_body(msg)
-
-            formatted = self._format_message(
-                msg, is_historical=is_historical, body=compressed_body
+            needs_compression = (
+                is_historical or len(text) > self.config.max_full_body_chars
             )
+
+            if needs_compression and self.use_llmlingua:
+                body = self._compress_llmlingua(text)
+                used_lingua = used_lingua or body != text
+            elif needs_compression:
+                body = self._truncate_text(text)
+            else:
+                body = text
+
+            formatted = self._format_message(msg, is_historical=is_historical, body=body)
             processed.append(formatted)
             attachments.extend(formatted["attachments"])
 
@@ -120,34 +95,37 @@ class EmailCompressor:
             used_llmlingua=used_lingua,
         )
 
-    def _compress_llmlingua(self, msg: dict[str, Any]) -> str:
-        text = self._extract_body(msg)
-        if not text or len(text) < 100:
+    def _compress_llmlingua(self, text: str) -> str:
+        if not text or len(text) < self.config.activate_compressor_message_length:
             return text
         try:
             model = self._get_llmlingua_model()
             if model:
-                res = model.compress_prompt(context=[text], rate=self.llmlingua_rate)
+                res = model.compress_prompt(
+                    context=[text], rate=self.config.llmlingua_rate
+                )
                 return res.get("compressed_prompt") or text
         except Exception:
+            # Model failure shouldn't take down the whole thread compression;
+            # fall back to plain truncation instead.
             pass
-        return self._truncate_text(msg)
+        return self._truncate_text(text)
 
-    def _truncate_text(self, msg: dict[str, Any]) -> str:
-        text = self._extract_body(msg)
-        if len(text) <= self.max_older_chars:
+    def _truncate_text(self, text: str) -> str:
+        if len(text) <= self.config.max_full_body_chars:
             return text
-        return text[: self.max_older_chars].rstrip() + " [... truncated]"
+        return text[: self.config.max_full_body_chars].rstrip() + " [... truncated]"
 
     def _format_message(
-        self, msg: dict[str, Any], is_historical: bool, body: str | None = None
+        self, msg: dict[str, Any], is_historical: bool, body: str
     ) -> dict[str, Any]:
         compressed_msg = dict(msg)
-        final_body = body if body is not None else self._extract_body(msg)
-        compressed_msg["compressed_body"] = final_body
+        compressed_msg["compressed_body"] = body
         compressed_msg["is_historical"] = is_historical
         compressed_msg["attachments"] = self._extract_attachments(msg)
-        compressed_msg["estimated_tokens"] = math.ceil(len(final_body) / 4.0) if final_body else 0
+        compressed_msg["estimated_tokens"] = (
+            math.ceil(len(body) / AVG_CHARS_PER_TOKEN) if body else 0
+        )
         return compressed_msg
 
     def _extract_attachments(self, msg: dict[str, Any]) -> list[dict[str, Any]]:
@@ -158,7 +136,9 @@ class EmailCompressor:
             {
                 "id": a.get("id"),
                 "name": a.get("name") or a.get("fileName") or "attachment",
-                "contentType": a.get("contentType") or a.get("content_type") or "application/octet-stream",
+                "contentType": a.get("contentType")
+                or a.get("content_type")
+                or "application/octet-stream",
                 "size": a.get("size") or 0,
             }
             for a in raw
@@ -173,19 +153,25 @@ class EmailCompressor:
         body_obj = msg.get("body")
         if isinstance(body_obj, dict):
             return str(body_obj.get("content") or "")
-        elif isinstance(body_obj, str):
+        if isinstance(body_obj, str):
             return body_obj
         return ""
 
-    @classmethod
-    def _get_llmlingua_model(cls) -> Any:
-        if HAS_LLMLINGUA and cls._llm_compressor is None:
-            cls._llm_compressor = PromptCompressor(
-                model_name="microsoft/llmlingua-2-bert-base-multilingual-cased-meeting",
+    def _get_llmlingua_model(self) -> Any:
+        """Loads (and caches, per model name) the LLMLingua compressor for this instance's model."""
+        if not HAS_LLMLINGUA:
+            return None
+        model_name = self.config.llmlingua_model
+        if model_name not in self._llm_compressors:
+            self._llm_compressors[model_name] = PromptCompressor(
+                model_name=model_name,
                 use_llmlingua2=True,
-            )
-        return cls._llm_compressor
+                device_map=self.config.llmlingua_device,
+            )  # pyright: ignore[reportOptionalCall]
+        return self._llm_compressors[model_name]
 
     @staticmethod
     def clean_subject(subject: str) -> str:
-        return re.sub(r"^(?:\s*(?:re|fwd|fw):\s*)+", "", subject, flags=re.IGNORECASE).strip()
+        return re.sub(
+            r"^(?:\s*(?:re|fwd|fw):\s*)+", "", subject, flags=re.IGNORECASE
+        ).strip()
