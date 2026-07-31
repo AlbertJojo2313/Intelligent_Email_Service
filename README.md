@@ -13,6 +13,8 @@ Given a financial advisor's mailbox and a target client's (household's) email ad
 - **Thread Resolution**: Handles both **unmodified threads** (containing inline quoted history) and **modified threads** (split individual messages sharing a `conversation_id`) via `ThreadProcessor`.
 - **Preprocessing & Cleaning**: Strips HTML tags, email signatures, disclaimers, and normalizes whitespace via `EmailCleaner` ([`docs/preprocessing.md`](docs/preprocessing.md)).
 - **Context Compression**: Applies rule-based character truncation and hybrid prompt compression via **LLMLingua** (`EmailCompressor`) to minimize token consumption while keeping recent context intact ([`docs/preprocessing.md`](docs/preprocessing.md)).
+- **Configuration Object Pattern**: Uses typed dataclass configuration objects (`EmailQueryFilter`, `PipelineConfig`, `CleanerConfig`, `CompressorConfig`) for clean, modular setting management.
+- **End-to-End Driver Pipeline**: Programmatic API driver and executable CLI script (`process_client_emails` in [`pipeline.py`](src/intelligent_email_service/pipeline.py)).
 - **Synthetic Email Generator**: Includes an asynchronous multi-client generator using the **NVIDIA AI Cloud / NIM API** (`deepseek-ai/deepseek-v4-flash`) and template fallbacks to build Graph API-compliant test datasets ([`docs/synthetic-generator.md`](docs/synthetic-generator.md)).
 
 ---
@@ -20,7 +22,7 @@ Given a financial advisor's mailbox and a target client's (household's) email ad
 ## ⚠️ Current Integration Status: Mocked (Planned Graph API Outline)
 
 > [!IMPORTANT]
-> The current architecture for Microsoft Graph API support is **a planned outline (`MicrosoftGraphProvider`) and is not implemented for live endpoints yet**. Currently, the project uses a **Mockoon server** (`MockGraphProvider`) to simulate the API endpoints (`GET /v1.0/users/{user-id}/messages`), allowing offline development. Core processing modules (`EmailRetrievalService`, `ThreadProcessor`, `EmailCleaner`, `EmailCompressor`) are fully implemented.
+> The current architecture for Microsoft Graph API support is **a planned outline (`MicrosoftGraphProvider`) and is not implemented for live endpoints yet**. Currently, the project uses a **Mockoon server** (`MockGraphProvider`) to simulate the API endpoints (`GET /v1.0/users/{user-id}/messages`), allowing offline development. Core processing modules (`EmailRetrievalService`, `ThreadProcessor`, `EmailCleaner`, `EmailCompressor`, `process_client_emails`) are fully implemented.
 
 For details on local mock server configuration, synthetic dataset generation, and the planned transition to Microsoft Graph API access, see [`docs/mock-setup.md`](docs/mock-setup.md).
 
@@ -46,15 +48,53 @@ cd email_service
 uv sync --all-extras
 ```
 
-Alternatively, if managing virtual environments manually:
+---
+
+## Running the Pipeline
+
+### 1. Programmatic Usage (Python)
+
+```python
+import asyncio
+from intelligent_email_service import (
+    EmailQueryFilter,
+    MockGraphProvider,
+    PipelineConfig,
+    process_client_emails,
+)
+
+async def main():
+    provider = MockGraphProvider(base_url="http://localhost:3000")
+
+    query = EmailQueryFilter(
+        advisor_id="tst_ad-001",
+        client_id="jane.household@example-clients.com",
+    )
+    config = PipelineConfig()
+
+    compressed_threads = await process_client_emails(
+        query=query,
+        config=config,
+        provider=provider,
+    )
+
+    for thread in compressed_threads:
+        print(f"Subject: {thread.subject} | Tokens: {thread.estimated_tokens}")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### 2. Executable CLI Command
+
+Run `pipeline.py` directly from the command line:
 
 ```bash
-# Create and activate virtual environment
-uv venv
-source .venv/bin/activate
+# Run with default arguments
+uv run python -m intelligent_email_service.pipeline
 
-# Install package in editable mode with dev dependencies
-uv pip install -e ".[dev]"
+# Run with custom Advisor ID and Client ID
+uv run python -m intelligent_email_service.pipeline "advisor@firm.com" "client@household.com"
 ```
 
 ---
@@ -86,7 +126,8 @@ See [`docs/architecture.md`](docs/architecture.md) for detailed data flow diagra
 
 ## Documentation Quick Links
 
-- [**Architecture & System Design**](docs/architecture.md): Data flow pipeline, identity model, exception layer, and component interactions.
+- [**Architecture & System Design**](docs/architecture.md): Data flow pipeline, configuration objects, identity model, exception layer, and component interactions.
+- [**Output Schema & Data Structure**](docs/data-structure.md): Detailed output payload schema and redundant field analysis for LLM prompts.
 - [**Mock Setup & Local Development**](docs/mock-setup.md): Guide for running Mockoon and local API simulation.
 - [**Preprocessing & Compression**](docs/preprocessing.md): Detailed cleaner and compressor module specifications.
 - [**Synthetic Email Generator**](docs/synthetic-generator.md): Usage guide for synthetic email thread generation with NVIDIA LLM / Fallback templates.
@@ -99,10 +140,4 @@ Run the test suite using `uv`:
 
 ```bash
 uv run pytest
-```
-
-Or inside an activated virtual environment:
-
-```bash
-pytest
 ```
