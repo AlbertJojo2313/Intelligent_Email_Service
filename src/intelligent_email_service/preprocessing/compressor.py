@@ -1,3 +1,4 @@
+import logging
 import math
 import re
 from dataclasses import dataclass, field
@@ -14,6 +15,8 @@ except ImportError:
 
 
 from ..config import CompressorConfig
+
+logger = logging.getLogger(__name__)
 
 # Average character count per estimated LLM token
 AVG_CHARS_PER_TOKEN: float = 4.0
@@ -85,6 +88,13 @@ class EmailCompressor:
             attachments.extend(formatted["attachments"])
 
         tokens = sum(m["estimated_tokens"] for m in processed)
+        logger.info(
+            "Compressed thread '%s' (%d msgs) -> est. %d tokens (LLMLingua: %s)",
+            subject,
+            len(messages),
+            tokens,
+            used_lingua,
+        )
         return CompressedThread(
             subject=subject,
             conversation_id=conversation_id,
@@ -105,10 +115,11 @@ class EmailCompressor:
                     context=[text], rate=self.config.llmlingua_rate
                 )
                 return res.get("compressed_prompt") or text
-        except Exception:
-            # Model failure shouldn't take down the whole thread compression;
-            # fall back to plain truncation instead.
-            pass
+        except Exception as exc:
+            logger.warning(
+                "LLMLingua compression failed (%s). Falling back to character truncation.",
+                exc,
+            )
         return self._truncate_text(text)
 
     def _truncate_text(self, text: str) -> str:

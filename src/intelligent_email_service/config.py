@@ -45,3 +45,4 @@ class PipelineConfig:
     cleaner: CleanerConfig = field(default_factory=CleanerConfig)
     compressor: CompressorConfig = field(default_factory=CompressorConfig)
     max_concurrency: int = 10
+    log_level: str = "INFO"

@@ -1,10 +1,13 @@
 import html
+import logging
 import re
 from typing import Any, ClassVar
 
 import bs4
 
 from ..config import CleanerConfig
+
+logger = logging.getLogger(__name__)
 
 # Max non-empty lines following a generic salutation (e.g. "Thanks,") before treating it as mid-body content
 MAX_SALUTATION_TRAILING_LINES: int = 3
@@ -93,6 +96,12 @@ class EmailCleaner:
         cleaned["cleaned_body"] = self._clean_content(
             raw,
             content_type,
+        )
+        logger.debug(
+            "Cleaned message ID '%s': raw length %d -> cleaned length %d",
+            message.get("id"),
+            len(raw),
+            len(cleaned["cleaned_body"]),
         )
 
         return cleaned

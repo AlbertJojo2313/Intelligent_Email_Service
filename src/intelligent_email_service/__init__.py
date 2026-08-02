@@ -24,6 +24,7 @@ from .exceptions import (
     ProviderNotFoundError,
     ProviderRateLimitError,
 )
+from .logging_config import setup_logging
 from .pipeline import process_client_emails
 from .retrieval import (
     EmailRetrievalService,
@@ -54,4 +55,5 @@ __all__ = [
     "ThreadFormat",
     "ThreadProcessor",
     "process_client_emails",
+    "setup_logging",
 ]

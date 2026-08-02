@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import re
 from dataclasses import dataclass
 from enum import StrEnum
@@ -7,6 +8,8 @@ from typing import Any, ClassVar
 from ..email_connectors.base import EmailProvider
 from ..utils import get_message_datetime
 from .email_retrieval import EmailRetrievalService
+
+logger = logging.getLogger(__name__)
 
 
 class ThreadFormat(StrEnum):
@@ -112,6 +115,11 @@ class ThreadProcessor:
         )
 
         if self._is_full_quoted(latest_message):
+            logger.debug(
+                "Subject '%s' resolved as FULL_QUOTED thread (conv_id: %s)",
+                latest_message.get("subject"),
+                conv_id,
+            )
             return ProcessedThread(
                 subject=latest_message.get("subject", ""),
                 conversation_id=conv_id,
@@ -120,6 +128,11 @@ class ThreadProcessor:
                 reconstructed=False,
             )
 
+        logger.debug(
+            "Subject '%s' resolved as MODIFIED thread; fetching conversation_id '%s'",
+            latest_message.get("subject"),
+            conv_id,
+        )
         complete_messages = await self._reconstruct_conversation(
             conversation_id=conv_id,
             fallback_messages=messages,

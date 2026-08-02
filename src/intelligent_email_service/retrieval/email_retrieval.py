@@ -1,3 +1,4 @@
+import logging
 import re
 from collections import defaultdict
 from collections.abc import Iterable
@@ -7,6 +8,8 @@ from typing import Any
 
 from intelligent_email_service.email_connectors.base import EmailProvider
 from intelligent_email_service.exceptions import EmailProviderError, EmailRetrievalError
+
+logger = logging.getLogger(__name__)
 
 # Pre-compile regex at module level to avoid re-compiling per function invocation
 RE_ALL_PREFIXES = re.compile(
@@ -41,6 +44,7 @@ class EmailRetrievalService:
         """Retrieve all emails involving a specific client with sanitized attachments."""
 
         try:
+            logger.debug("Fetching emails for advisor '%s'...", advisor_id)
             messages = await self.provider.get_emails(
                 user_id=advisor_id,
                 start_date=start_date,
@@ -54,12 +58,18 @@ class EmailRetrievalService:
             ) from err
 
         messages = messages or []
-
-        return [
+        filtered = [
             self._sanitize_attachment_metadata(message)
             for message in messages
             if self._message_matches_client(message, client_id)
         ]
+        logger.info(
+            "Retrieved %d total message(s) from provider; %d match client '%s'",
+            len(messages),
+            len(filtered),
+            client_id,
+        )
+        return filtered
 
     async def get_client_email_groups(
         self,

@@ -6,12 +6,17 @@ import warnings
 
 warnings.filterwarnings("ignore", category=RuntimeWarning, module="runpy")
 
+import logging
+
 from .config import EmailQueryFilter, PipelineConfig
 from .email_connectors import EmailProvider, MockGraphProvider
 from .exceptions import EmailProviderError
+from .logging_config import setup_logging
 from .preprocessing import EmailCleaner, EmailCompressor
 from .preprocessing.compressor import CompressedThread
 from .retrieval import EmailRetrievalService, ThreadProcessor
+
+logger = logging.getLogger(__name__)
 
 
 async def process_client_emails(
@@ -36,6 +41,15 @@ async def process_client_emails(
     """
     if config is None:
         config = PipelineConfig()
+
+    setup_logging(level=config.log_level)
+
+    logger.info(
+        "Starting pipeline for advisor '%s' & client '%s' (log_level: %s)...",
+        query.advisor_id,
+        query.client_id,
+        config.log_level,
+    )
 
     if provider is None:
         provider = MockGraphProvider()
