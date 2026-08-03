@@ -1,12 +1,11 @@
 """End-to-end driver pipeline for Intelligent Email Service."""
 
 import asyncio
+from dataclasses import asdict
+import json
+import logging
 import sys
 import warnings
-
-warnings.filterwarnings("ignore", category=RuntimeWarning, module="runpy")
-
-import logging
 
 from .config import EmailQueryFilter, PipelineConfig
 from .email_connectors import EmailProvider, MockGraphProvider
@@ -15,6 +14,9 @@ from .logging_config import setup_logging
 from .preprocessing import EmailCleaner, EmailCompressor
 from .preprocessing.compressor import CompressedThread
 from .retrieval import EmailRetrievalService, ThreadProcessor
+
+warnings.filterwarnings("ignore", category=RuntimeWarning, module="runpy")
+
 
 logger = logging.getLogger(__name__)
 
@@ -106,6 +108,10 @@ async def main() -> None:
             print(f"  Total Messages:  {thread.total_messages}")
             print(f"  Est. Tokens:     {thread.estimated_tokens}")
             print(f"  Attachments:     {len(thread.attachments_summary)}")
+
+        with open("compressed_threads.json", "w") as f:
+            json.dump([asdict(thread) for thread in threads], f, indent=2, default=str)
+            print("\nCompressed threads saved to 'compressed_threads.json'.")
     except EmailProviderError as err:
         print(f"\n[Provider Error] {err}")
         print(
