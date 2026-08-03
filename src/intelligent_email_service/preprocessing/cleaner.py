@@ -70,17 +70,17 @@ class EmailCleaner:
 
     def clean_message(
         self,
-        message: dict[str, Any],
-    ) -> dict[str, Any]:
-        """
-        Return a cleaned copy of an email message.
-
-        Adds:
-            cleaned_body
-        """
+        message: dict[str, Any] | Any,
+    ) -> Any:
+        """Return a cleaned copy of an email message or EmailNode."""
+        if hasattr(message, "body_content"):
+            raw = getattr(message, "body_content", "") or ""
+            content_type = getattr(message, "content_type", "text") or "text"
+            cleaned_text = self._clean_content(raw, content_type)
+            message.cleaned_body = cleaned_text
+            return message
 
         cleaned = dict(message)
-
         body = message.get("body", {})
 
         if isinstance(body, dict):
@@ -97,13 +97,6 @@ class EmailCleaner:
             raw,
             content_type,
         )
-        logger.debug(
-            "Cleaned message ID '%s': raw length %d -> cleaned length %d",
-            message.get("id"),
-            len(raw),
-            len(cleaned["cleaned_body"]),
-        )
-
         return cleaned
 
     def _clean_content(
