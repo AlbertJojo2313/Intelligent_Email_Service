@@ -77,10 +77,10 @@ async def process_client_emails(
     )
     processed_threads = await processor.process_subject_groups(subject_groups)
 
-    # Step 4: Preprocessing & Cleaning (HTML stripping & signature removal)
+    # Step 4: Preprocessing & Cleaning (HTML stripping & signature removal in threadpool)
     cleaner = EmailCleaner(config=config.cleaner)
     for thread in processed_threads:
-        thread.messages = [cleaner.clean_message(msg) for msg in thread.messages]
+        thread.messages = await cleaner.clean_messages_async(thread.messages)
 
     # Step 5: Context Compression (LLMLingua neural prompt compression / character truncation)
     compressor = EmailCompressor(config=config.compressor)

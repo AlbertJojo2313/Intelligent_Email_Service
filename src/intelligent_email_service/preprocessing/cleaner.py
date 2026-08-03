@@ -1,3 +1,4 @@
+import asyncio
 import html
 import logging
 import re
@@ -99,6 +100,16 @@ class EmailCleaner:
         )
         return cleaned
 
+    async def clean_messages_async(
+        self,
+        messages: list[Any],
+    ) -> list[Any]:
+        """Clean a batch of messages concurrently using Python's default thread pool."""
+        if not messages:
+            return []
+        tasks = [asyncio.to_thread(self.clean_message, msg) for msg in messages]
+        return await asyncio.gather(*tasks)
+
     def _clean_content(
         self,
         raw_content: str | None,
@@ -196,7 +207,7 @@ class EmailCleaner:
             matched_str = match.group(0)
             # If the match is a generic salutation (e.g. "Thanks,"), verify it's near the end
             if self.SALUTATION_RE.match(matched_str):
-                remaining_text = text[match.end():]
+                remaining_text = text[match.end() :]
                 remaining_lines = [
                     line for line in remaining_text.splitlines() if line.strip()
                 ]

@@ -1,9 +1,8 @@
-from datetime import datetime
 import logging
 import math
 import re
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +18,6 @@ except ImportError:
 
 from ..config import CompressorConfig
 
-
 AVG_CHARS_PER_TOKEN: float = 4.0
 
 
@@ -32,10 +30,12 @@ class CompressedThread:
     format: str
     total_messages: int
     compressed_body: str
+    sender: str | None = None
+    senders: list[str] = field(default_factory=list)
+    participants: list[str] = field(default_factory=list)
     attachments_summary: list[dict[str, Any]] = field(default_factory=list)
     estimated_tokens: int = 0
     used_llmlingua: bool = False
-    compressed_messages: list[dict[str, Any]] = field(default_factory=list)
 
 
 class EmailCompressor:
@@ -43,10 +43,14 @@ class EmailCompressor:
     Context compressor for email threads of any shape.
 
     Handling rules:
-      - FULL_QUOTED: Takes the latest message (which contains the embedded quoted history),
-        compresses its body, and returns it as the single `compressed_body`.
-      - MODIFIED: Combines all chronological messages into a unified thread text,
-        then compresses that combined text into a single `compressed_body`.
+      - FULL_QUOTED (or any single-message thread): compress the one message's
+        body directly.
+      - MODIFIED: compress/truncate any individual messages that need it,
+        join everything into one chronological text, then compress that
+        combined text again if it's still too large.
+
+    New thread formats can be supported by adding an entry to `_strategies`
+    rather than editing `compress_processed_thread` itself.
     """
 
     # Cache of loaded LLMLingua models, keyed by model name
@@ -55,6 +59,11 @@ class EmailCompressor:
     def __init__(self, config: CompressorConfig | None = None):
         self.config = config or CompressorConfig()
         self.use_llmlingua = self.config.use_llmlingua and HAS_LLMLINGUA
+        self._strategies: dict[
+            str, Callable[[list[dict[str, Any]]], tuple[str, bool]]
+        ] = {
+            "full_quoted": self._compress_full_quoted,
+        }
 
     def compress_processed_thread(self, thread: Any) -> CompressedThread:
         """Compresses a ProcessedThread instance into a unified CompressedThread."""
@@ -70,78 +79,38 @@ class EmailCompressor:
                 format=fmt,
                 total_messages=0,
                 compressed_body="",
-                compressed_messages=[],
-                attachments_summary=[],
-                estimated_tokens=0,
-                used_llmlingua=False,
             )
 
-        attachments = []
-        for msg in messages:
-            attachments.extend(self._extract_attachments(msg))
+        normalized = [self._normalize_message(m) for m in messages]
 
-        used_lingua = False
-        processed_msgs = []
+        attachments: list[dict[str, Any]] = []
+        senders_seen: dict[str, None] = {}
+        participants: set[str] = set()
 
-        if fmt == "full_quoted" or len(messages) == 1:
-            latest_msg = messages[-1]
-            text = self._extract_body(latest_msg)
-            needs_comp = len(text) > self.config.max_full_body_chars
+        for nm in normalized:
+            attachments.extend(nm["attachments"])
+            if nm["sender"]:
+                senders_seen.setdefault(nm["sender"], None)
+                participants.add(nm["sender"])
+            participants.update(nm["recipients"])
 
-            if needs_comp and self.use_llmlingua:
-                compressed_body = self._compress_llmlingua(text)
-                used_lingua = compressed_body != text
-            elif needs_comp:
-                compressed_body = self._truncate_text(text)
-            else:
-                compressed_body = text
+        senders_list = list(senders_seen)
+        latest_sender = senders_list[-1] if senders_list else None
 
-            formatted = self._format_message(latest_msg, is_historical=False, body=compressed_body)
-            processed_msgs.append(formatted)
+        # A lone message is always handled like a full_quoted thread,
+        # regardless of the reported format.
+        strategy = (
+            self._compress_full_quoted
+            if len(normalized) == 1
+            else self._strategies.get(fmt, self._compress_modified)
+        )
+        compressed_body, used_lingua = strategy(normalized)
 
-        else:
-            chrono_texts = []
-            cutoff = max(len(messages) - self.config.recent_full_count, 0)
-
-            for idx, msg in enumerate(messages):
-                text = self._extract_body(msg)
-                is_historical = idx < cutoff
-                needs_comp = is_historical or len(text) > self.config.max_full_body_chars
-
-                if needs_comp and self.use_llmlingua:
-                    c_body = self._compress_llmlingua(text)
-                    used_lingua = used_lingua or (c_body != text)
-                elif needs_comp:
-                    c_body = self._truncate_text(text)
-                else:
-                    c_body = text
-
-                formatted = self._format_message(msg, is_historical=is_historical, body=c_body)
-                processed_msgs.append(formatted)
-
-                sender = getattr(msg, "sender", None) if hasattr(msg, "sender") else None
-                if not sender and isinstance(msg, dict):
-                    sender_obj = msg.get("from") or {}
-                    if isinstance(sender_obj, dict):
-                        addr_info = sender_obj.get("emailAddress") or {}
-                        if isinstance(addr_info, dict):
-                            sender = addr_info.get("name") or addr_info.get("address") or ""
-
-                header = f"[{sender}] " if sender else ""
-                chrono_texts.append(f"{header}{c_body}")
-
-            combined_raw = "\n\n---\n\n".join(chrono_texts)
-            needs_comp = len(combined_raw) > self.config.max_full_body_chars
-
-            if needs_comp and self.use_llmlingua:
-                compressed_body = self._compress_llmlingua(combined_raw)
-                used_lingua = used_lingua or (compressed_body != combined_raw)
-            elif needs_comp:
-                compressed_body = self._truncate_text(combined_raw)
-            else:
-                compressed_body = combined_raw
-
-        tokens = math.ceil(len(compressed_body) / AVG_CHARS_PER_TOKEN) if compressed_body else 0
+        tokens = (
+            math.ceil(len(compressed_body) / AVG_CHARS_PER_TOKEN)
+            if compressed_body
+            else 0
+        )
 
         return CompressedThread(
             subject=subject,
@@ -149,61 +118,156 @@ class EmailCompressor:
             format=fmt,
             total_messages=len(messages),
             compressed_body=compressed_body,
-            compressed_messages=processed_msgs,
+            sender=latest_sender,
+            senders=senders_list,
+            participants=sorted(participants),
             attachments_summary=attachments,
             estimated_tokens=tokens,
             used_llmlingua=used_lingua,
         )
 
-    def _compress_llmlingua(self, text: str) -> str:
+    # ---- Format strategies -------------------------------------------------
+
+    def _compress_full_quoted(self, normalized: list[dict[str, Any]]) -> tuple[str, bool]:
+        """The latest message already contains the full embedded quoted history."""
+        text = normalized[-1]["body"]
+        return self._compress_if_needed(text)
+
+    def _compress_modified(self, normalized: list[dict[str, Any]]) -> tuple[str, bool]:
+        """Compresses old messages individually, then compresses the joined result."""
+        cutoff = max(len(normalized) - self.config.recent_full_count, 0)
+        used_lingua = False
+        chrono_texts = []
+
+        for idx, nm in enumerate(normalized):
+            body, used = self._compress_if_needed(nm["body"], force=idx < cutoff)
+            used_lingua = used_lingua or used
+            header = f"[{nm['sender']}] " if nm["sender"] else ""
+            chrono_texts.append(f"{header}{body}")
+
+        combined = "\n\n---\n\n".join(chrono_texts)
+        compressed_body, used = self._compress_if_needed(combined)
+        return compressed_body, used_lingua or used
+
+    # ---- Compression core ---------------------------------------------------
+
+    def _compress_if_needed(self, text: str, force: bool = False) -> tuple[str, bool]:
+        """
+        Single point of truth for "does this text need compressing, and if
+        so, how." Replaces what used to be three duplicated
+        if/elif/else blocks. Returns (body, used_llmlingua).
+        """
+        if not force and len(text) <= self.config.max_full_body_chars:
+            return text, False
+
+        if self.use_llmlingua:
+            compressed, used = self._compress_llmlingua(text)
+            if used:
+                return compressed, True
+
+        return self._truncate_text(text), False
+
+    def _compress_llmlingua(self, text: str) -> tuple[str, bool]:
+        """Attempts LLMLingua compression. Returns (text, success) — success
+        is explicit rather than inferred from string inequality, so a
+        fallback-to-truncation result is never mistaken for a real
+        LLMLingua compression."""
         if not text or len(text) < self.config.activate_compressor_message_length:
-            return text
+            return text, False
         try:
             model = self._get_llmlingua_model()
             if model:
                 res = model.compress_prompt(
-                    context=[text], rate=self.config.llmlingua_rate
+                    context=[text],
+                    rate=self.config.llmlingua_rate,
+                    use_sentence_level_filter=False,
+                    token_budget_ratio=self.config.token_budget_ratio,
+                    keep_first_sentence=self.config.keep_first_sentence,
+                    force_tokens=self.config.force_tokens,
                 )
-                return res.get("compressed_prompt") or text
+                compressed = res.get("compressed_prompt")
+                if compressed:
+                    return compressed, True
         except Exception as err:
-            logger.warning("LLMLingua compression failed, falling back to truncation: %s", err)
-        return self._truncate_text(text)
+            logger.warning(
+                "LLMLingua compression failed, falling back to truncation: %s", err
+            )
+        return text, False
 
     def _truncate_text(self, text: str) -> str:
         if len(text) <= self.config.max_full_body_chars:
             return text
         return text[: self.config.max_full_body_chars].rstrip() + " [... truncated]"
 
-    def _format_message(
-        self, msg: Any, is_historical: bool, body: str
-    ) -> dict[str, Any]:
-        if hasattr(msg, "__dict__"):
-            compressed_msg = {
-                k: v.isoformat() if isinstance(v, datetime) else v
-                for k, v in msg.__dict__.items()
-            }
-        elif isinstance(msg, dict):
-            compressed_msg = {
-                k: v.isoformat() if isinstance(v, datetime) else v
-                for k, v in msg.items()
-            }
+    # ---- Message normalization (Adapter) ------------------------------------
+
+    @staticmethod
+    def _normalize_message(msg: Any) -> dict[str, Any]:
+        """
+        Adapts either an attribute-based message object or a raw dict (e.g.
+        Graph API shape) into one canonical dict, so every downstream piece
+        of logic reads a single shape instead of re-checking "is this a
+        dict or an object?" on every field access.
+        """
+        if isinstance(msg, dict):
+            sender = EmailCompressor._sender_from_dict(msg)
+            recipients = EmailCompressor._recipients_from_dict(msg)
+            body = EmailCompressor._body_from_dict(msg)
+            attachments = msg.get("attachments") or []
         else:
-            compressed_msg = {}
+            sender = str(getattr(msg, "sender", "") or "")
+            recipients = [str(r) for r in (getattr(msg, "recipients", None) or []) if r]
+            body = str(
+                getattr(msg, "cleaned_body", "") or getattr(msg, "body_content", "") or ""
+            )
+            attachments = getattr(msg, "attachments", None) or []
 
-        compressed_msg["compressed_body"] = body
-        compressed_msg["is_historical"] = is_historical
-        compressed_msg["attachments"] = self._extract_attachments(msg)
-        compressed_msg["estimated_tokens"] = math.ceil(len(body) / AVG_CHARS_PER_TOKEN) if body else 0
-        return compressed_msg
+        return {
+            "sender": sender,
+            "recipients": recipients,
+            "body": body,
+            "attachments": EmailCompressor._clean_attachments(attachments),
+        }
 
-    def _extract_attachments(self, msg: Any) -> list[dict[str, Any]]:
-        if hasattr(msg, "attachments"):
-            raw = getattr(msg, "attachments", []) or []
-        elif isinstance(msg, dict):
-            raw = msg.get("attachments") or []
-        else:
-            raw = []
+    @staticmethod
+    def _sender_from_dict(msg: dict[str, Any]) -> str:
+        sender_obj = msg.get("from") or {}
+        if isinstance(sender_obj, str):
+            return sender_obj
+        if isinstance(sender_obj, dict):
+            addr_info = sender_obj.get("emailAddress") or {}
+            if isinstance(addr_info, dict):
+                return addr_info.get("address") or addr_info.get("name") or ""
+        return ""
 
+    @staticmethod
+    def _recipients_from_dict(msg: dict[str, Any]) -> list[str]:
+        recipients = []
+        for r in msg.get("toRecipients") or []:
+            if not isinstance(r, dict):
+                continue
+            addr_info = r.get("emailAddress") or {}
+            if not isinstance(addr_info, dict):
+                continue
+            addr = addr_info.get("address") or addr_info.get("name")
+            if addr:
+                recipients.append(addr)
+        return recipients
+
+    @staticmethod
+    def _body_from_dict(msg: dict[str, Any]) -> str:
+        cleaned = msg.get("cleaned_body")
+        if isinstance(cleaned, str) and cleaned:
+            return cleaned
+        body_obj = msg.get("body")
+        if isinstance(body_obj, dict):
+            return str(body_obj.get("content") or "")
+        if isinstance(body_obj, str):
+            return body_obj
+        return ""
+
+    @staticmethod
+    def _clean_attachments(raw: Any) -> list[dict[str, Any]]:
         if not isinstance(raw, list):
             return []
         return [
@@ -218,23 +282,6 @@ class EmailCompressor:
             for a in raw
             if isinstance(a, dict)
         ]
-
-    @staticmethod
-    def _extract_body(msg: Any) -> str:
-        if hasattr(msg, "cleaned_body") and getattr(msg, "cleaned_body"):
-            return str(getattr(msg, "cleaned_body"))
-        if hasattr(msg, "body_content") and getattr(msg, "body_content"):
-            return str(getattr(msg, "body_content"))
-        if isinstance(msg, dict):
-            cleaned = msg.get("cleaned_body")
-            if isinstance(cleaned, str) and cleaned:
-                return cleaned
-            body_obj = msg.get("body")
-            if isinstance(body_obj, dict):
-                return str(body_obj.get("content") or "")
-            if isinstance(body_obj, str):
-                return body_obj
-        return ""
 
     def _get_llmlingua_model(self) -> Any:
         """Loads (and caches, per model name) the LLMLingua compressor for this instance's model."""

@@ -22,10 +22,15 @@ class CompressorConfig:
     recent_full_count: int = 2
     max_full_body_chars: int = 300
     use_llmlingua: bool = True
-    llmlingua_rate: float = 0.5
+    llmlingua_rate: float = 0.75
     llmlingua_model: str = "microsoft/llmlingua-2-xlm-roberta-large-meetingbank"
     llmlingua_device: str = "cpu"
     activate_compressor_message_length: int = 100
+    force_tokens: list[str] = field(
+        default_factory=lambda: ["\n", ".", "?", "[", "]", ":", "!"]
+    )
+    token_budget_ratio: float = 1.8
+    keep_first_sentence: bool = True
 
 
 @dataclass
