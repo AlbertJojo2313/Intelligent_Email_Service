@@ -75,3 +75,16 @@ def test_custom_signature_patterns():
     )
     email = "Some text.\n\n--- My Custom Signature ---\nExtra info"
     assert cleaner._clean_content(email, content_type="text").strip() == "Some text."
+
+
+@pytest.mark.asyncio
+async def test_clean_messages_async():
+    cleaner = EmailCleaner()
+    msgs = [
+        {"id": "1", "body": {"contentType": "html", "content": "<div>Hello <b>World</b></div>"}},
+        {"id": "2", "body": "Plain text email\n\nBest regards,\nJane"},
+    ]
+    cleaned = await cleaner.clean_messages_async(msgs)
+    assert len(cleaned) == 2
+    assert cleaned[0]["cleaned_body"] == "Hello World"
+    assert "Best regards" not in cleaned[1]["cleaned_body"]

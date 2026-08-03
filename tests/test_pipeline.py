@@ -90,7 +90,6 @@ async def test_main_success(tmp_path, monkeypatch):
             format="full_quoted",
             total_messages=1,
             compressed_body="Test compressed body",
-            compressed_messages=[],
             attachments_summary=[],
             estimated_tokens=50,
             used_llmlingua=False,
