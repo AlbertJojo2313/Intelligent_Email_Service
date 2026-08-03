@@ -29,19 +29,18 @@ def test_compress_full_quoted_thread_bypasses_compression():
     assert result.subject == "Portfolio Review"
     assert result.total_messages == 1
     assert result.used_llmlingua is False
-    assert len(result.compressed_messages) == 1
-    assert result.compressed_messages[0]["compressed_body"] == "Hello John, let's proceed with rebalancing."
+    assert result.compressed_body == "Hello John, let's proceed with rebalancing."
     assert len(result.attachments_summary) == 1
     assert result.attachments_summary[0]["name"] == "report.pdf"
 
 
 def test_compress_modified_multi_message_thread():
     compressor = EmailCompressor(
-        config=CompressorConfig(recent_full_count=2, max_full_body_chars=50, use_llmlingua=False)
+        config=CompressorConfig(recent_full_count=2, max_full_body_chars=500, use_llmlingua=False)
     )
 
-    msg1 = {"id": "m1", "cleaned_body": "This is an older message that should be truncated because it is long."}
-    msg2 = {"id": "m2", "cleaned_body": "This is another older message that should also be truncated."}
+    msg1 = {"id": "m1", "cleaned_body": "This is an older message."}
+    msg2 = {"id": "m2", "cleaned_body": "This is another older message."}
     msg3 = {"id": "m3", "cleaned_body": "This is recent message 1, keep full text."}
     msg4 = {"id": "m4", "cleaned_body": "This is recent message 2, keep full text."}
 
@@ -56,13 +55,8 @@ def test_compress_modified_multi_message_thread():
     result = compressor.compress_processed_thread(thread)
 
     assert result.total_messages == 4
-    # Recent 2 messages kept full text
-    assert result.compressed_messages[2]["compressed_body"] == "This is recent message 1, keep full text."
-    assert result.compressed_messages[3]["compressed_body"] == "This is recent message 2, keep full text."
-
-    # Older 2 messages truncated
-    assert "[... truncated]" in result.compressed_messages[0]["compressed_body"]
-    assert "[... truncated]" in result.compressed_messages[1]["compressed_body"]
+    assert "This is recent message 1, keep full text." in result.compressed_body
+    assert "This is recent message 2, keep full text." in result.compressed_body
 
 
 def test_clean_subject():

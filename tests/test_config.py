@@ -55,4 +55,4 @@ async def test_process_client_emails_with_config_objects():
 
         assert len(threads) == 1
         assert threads[0].subject == "Tax Planning 2026"
-        assert threads[0].compressed_messages[0]["compressed_body"] == "Let's review tax strategies for 2026."
+        assert threads[0].compressed_body == "Let's review tax strategies for 2026."
