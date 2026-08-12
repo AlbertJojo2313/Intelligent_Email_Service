@@ -1,31 +1,31 @@
 # Intelligent Email Service
 
-This project is an email intelligence service that ingests mailbox data via the Microsoft Graph API (or local mock endpoints) and transforms it into a structured, compressed format optimized for LLM prompting at scale.
+This project is an email intelligence service that ingests mailbox data via Microsoft Graph API (or local mock endpoints) and transforms it into a structured, compressed format optimized for LLM context windows at scale.
 
-Given a financial advisor's mailbox and a target client's (household's) email address, it retrieves historical correspondence, converts incoming payloads into a strongly-typed `EmailNode` domain model, resolves conversation threads using an **in-memory Directed Acyclic Graph (DAG)** via `ConversationReconstructor` strategies, cleans and compresses the content, and outputs streamlined JSON payloads containing a single `compressed_body` per subject ready for downstream LLM context injection.
+Given a financial advisor's mailbox and a target client's (household's) email address, it retrieves historical correspondence, converts incoming payloads into a strongly-typed `EmailNode` domain model, resolves conversation threads using an **in-memory Directed Acyclic Graph (DAG)** via `ConversationReconstructor` strategies, extracts readable text attachments, cleans and compresses the content, and outputs streamlined JSON payloads containing a single `compressed_body` per subject ready for downstream LLM context injection.
 
 ---
 
 ## Key Features & Capabilities
 
-- **Mailbox Ingestion**: Pulls email metadata, message bodies, and attachment descriptors via Microsoft Graph API abstraction (`EmailProvider`).
-- **Domain Model (`EmailNode`)**: Replaces raw dictionaries with strongly-typed `EmailNode` objects for end-to-end type safety.
-- **In-Memory DAG Thread Reconstruction**: Uses `GraphConversationReconstructor` (Strategy pattern via `typing.Protocol`) to build an in-memory DAG from `In-Reply-To` and `Message-ID` headers, correctly ordering branching replies.
-- **Preprocessing & Cleaning**: Strips HTML tags, email signatures, disclaimers, and normalizes whitespace via `EmailCleaner` ([`docs/preprocessing.md`](docs/preprocessing.md)).
-- **Unified Context Compression**: Applies character truncation and hybrid prompt compression via **LLMLingua** (`EmailCompressor`) to output a single top-level `compressed_body` per subject thread ([`docs/preprocessing.md`](docs/preprocessing.md)).
-- **Domain Exception Handling**: Uniform error handling mapping HTTP status codes (401/403, 404, 429 rate limits) into domain exceptions (`EmailServiceError`, `EmailProviderError`, `ProviderRateLimitError`).
-- **Configuration Object Pattern**: Uses typed dataclass configuration objects (`EmailQueryFilter`, `PipelineConfig`, `CleanerConfig`, `CompressorConfig`) for modular setting management.
+- **Mailbox Ingestion**: Pulls email metadata, message bodies, and attachment descriptors via Microsoft Graph API (`MicrosoftGraphProvider` with Azure AD / `DefaultAzureCredential` & `@odata.nextLink` pagination).
+- **Domain Model (`EmailNode`)**: Replaces raw dictionaries with strongly-typed `EmailNode` objects for end-to-end type safety and timezone-aware UTC dates.
+- **In-Memory DAG Thread Reconstruction**: Uses `GraphConversationReconstructor` (Strategy pattern via `typing.Protocol`) to build an in-memory DAG from `In-Reply-To` and `Message-ID` headers, correctly ordering branching replies without message loss.
+- **Attachment Processing**: Extracts uncompressed plain text content from readable text attachments (`.txt`, `.csv`, `.json`, `.md`, `.log`, `.yaml`, etc.) via `process_node_attachments()`.
+- **Preprocessing & Cleaning**: Strips HTML tags, email signatures, disclaimers, and normalizes whitespace via `EmailCleaner` ([`docs/production/preprocessing.md`](docs/production/preprocessing.md)).
+- **Unified Context Compression**: Applies character truncation and hybrid prompt compression via **LLMLingua** (`EmailCompressor`) to output a single top-level `compressed_body` per subject thread ([`docs/production/preprocessing.md`](docs/production/preprocessing.md)).
+- **Domain Exception Handling**: Uniform error handling mapping HTTP status codes (401/403 auth, 404, 429 rate limits with retry-after handling) into domain exceptions (`EmailServiceError`, `EmailProviderError`, `ProviderRateLimitError`).
+- **Environment-Driven Configuration**: Every parameter (`LOG_LEVEL`, `MAX_CONCURRENCY`, `GRAPH_API_BASE_URL`, `USE_LLMLINGUA`, `LLMLINGUA_MODEL`, `LLMLINGUA_DEVICE`) can be configured via `.env` or overridden programmatically.
 - **End-to-End Driver Pipeline**: Programmatic API driver and executable CLI script (`process_client_emails` in [`pipeline.py`](src/intelligent_email_service/pipeline.py)).
-- **Synthetic Email Generator**: Includes an asynchronous multi-client generator using the **NVIDIA AI Cloud / NIM API** (`deepseek-ai/deepseek-v4-flash`) and template fallbacks to build Graph API-compliant test datasets ([`docs/synthetic-generator.md`](docs/synthetic-generator.md)).
+- **Synthetic Email Generator**: Includes an asynchronous multi-client generator using the **NVIDIA AI Cloud / NIM API** (`deepseek-ai/deepseek-v4-flash`) and template fallbacks to build test datasets ([`docs/development/synthetic-generator.md`](docs/development/synthetic-generator.md)).
 
 ---
 
-## ⚠️ Current Integration Status: Mocked (Planned Graph API Outline)
+## 🟢 Integration Status: Fully Implemented
 
-> [!IMPORTANT]
-> The current architecture for Microsoft Graph API support is **a planned outline (`MicrosoftGraphProvider`) and is not implemented for live endpoints yet**. Currently, the project uses a **Mockoon server** (`MockGraphProvider`) to simulate the API endpoints (`GET /v1.0/users/{user-id}/messages`), allowing offline development. Core processing modules (`EmailRetrievalService`, `ThreadProcessor`, `EmailCleaner`, `EmailCompressor`, `process_client_emails`) are fully implemented.
+Core processing modules (`EmailRetrievalService`, `ThreadProcessor`, `EmailCleaner`, `EmailCompressor`, `process_client_emails`) and network provider integrations (`MicrosoftGraphProvider` and `MockGraphProvider`) are **fully implemented and covered by unit tests**.
 
-For details on local mock server configuration, synthetic dataset generation, and the planned transition to Microsoft Graph API access, see [`docs/mock-setup.md`](docs/mock-setup.md).
+To get started in under 5 minutes, follow the **[Getting Started Guide](docs/production/getting-started.md)**.
 
 ---
 
@@ -47,54 +47,69 @@ cd email_service
 
 # Install all dependencies (including dev tools) into virtual environment
 uv sync --all-extras
+
+# Copy environment variables template
+cp .env.example .env
 ```
 
 ---
 
-## Running the Pipeline
+## Usage & Pipeline Integration
 
-### 1. Programmatic Usage (Python)
+The primary entry point of the package is [`process_client_emails`](src/intelligent_email_service/pipeline.py), an `async` pipeline driver that orchestrates end-to-end processing across 5 distinct stages:
+
+1. **Retrieval**: Queries the email provider for messages matching `advisor_id` and `client_id`.
+2. **Grouping**: Normalizes subject lines and groups messages into subject-based threads.
+3. **Thread Reconstruction**: Uses `ThreadProcessor` to reconstruct modified & full-quoted threads via in-memory DAG modeling.
+4. **Attachment Extraction & Preprocessing**: Extracts text attachment content via `process_node_attachments()` and strips HTML noise/signatures via `EmailCleaner`.
+5. **Context Compression**: Applies LLMLingua neural prompt compression or character truncation via `EmailCompressor`.
+
+---
+
+### 1. Basic Programmatic Usage
 
 ```python
 import asyncio
 from intelligent_email_service import (
     EmailQueryFilter,
-    MockGraphProvider,
     PipelineConfig,
     process_client_emails,
 )
 
-async def main():
-    provider = MockGraphProvider(base_url="http://localhost:3000")
 
+async def main():
+    # 1. Define query filters
     query = EmailQueryFilter(
-        advisor_id="tst_ad-001",
+        advisor_id="advisor@example.com",
         client_id="jane.household@example-clients.com",
     )
+
+    # 2. Pipeline automatically loads settings from .env
     config = PipelineConfig()
 
-    compressed_threads = await process_client_emails(
-        query=query,
-        config=config,
-        provider=provider,
-    )
+    # 3. Execute the pipeline
+    compressed_threads = await process_client_emails(query=query, config=config)
 
+    # 4. Inspect compressed outputs
     for thread in compressed_threads:
-        print(f"Subject: {thread.subject} | Format: {thread.format} | Tokens: {thread.estimated_tokens}")
+        print(f"Subject:         {thread.subject}")
+        print(f"Conversation ID: {thread.conversation_id}")
+        print(f"Total Messages:  {thread.total_messages}")
+        print(f"Est. Tokens:     {thread.estimated_tokens}")
         print(f"Compressed Body:\n{thread.compressed_body}\n")
+
 
 if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-### 2. Executable CLI Command
+---
 
-Run `pipeline.py` directly from the command line:
+### 2. Executable CLI Driver
+
+The module can also be executed directly as a CLI script via [`pipeline.py`](src/intelligent_email_service/pipeline.py). It processes matching emails and exports results to `compressed_threads.json`.
 
 ```bash
-# Run with default arguments
-uv run python -m intelligent_email_service.pipeline
-
 # Run with custom Advisor ID and Client ID
 uv run python -m intelligent_email_service.pipeline "advisor@firm.com" "client@household.com"
 ```
@@ -104,16 +119,16 @@ uv run python -m intelligent_email_service.pipeline "advisor@firm.com" "client@h
 ## Architecture Overview
 
 ```
-Connector Layer (EmailProvider / MockGraphProvider / MicrosoftGraphProvider Outline)
+Connector Layer (MicrosoftGraphProvider [prod] / MockGraphProvider [dev])
        │
        ▼
-Retrieval & Domain Conversion (EmailNode: ID / Message-ID / In-Reply-To headers)
+Retrieval & Domain Conversion (EmailNode: ID / Message-ID / In-Reply-To / UTC received_at)
        │
        ▼
 Thread Resolution (Strategy Layer: GraphConversationReconstructor In-Memory DAG)
        │
        ▼
-Preprocessing & Cleaning (EmailCleaner: HTML Stripping / Signature Removal)
+Attachment Extraction & Cleaning (process_node_attachments / EmailCleaner HTML & Signatures)
        │
        ▼
 Context Compression (EmailCompressor: LLMLingua & Truncation -> Single compressed_body)
@@ -122,17 +137,21 @@ Context Compression (EmailCompressor: LLMLingua & Truncation -> Single compresse
 Structured Payload Output (CompressedThread / LLM Context Prompt Payload)
 ```
 
-See [`docs/architecture.md`](docs/architecture.md) for detailed data flow diagrams and component design specifications.
+See [`docs/production/architecture.md`](docs/production/architecture.md) for detailed data flow diagrams and component specifications.
 
 ---
 
-## Documentation Quick Links
+## 📚 Documentation Directory
 
-- [**Architecture & System Design**](docs/architecture.md): Data flow pipeline, configuration objects, identity model, in-memory DAG reconstruction, and component interactions.
-- [**Output Schema & Data Structure**](docs/data-structure.md): Streamlined output payload schema (`compressed_body`) and field specifications.
-- [**Mock Setup & Local Development**](docs/mock-setup.md): Guide for running Mockoon and local API simulation.
-- [**Preprocessing & Compression**](docs/preprocessing.md): Detailed cleaner and compressor module specifications.
-- [**Synthetic Email Generator**](docs/synthetic-generator.md): Usage guide for synthetic email thread generation with NVIDIA LLM / Fallback templates.
+### 🟢 Production Environment
+- **[Getting Started Guide](docs/production/getting-started.md)**: Setup, `.env` configuration, and pipeline quickstart.
+- **[Architecture & System Design](docs/production/architecture.md)**: Data flow pipeline, configuration objects, DAG reconstruction, and component design.
+- **[Output Schema & Data Structure](docs/production/data-structure.md)**: Streamlined output payload schema (`compressed_body`) and field specifications.
+- **[Preprocessing & Compression](docs/production/preprocessing.md)**: Detailed cleaner, attachment processor, and compressor specifications.
+
+### 🟡 Local Development & Testing
+- **[Mock Setup & Local Development](docs/development/mock-setup.md)**: Guide for running Mockoon and local API simulation.
+- **[Synthetic Email Generator](docs/development/synthetic-generator.md)**: Usage guide for synthetic email thread generation with NVIDIA LLM / Fallback templates.
 
 ---
 
