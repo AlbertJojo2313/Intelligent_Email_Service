@@ -7,3 +7,9 @@ uv.lock
 data/
 *.vscode
 *compressed_threads.json
+get_metrics.py
+measured_metrics_results.json
+mkdocs.prod.yml
+mkdocs.yml
+*.DS_Store
+todo.txt
