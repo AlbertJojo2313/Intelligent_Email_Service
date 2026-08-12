@@ -1,6 +1,7 @@
 """Unit tests for intelligent_email_service logging configuration."""
 
 import logging
+
 from intelligent_email_service import setup_logging
 
 

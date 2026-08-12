@@ -46,6 +46,4 @@ async def test_retrieval_service_propagates_provider_error():
     service = EmailRetrievalService(provider=mock_provider)
 
     with pytest.raises(ProviderAuthenticationError):
-        await service.get_client_emails(
-            advisor_id="adv1", client_id="client@example.com"
-        )
+        await service.get_client_emails(advisor_id="adv1", client_id="client@example.com")

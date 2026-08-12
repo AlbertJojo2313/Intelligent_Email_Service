@@ -1,12 +1,18 @@
-import pytest
-
 from intelligent_email_service import CompressorConfig
-from intelligent_email_service.preprocessing.compressor import CompressedThread, EmailCompressor
-from intelligent_email_service.retrieval.thread_processor import ProcessedThread, ThreadFormat
+from intelligent_email_service.preprocessing.compressor import (
+    CompressedThread,
+    EmailCompressor,
+)
+from intelligent_email_service.retrieval.thread_processor import (
+    ProcessedThread,
+    ThreadFormat,
+)
 
 
 def test_compress_full_quoted_thread_bypasses_compression():
-    compressor = EmailCompressor(config=CompressorConfig(recent_full_count=2, use_llmlingua=False))
+    compressor = EmailCompressor(
+        config=CompressorConfig(recent_full_count=2, use_llmlingua=False)
+    )
 
     msg = {
         "id": "msg-1",
@@ -36,7 +42,9 @@ def test_compress_full_quoted_thread_bypasses_compression():
 
 def test_compress_modified_multi_message_thread():
     compressor = EmailCompressor(
-        config=CompressorConfig(recent_full_count=2, max_full_body_chars=500, use_llmlingua=False)
+        config=CompressorConfig(
+            recent_full_count=2, max_full_body_chars=500, use_llmlingua=False
+        )
     )
 
     msg1 = {"id": "m1", "cleaned_body": "This is an older message."}
@@ -60,5 +68,8 @@ def test_compress_modified_multi_message_thread():
 
 
 def test_clean_subject():
-    assert EmailCompressor.clean_subject("Re: Fwd: FW: re: Financial Statement") == "Financial Statement"
+    assert (
+        EmailCompressor.clean_subject("Re: Fwd: FW: re: Financial Statement")
+        == "Financial Statement"
+    )
     assert EmailCompressor.clean_subject("Quarterly Planning") == "Quarterly Planning"

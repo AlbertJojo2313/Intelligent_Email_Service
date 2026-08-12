@@ -1,4 +1,5 @@
 import re
+
 import pytest
 
 from intelligent_email_service import CleanerConfig
@@ -32,7 +33,10 @@ def test_clean_html_preserve_links():
     html = '<p>Check <a href="https://example.com">this link</a> for details.</p>'
 
     assert cleaner_no_links._clean_html(html) == "Check this link for details."
-    assert cleaner_links._clean_html(html) == "Check this link (https://example.com) for details."
+    assert (
+        cleaner_links._clean_html(html)
+        == "Check this link (https://example.com) for details."
+    )
 
 
 def test_strip_signatures():
@@ -55,7 +59,10 @@ def test_normalize_whitespace_and_blank_lines():
     "raw_body, expected_cleaned",
     [
         (
-            {"contentType": "html", "content": "<div>Hello,<br><br>Updated.<br><br>Thanks,<br>Jane</div>"},
+            {
+                "contentType": "html",
+                "content": "<div>Hello,<br><br>Updated.<br><br>Thanks,<br>Jane</div>",
+            },
             "Hello,\n\nUpdated.",
         ),
         ("Plain text email body.\n\nSent from my iPhone", "Plain text email body."),
@@ -71,7 +78,9 @@ def test_clean_message_body_variations(raw_body, expected_cleaned):
 def test_custom_signature_patterns():
     custom_pattern = re.compile(r"^---\s*My Custom Signature\s*---", re.MULTILINE)
     cleaner = EmailCleaner(
-        config=CleanerConfig(strip_signatures=True, custom_signature_patterns=[custom_pattern])
+        config=CleanerConfig(
+            strip_signatures=True, custom_signature_patterns=[custom_pattern]
+        )
     )
     email = "Some text.\n\n--- My Custom Signature ---\nExtra info"
     assert cleaner._clean_content(email, content_type="text").strip() == "Some text."
@@ -81,7 +90,10 @@ def test_custom_signature_patterns():
 async def test_clean_messages_async():
     cleaner = EmailCleaner()
     msgs = [
-        {"id": "1", "body": {"contentType": "html", "content": "<div>Hello <b>World</b></div>"}},
+        {
+            "id": "1",
+            "body": {"contentType": "html", "content": "<div>Hello <b>World</b></div>"},
+        },
         {"id": "2", "body": "Plain text email\n\nBest regards,\nJane"},
     ]
     cleaned = await cleaner.clean_messages_async(msgs)
