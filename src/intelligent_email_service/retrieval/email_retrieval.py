@@ -1,13 +1,14 @@
 import logging
 from collections import defaultdict
 from collections.abc import Iterable
-from datetime import datetime
+from datetime import UTC, datetime
 from itertools import chain
 from typing import Any
 
 from intelligent_email_service.email_connectors.base import EmailProvider
 from intelligent_email_service.exceptions import EmailProviderError, EmailRetrievalError
-from ..utils import normalize_subject, parse_iso_datetime, sanitize_attachments
+from intelligent_email_service.utils import normalize_subject, sanitize_attachments
+
 from .email_node import EmailNode
 
 logger = logging.getLogger(__name__)
@@ -79,16 +80,24 @@ class EmailRetrievalService:
             message.get("toRecipients") or [],
             message.get("ccRecipients") or [],
         )
-        return any(EmailRetrievalService._email_address_matches(r, client_id) for r in recipients)
+        return any(
+            EmailRetrievalService._email_address_matches(r, client_id) for r in recipients
+        )
 
     @staticmethod
-    def _email_address_matches(participant: dict[str, Any] | None, client_id: str) -> bool:
+    def _email_address_matches(participant: Any, client_id: str) -> bool:
+        if isinstance(participant, str):
+            return participant.lower() == client_id
         if not isinstance(participant, dict):
             return False
         email_address = participant.get("emailAddress")
-        if not isinstance(email_address, dict):
-            return False
-        return (email_address.get("address") or "").lower() == client_id
+        if isinstance(email_address, str):
+            return email_address.lower() == client_id
+        if isinstance(email_address, dict):
+            addr = email_address.get("address") or email_address.get("name") or ""
+            return addr.lower() == client_id
+        addr = participant.get("address") or participant.get("name") or ""
+        return addr.lower() == client_id if addr else False
 
     @staticmethod
     def _group_by_subject(nodes: Iterable[EmailNode]) -> dict[str, list[EmailNode]]:
@@ -98,13 +107,16 @@ class EmailRetrievalService:
             norm_subj = normalize_subject(node.subject, lower=True)
             groups[norm_subj].append(node)
 
+        min_utc = datetime.min.replace(tzinfo=UTC)
         for thread_nodes in groups.values():
-            thread_nodes.sort(key=lambda n: n.received_at or datetime.min)
+            thread_nodes.sort(key=lambda n: n.received_at or min_utc)
 
         return dict(groups)
 
     @staticmethod
     def _sanitize_message(message: dict[str, Any]) -> dict[str, Any]:
         clean_msg = dict(message)
-        clean_msg["attachments"] = sanitize_attachments(message.get("attachments"), include_is_inline=True)
+        clean_msg["attachments"] = sanitize_attachments(
+            message.get("attachments"), include_is_inline=True
+        )
         return clean_msg

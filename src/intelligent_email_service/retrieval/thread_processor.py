@@ -5,11 +5,10 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any, ClassVar
 
-from ..email_connectors.base import EmailProvider
-from ..utils import get_message_datetime
-from .email_retrieval import EmailRetrievalService
+from intelligent_email_service.email_connectors.base import EmailProvider
 
 from .email_node import EmailNode
+from .email_retrieval import EmailRetrievalService
 from .reconstructors import ConversationReconstructor, GraphConversationReconstructor
 
 logger = logging.getLogger(__name__)
@@ -51,7 +50,9 @@ class ThreadProcessor:
     """
 
     QUOTED_HEADER_PATTERNS: ClassVar[list[re.Pattern[str]]] = [
-        re.compile(r"(?:<p[^>]*>|<div[^>]*>)?\s*On\s+.+?\s+wrote:", re.IGNORECASE | re.DOTALL),
+        re.compile(
+            r"(?:<p[^>]*>|<div[^>]*>)?\s*On\s+.+?\s+wrote:", re.IGNORECASE | re.DOTALL
+        ),
         re.compile(r"-{3,}\s*Original Message\s*-{3,}", re.IGNORECASE),
         re.compile(
             r"(?:From|De):\s*.*?(?:<br\s*/?>|<\/div>|<\/p>|\n)\s*(?:Sent|Date|Envoyé):",
@@ -170,7 +171,10 @@ class ThreadProcessor:
             ]
 
         nodes = [
-            m if isinstance(m, EmailNode) else EmailNode.from_dict(m) for m in raw_messages
+            m
+            if isinstance(m, EmailNode)
+            else EmailNode.from_dict(EmailRetrievalService._sanitize_message(m))
+            for m in raw_messages
         ]
         reconstructed = self.reconstructor.reconstruct(nodes) if nodes else fallback_nodes
         return reconstructed or fallback_nodes
@@ -183,5 +187,11 @@ class ThreadProcessor:
         tasks = [
             self.process_subject_group(messages) for messages in subject_groups.values()
         ]
-        results = await asyncio.gather(*tasks)
-        return [res for res in results if res is not None]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        processed: list[ProcessedThread] = []
+        for res in results:
+            if isinstance(res, Exception):
+                logger.error("Failed to process subject group: %s", res)
+            elif res is not None:
+                processed.append(res)
+        return processed

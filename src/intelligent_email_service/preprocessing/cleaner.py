@@ -6,7 +6,7 @@ from typing import Any, ClassVar
 
 import bs4
 
-from ..config import CleanerConfig
+from intelligent_email_service.config import CleanerConfig
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +66,7 @@ class EmailCleaner:
         combined = "|".join(f"(?:{p.pattern})" for p in patterns)
         return re.compile(
             combined,
-            re.IGNORECASE | re.MULTILINE | re.DOTALL,
+            re.IGNORECASE | re.MULTILINE,
         )
 
     def clean_message(

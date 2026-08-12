@@ -1,8 +1,11 @@
 import logging
 import math
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any, ClassVar
+
+from intelligent_email_service.config import CompressorConfig
 
 logger = logging.getLogger(__name__)
 
@@ -15,8 +18,6 @@ except ImportError:
     PromptCompressor = None
     HAS_LLMLINGUA = False
 
-
-from ..config import CompressorConfig
 
 AVG_CHARS_PER_TOKEN: float = 4.0
 
@@ -54,7 +55,7 @@ class EmailCompressor:
     """
 
     # Cache of loaded LLMLingua models, keyed by model name
-    _llm_compressors: dict[str, Any] = {}
+    _llm_compressors: ClassVar[dict[str, Any]] = {}
 
     def __init__(self, config: CompressorConfig | None = None):
         self.config = config or CompressorConfig()
@@ -92,7 +93,9 @@ class EmailCompressor:
             if nm["sender"]:
                 senders_seen.setdefault(nm["sender"], None)
                 participants.add(nm["sender"])
-            participants.update(nm["recipients"])
+            for recipient in nm["recipients"]:
+                if recipient:
+                    participants.add(recipient)
 
         senders_list = list(senders_seen)
         latest_sender = senders_list[-1] if senders_list else None
@@ -270,18 +273,23 @@ class EmailCompressor:
     def _clean_attachments(raw: Any) -> list[dict[str, Any]]:
         if not isinstance(raw, list):
             return []
-        return [
-            {
-                "id": a.get("id"),
-                "name": a.get("name") or a.get("fileName") or "attachment",
-                "contentType": a.get("contentType")
-                or a.get("content_type")
-                or "application/octet-stream",
-                "size": a.get("size") or 0,
-            }
-            for a in raw
-            if isinstance(a, dict)
-        ]
+        cleaned: list[dict[str, Any]] = []
+        for a in raw:
+            if isinstance(a, dict):
+                item = {
+                    "id": a.get("id"),
+                    "name": a.get("name") or a.get("fileName") or "attachment",
+                    "contentType": (
+                        a.get("contentType")
+                        or a.get("content_type")
+                        or "application/octet-stream"
+                    ),
+                    "size": a.get("size") or 0,
+                }
+                if "content" in a:
+                    item["content"] = a["content"]
+                cleaned.append(item)
+        return cleaned
 
     def _get_llmlingua_model(self) -> Any:
         """Loads (and caches, per model name) the LLMLingua compressor for this instance's model."""
