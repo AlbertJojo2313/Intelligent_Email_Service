@@ -162,6 +162,18 @@ def _parser_config():
         default=os.getenv("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1"),
         help="NVIDIA API base URL",
     )
+    parser.add_argument(
+        "--concurrency",
+        type=int,
+        default=int(os.getenv("LLM_CONCURRENCY", "1")),
+        help="Maximum concurrent LLM requests to avoid 429 rate limits (default: 1)",
+    )
+    parser.add_argument(
+        "--request-delay",
+        type=float,
+        default=float(os.getenv("LLM_REQUEST_DELAY", "0.5")),
+        help="Delay in seconds between LLM requests to prevent 429 rate limits (default: 0.5)",
+    )
     return parser
 
 
@@ -198,6 +210,8 @@ async def main():
         ),
         config=EmailGenerationConfig(fallback_templates=FALLBACK_TEMPLATES),
         nvidia_client=llm_client,
+        max_concurrency=args.concurrency,
+        request_delay=args.request_delay,
     )
 
     all_messages = []
@@ -245,8 +259,8 @@ async def main():
         json.dump(response_wrapper, f, indent=2)
 
     print(
-        f"\nSuccessfully generated {len(all_messages)} \
-            total messages across {args.conversations} threads."
+        f"\nSuccessfully generated {len(all_messages)} "
+        f"total messages across {args.conversations} threads."
     )
     print(f"Saved dataset to {args.output}")
 
