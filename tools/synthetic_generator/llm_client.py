@@ -2,8 +2,14 @@ import json
 import logging
 from typing import Any
 
-from openai import AsyncOpenAI
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from openai import APIStatusError, AsyncOpenAI, RateLimitError
+from tenacity import (
+    before_sleep_log,
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_random_exponential,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -29,9 +35,10 @@ class NvidiaClient:
         self.model = model
 
     @retry(
-        retry=retry_if_exception_type(Exception),
-        wait=wait_exponential(multiplier=2, min=2, max=30),
-        stop=stop_after_attempt(5),
+        retry=retry_if_exception_type((RateLimitError, APIStatusError, Exception)),
+        wait=wait_random_exponential(min=2, max=60),
+        stop=stop_after_attempt(8),
+        before_sleep=before_sleep_log(logger, logging.WARNING),
         reraise=True,
     )
     async def generate_email_thread(

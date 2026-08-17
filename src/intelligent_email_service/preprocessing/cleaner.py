@@ -1,3 +1,4 @@
+import asyncio
 import html
 import logging
 import re
@@ -5,7 +6,7 @@ from typing import Any, ClassVar
 
 import bs4
 
-from ..config import CleanerConfig
+from intelligent_email_service.config import CleanerConfig
 
 logger = logging.getLogger(__name__)
 
@@ -65,22 +66,22 @@ class EmailCleaner:
         combined = "|".join(f"(?:{p.pattern})" for p in patterns)
         return re.compile(
             combined,
-            re.IGNORECASE | re.MULTILINE | re.DOTALL,
+            re.IGNORECASE | re.MULTILINE,
         )
 
     def clean_message(
         self,
-        message: dict[str, Any],
-    ) -> dict[str, Any]:
-        """
-        Return a cleaned copy of an email message.
-
-        Adds:
-            cleaned_body
-        """
+        message: dict[str, Any] | Any,
+    ) -> Any:
+        """Return a cleaned copy of an email message or EmailNode."""
+        if hasattr(message, "body_content"):
+            raw = getattr(message, "body_content", "") or ""
+            content_type = getattr(message, "content_type", "text") or "text"
+            cleaned_text = self._clean_content(raw, content_type)
+            message.cleaned_body = cleaned_text
+            return message
 
         cleaned = dict(message)
-
         body = message.get("body", {})
 
         if isinstance(body, dict):
@@ -97,14 +98,17 @@ class EmailCleaner:
             raw,
             content_type,
         )
-        logger.debug(
-            "Cleaned message ID '%s': raw length %d -> cleaned length %d",
-            message.get("id"),
-            len(raw),
-            len(cleaned["cleaned_body"]),
-        )
-
         return cleaned
+
+    async def clean_messages_async(
+        self,
+        messages: list[Any],
+    ) -> list[Any]:
+        """Clean a batch of messages concurrently using Python's default thread pool."""
+        if not messages:
+            return []
+        tasks = [asyncio.to_thread(self.clean_message, msg) for msg in messages]
+        return await asyncio.gather(*tasks)
 
     def _clean_content(
         self,
@@ -203,7 +207,7 @@ class EmailCleaner:
             matched_str = match.group(0)
             # If the match is a generic salutation (e.g. "Thanks,"), verify it's near the end
             if self.SALUTATION_RE.match(matched_str):
-                remaining_text = text[match.end():]
+                remaining_text = text[match.end() :]
                 remaining_lines = [
                     line for line in remaining_text.splitlines() if line.strip()
                 ]

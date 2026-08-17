@@ -1,4 +1,5 @@
 import re
+
 import pytest
 
 from intelligent_email_service import CleanerConfig
@@ -32,7 +33,10 @@ def test_clean_html_preserve_links():
     html = '<p>Check <a href="https://example.com">this link</a> for details.</p>'
 
     assert cleaner_no_links._clean_html(html) == "Check this link for details."
-    assert cleaner_links._clean_html(html) == "Check this link (https://example.com) for details."
+    assert (
+        cleaner_links._clean_html(html)
+        == "Check this link (https://example.com) for details."
+    )
 
 
 def test_strip_signatures():
@@ -55,7 +59,10 @@ def test_normalize_whitespace_and_blank_lines():
     "raw_body, expected_cleaned",
     [
         (
-            {"contentType": "html", "content": "<div>Hello,<br><br>Updated.<br><br>Thanks,<br>Jane</div>"},
+            {
+                "contentType": "html",
+                "content": "<div>Hello,<br><br>Updated.<br><br>Thanks,<br>Jane</div>",
+            },
             "Hello,\n\nUpdated.",
         ),
         ("Plain text email body.\n\nSent from my iPhone", "Plain text email body."),
@@ -71,7 +78,56 @@ def test_clean_message_body_variations(raw_body, expected_cleaned):
 def test_custom_signature_patterns():
     custom_pattern = re.compile(r"^---\s*My Custom Signature\s*---", re.MULTILINE)
     cleaner = EmailCleaner(
-        config=CleanerConfig(strip_signatures=True, custom_signature_patterns=[custom_pattern])
+        config=CleanerConfig(
+            strip_signatures=True, custom_signature_patterns=[custom_pattern]
+        )
     )
     email = "Some text.\n\n--- My Custom Signature ---\nExtra info"
     assert cleaner._clean_content(email, content_type="text").strip() == "Some text."
+
+
+@pytest.mark.asyncio
+async def test_clean_messages_async():
+    cleaner = EmailCleaner()
+    msgs = [
+        {
+            "id": "1",
+            "body": {"contentType": "html", "content": "<div>Hello <b>World</b></div>"},
+        },
+        {"id": "2", "body": "Plain text email\n\nBest regards,\nJane"},
+    ]
+    cleaned = await cleaner.clean_messages_async(msgs)
+    assert len(cleaned) == 2
+    assert cleaned[0]["cleaned_body"] == "Hello World"
+    assert "Best regards" not in cleaned[1]["cleaned_body"]
+
+
+def test_cleaner_emojis_and_unicode_preservation():
+    cleaner = EmailCleaner()
+    text = "Portfolio update 📈: $50,000 allocated to bonds. 💼"
+    cleaned = cleaner._clean_content(text, content_type="text")
+    assert "📈" in cleaned
+    assert "💼" in cleaned
+    assert "$50,000" in cleaned
+
+
+def test_cleaner_body_is_solely_signature():
+    cleaner = EmailCleaner(config=CleanerConfig(strip_signatures=True))
+    text = "Best regards,\nJane Doe\nVP Wealth Management"
+    cleaned = cleaner._clean_content(text, content_type="text")
+    assert cleaned.strip() == ""
+
+
+def test_cleaner_malformed_html_and_comments():
+    cleaner = EmailCleaner()
+    html = (
+        "<!-- Comment to ignore -->"
+        "<div>Paragraph one.<br>"
+        "<script>document.cookie='bad';</script>"
+        "<p>Paragraph two with unclosed tags"
+    )
+    cleaned = cleaner._clean_html(html)
+    assert "Paragraph one." in cleaned
+    assert "Paragraph two with unclosed tags" in cleaned
+    assert "document.cookie" not in cleaned
+    assert "Comment to ignore" not in cleaned

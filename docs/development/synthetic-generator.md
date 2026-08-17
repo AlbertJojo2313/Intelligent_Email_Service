@@ -2,8 +2,8 @@
 
 _Last updated: 2026-07-30_
 
-> [!IMPORTANT]
-> **Implementation Status**: Microsoft Graph API support is currently **just a planned outline and is not implemented yet**. The generator constructs datasets to feed a **Mockoon server** simulating the endpoints, and specs **may change**.
+> [!NOTE]
+> **Implementation Status**: The Synthetic Email Generator is fully implemented in `tools/` and generates Graph API-compliant message datasets for testing local mock endpoints or populating database mock fixtures.
 
 The Synthetic Email Generator is a utility tool designed to simulate advisor-client email conversations. It programmatically constructs mock email datasets matching the schema expected by the Microsoft Graph API connector.
 
@@ -62,7 +62,7 @@ NVIDIA_BASE_URL=https://integrate.api.nvidia.com/v1
 
 ### 3. Customize Topics
 
-You can modify conversation topics in [`tools/topics.json`](../tools/topics.json). The generator selects topics randomly from this list to guide LLM thread drafting (e.g., portfolio rebalancing, IRA contributions, onboarding documents).
+You can modify conversation topics in `tools/topics.json`. The generator selects topics randomly from this list to guide LLM thread drafting (e.g., portfolio rebalancing, IRA contributions, onboarding documents).
 
 ---
 
@@ -90,6 +90,8 @@ python3 tools/generate_synthetic_emails.py [options]
 | `--nvidia-key` | NVIDIA API key | `$NVIDIA_API_KEY` |
 | `--model` | NVIDIA NIM model to invoke | `$NVIDIA_MODEL` (`deepseek-ai/deepseek-v4-flash`) |
 | `--url` | Base URL of the NVIDIA API | `$NVIDIA_BASE_URL` (`https://integrate.api.nvidia.com/v1`) |
+| `--concurrency` | Max concurrent LLM calls to prevent HTTP 429 rate limits | `1` (or `$LLM_CONCURRENCY`) |
+| `--request-delay` | Pacing delay (seconds) between LLM calls to stay under RPM limit | `0.5` (or `$LLM_REQUEST_DELAY`) |
 
 ---
 

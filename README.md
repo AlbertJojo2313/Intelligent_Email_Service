@@ -1,136 +1,206 @@
 # Intelligent Email Service
 
-This project is an email intelligence service that ingests mailbox data via the Microsoft Graph API (or local mock endpoints) and transforms it into a structured, compressed format optimized for LLM prompting at scale.
+This project is an email intelligence service that ingests mailbox data via Microsoft Graph API (or local mock endpoints) and transforms it into a structured, compressed format optimized for LLM context windows at scale.
 
-Given a financial advisor's mailbox and a target client's (household's) email address, it retrieves historical correspondence, filters and groups it, resolves conversation threads, cleans and compresses the content, and outputs structured JSON payloads ready for downstream LLM context injection.
+
 
 ---
 
 ## Key Features & Capabilities
 
-- **Mailbox Ingestion**: Pulls email metadata, message bodies, and attachment descriptors via Microsoft Graph API abstraction (`EmailProvider`).
-- **Domain Exception Handling**: Uniform error handling mapping HTTP status codes (401/403, 404, 429 rate limits) into domain exceptions (`EmailServiceError`, `EmailProviderError`, `ProviderRateLimitError`).
-- **Thread Resolution**: Handles both **unmodified threads** (containing inline quoted history) and **modified threads** (split individual messages sharing a `conversation_id`) via `ThreadProcessor`.
-- **Preprocessing & Cleaning**: Strips HTML tags, email signatures, disclaimers, and normalizes whitespace via `EmailCleaner` ([`docs/preprocessing.md`](docs/preprocessing.md)).
-- **Context Compression**: Applies rule-based character truncation and hybrid prompt compression via **LLMLingua** (`EmailCompressor`) to minimize token consumption while keeping recent context intact ([`docs/preprocessing.md`](docs/preprocessing.md)).
-- **Configuration Object Pattern**: Uses typed dataclass configuration objects (`EmailQueryFilter`, `PipelineConfig`, `CleanerConfig`, `CompressorConfig`) for clean, modular setting management.
-- **End-to-End Driver Pipeline**: Programmatic API driver and executable CLI script (`process_client_emails` in [`pipeline.py`](src/intelligent_email_service/pipeline.py)).
-- **Synthetic Email Generator**: Includes an asynchronous multi-client generator using the **NVIDIA AI Cloud / NIM API** (`deepseek-ai/deepseek-v4-flash`) and template fallbacks to build Graph API-compliant test datasets ([`docs/synthetic-generator.md`](docs/synthetic-generator.md)).
+- **FastAPI REST Microservice**: Provides high-throughput async endpoints (`/compress`, `/health`, `/docs`) for on-demand LLM context preparation.
+- **Mailbox Ingestion**: Pulls email metadata, message bodies, and attachment descriptors via Microsoft Graph API (`MicrosoftGraphProvider` with Azure AD / `DefaultAzureCredential` & `@odata.nextLink` pagination).
+- **Domain Model (`EmailNode`)**: Replaces raw dictionaries with strongly-typed `EmailNode` objects for end-to-end type safety and timezone-aware UTC dates.
+- **In-Memory DAG Thread Reconstruction**: Uses `GraphConversationReconstructor` (Strategy pattern via `typing.Protocol`) to build an in-memory DAG from `In-Reply-To` and `Message-ID` headers, correctly ordering branching replies without message loss.
+- **Attachment Processing**: Extracts uncompressed plain text content from readable text attachments (`.txt`, `.csv`, `.json`, `.md`, `.log`, `.yaml`, etc.) via `process_node_attachments()`.
+- **Preprocessing & Cleaning**: Strips HTML tags, email signatures, disclaimers, and normalizes whitespace via `EmailCleaner` ([`docs/production/preprocessing.md`](docs/production/preprocessing.md)).
+- **Unified Context Compression**: Applies character truncation and hybrid prompt compression via **LLMLingua** (`EmailCompressor`) to output a single top-level `compressed_body` per subject thread ([`docs/production/preprocessing.md`](docs/production/preprocessing.md)).
+- **Domain Exception Handling**: Uniform error handling mapping HTTP status codes (401/403 auth, 404, 429 rate limits with retry-after handling) into domain exceptions (`EmailServiceError`, `EmailProviderError`, `ProviderRateLimitError`).
+- **Environment-Driven Configuration**: Every parameter (`LOG_LEVEL`, `MAX_CONCURRENCY`, `GRAPH_API_BASE_URL`, `USE_LLMLINGUA`, `LLMLINGUA_MODEL`, `LLMLINGUA_DEVICE`) can be configured via `.env` or overridden programmatically.
+- **Synthetic Email Generator**: Includes an asynchronous multi-client generator using the **NVIDIA AI Cloud / NIM API** (`deepseek-ai/deepseek-v4-flash`) and template fallbacks to build test datasets (*Note: Verify the LLM model is available on the NVIDIA AI platform*) ([`docs/development/synthetic-generator.md`](docs/development/synthetic-generator.md)).
 
 ---
 
-## ⚠️ Current Integration Status: Mocked (Planned Graph API Outline)
+## 🛠️ Step-by-Step Guide: Running & Deploying to Azure via Docker
 
-> [!IMPORTANT]
-> The current architecture for Microsoft Graph API support is **a planned outline (`MicrosoftGraphProvider`) and is not implemented for live endpoints yet**. Currently, the project uses a **Mockoon server** (`MockGraphProvider`) to simulate the API endpoints (`GET /v1.0/users/{user-id}/messages`), allowing offline development. Core processing modules (`EmailRetrievalService`, `ThreadProcessor`, `EmailCleaner`, `EmailCompressor`, `process_client_emails`) are fully implemented.
+Follow these steps to build, run, and deploy the service for Microsoft Azure using Docker.
 
-For details on local mock server configuration, synthetic dataset generation, and the planned transition to Microsoft Graph API access, see [`docs/mock-setup.md`](docs/mock-setup.md).
+> 💡 **Offline / Local Mock Testing**: If you want to run the service locally without Azure credentials using mock data, follow the **[Local Docker Development Guide](docs/development/local-docker-setup.md)**.
 
 ---
 
-## Installation & Environment Setup
-
-This project uses [`uv`](https://docs.astral.sh/uv/) for fast, reliable Python package and dependency management using `pyproject.toml` and `uv.lock`.
-
-### Prerequisites
-
-- Python >= 3.11
-- [`uv`](https://docs.astral.sh/uv/getting-started/installation/) (`curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`)
-
-### Setup & Install Dependencies
+### Step 1: Clone Repository & Configure Azure Environment
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone <repository-url>
 cd email_service
 
-# Install all dependencies (including dev tools) into virtual environment
-uv sync --all-extras
+# 2. Copy the environment configuration template
+cp .env.example .env
+```
+
+Configure your Azure AD credentials in `.env` (or `.env.test_prod`):
+
+```ini
+APP_ENV=test_prod
+EMAIL_PROVIDER=microsoft
+GRAPH_API_BASE_URL=https://graph.microsoft.com/v1.0
+AZURE_TENANT_ID=<your-azure-tenant-id>
+AZURE_CLIENT_ID=<your-azure-client-id>
+AZURE_CLIENT_SECRET=<your-azure-client-secret>
+LOG_LEVEL=INFO
+USE_LLMLINGUA=false
 ```
 
 ---
 
-## Running the Pipeline
+### Step 2: Build & Start the Production Container
 
-### 1. Programmatic Usage (Python)
-
-```python
-import asyncio
-from intelligent_email_service import (
-    EmailQueryFilter,
-    MockGraphProvider,
-    PipelineConfig,
-    process_client_emails,
-)
-
-async def main():
-    provider = MockGraphProvider(base_url="http://localhost:3000")
-
-    query = EmailQueryFilter(
-        advisor_id="tst_ad-001",
-        client_id="jane.household@example-clients.com",
-    )
-    config = PipelineConfig()
-
-    compressed_threads = await process_client_emails(
-        query=query,
-        config=config,
-        provider=provider,
-    )
-
-    for thread in compressed_threads:
-        print(f"Subject: {thread.subject} | Tokens: {thread.estimated_tokens}")
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-### 2. Executable CLI Command
-
-Run `pipeline.py` directly from the command line:
+Start the service container using Docker Compose:
 
 ```bash
-# Run with default arguments
-uv run python -m intelligent_email_service.pipeline
-
-# Run with custom Advisor ID and Client ID
-uv run python -m intelligent_email_service.pipeline "advisor@firm.com" "client@household.com"
+docker compose up app-prod --build
 ```
+
+The container builds using the lean [Dockerfile.prod](Dockerfile.prod) and starts Uvicorn bound to port `8001` (mapped to container port `8000`).
+
+---
+
+### Step 3: Verify & Test the Endpoints
+
+Once the container is running:
+
+#### 1. Interactive Swagger UI
+Open your browser to:
+👉 **`http://localhost:8001/docs`**
+
+#### 2. Test the Health Endpoint
+```bash
+curl http://localhost:8001/health
+```
+
+**Expected Response:**
+```json
+{
+  "status": "healthy",
+  "env": "test_prod"
+}
+```
+
+#### 3. Test Email Compression (`POST /compress`)
+> 💡 **Note**: Calling `POST /compress` in production mode queries live Microsoft Graph API and requires the valid Azure AD credentials configured in Step 1.
+
+Send a test request with a financial advisor ID and client email:
+```bash
+curl -X POST http://localhost:8001/compress \
+  -H "Content-Type: application/json" \
+  -d '{
+    "advisor_id": "tst_ad-001",
+    "client_id": "client@household.com"
+  }'
+```
+
+**Expected Response Structure:**
+```json
+[
+  {
+    "subject": "Portfolio Review Q2",
+    "conversation_id": "conv-abc-123",
+    "format": "modified",
+    "total_messages": 2,
+    "compressed_body": "[client@household.com] Hi, can we review the portfolio allocation?\n\n---\n\n[advisor@firm.com] Hello Jane, I have reviewed the portfolio...",
+    "sender": "advisor@firm.com",
+    "senders": ["client@household.com", "advisor@firm.com"],
+    "participants": ["advisor@firm.com", "client@household.com"],
+    "attachments_summary": [],
+    "estimated_tokens": 42,
+    "used_llmlingua": false
+  }
+]
+```
+
+---
+
+### Step 4: Run Automated Tests Inside Docker
+
+To verify all 69 unit and integration tests inside Docker:
+
+```bash
+docker compose run --rm app-prod pytest
+```
+
+---
+
+### Step 5: Deploying Container to Microsoft Azure
+
+#### Option A: Azure Container Apps / Azure Kubernetes (AKS)
+1. **Build and Tag the Image**:
+   ```bash
+   docker build -f Dockerfile.prod -t <your-acr-name>.azurecr.io/intelligent-email-service:latest .
+   ```
+2. **Push to Azure Container Registry (ACR)**:
+   ```bash
+   az acr login --name <your-acr-name>
+   docker push <your-acr-name>.azurecr.io/intelligent-email-service:latest
+   ```
+3. **Configure Ingress**: Set the container ingress target port to **`8000`**.
+
+#### Option B: Azure App Service (Custom Container)
+1. In Azure Portal &rarr; **App Services** &rarr; **Create Web App (Docker Container)**.
+2. Select your Azure Container Registry image.
+3. In **Configuration &rarr; Application Settings**, add:
+   * `WEBSITES_PORT`: `8000`
+   * `APP_ENV`: `test_prod`
+   * `EMAIL_PROVIDER`: `microsoft`
+   * `AZURE_TENANT_ID`: `<tenant-id>`
+   * `AZURE_CLIENT_ID`: `<client-id>`
+   * `AZURE_CLIENT_SECRET`: `<client-secret>`
 
 ---
 
 ## Architecture Overview
 
 ```
-Connector Layer (EmailProvider / MockGraphProvider / MicrosoftGraphProvider Outline)
+HTTP Client / LLM Agent
+       │ (POST /compress)
+       ▼
+FastAPI Service Layer (intelligent_email_service.app)
        │
        ▼
-Exception Layer (Domain Exceptions: EmailProviderError / ProviderRateLimitError)
+Connector Layer (MicrosoftGraphProvider [prod] / MockGraphProvider [dev])
        │
        ▼
-Thread Grouping & Resolution (ThreadProcessor: Unmodified vs Modified email threads)
+Retrieval & Domain Conversion (EmailNode: ID / Message-ID / In-Reply-To / UTC received_at)
        │
        ▼
-Preprocessing & Cleaning (EmailCleaner: HTML Stripping / Signature Removal)
+Thread Resolution (Strategy Layer: GraphConversationReconstructor In-Memory DAG)
        │
        ▼
-Context Compression (EmailCompressor: LLMLingua & Character Truncation)
+Attachment Extraction & Cleaning (process_node_attachments / EmailCleaner HTML & Signatures)
+       │
+       ▼
+Context Compression (EmailCompressor: LLMLingua & Truncation -> Single compressed_body)
        │
        ▼
 Structured Payload Output (CompressedThread / LLM Context Prompt Payload)
 ```
 
-See [`docs/architecture.md`](docs/architecture.md) for detailed data flow diagrams and component design specifications.
+See [`docs/production/architecture.md`](docs/production/architecture.md) for detailed data flow diagrams and component specifications.
 
 ---
 
-## Documentation Quick Links
+## 📚 Documentation Directory
 
-- [**Architecture & System Design**](docs/architecture.md): Data flow pipeline, configuration objects, identity model, exception layer, and component interactions.
-- [**Output Schema & Data Structure**](docs/data-structure.md): Detailed output payload schema and redundant field analysis for LLM prompts.
-- [**Mock Setup & Local Development**](docs/mock-setup.md): Guide for running Mockoon and local API simulation.
-- [**Preprocessing & Compression**](docs/preprocessing.md): Detailed cleaner and compressor module specifications.
-- [**Synthetic Email Generator**](docs/synthetic-generator.md): Usage guide for synthetic email thread generation with NVIDIA LLM / Fallback templates.
+### 🟢 Production & Azure Environment
+- **[Architecture & System Design](docs/production/architecture.md)**: Data flow pipeline, configuration objects, DAG reconstruction, and component design.
+- **[Output Schema & Data Structure](docs/production/data-structure.md)**: Streamlined output payload schema (`compressed_body`) and field specifications.
+- **[Preprocessing & Compression](docs/production/preprocessing.md)**: Detailed cleaner, attachment processor, and compressor specifications.
+
+### 🟡 Local Development & Testing
+- **[Local Docker Setup Guide](docs/development/local-docker-setup.md)**: Step-by-step guide for local development and offline mock testing with Docker Compose.
+- **[Mock Setup Guide](docs/development/mock-setup.md)**: Guide for running Mockoon and local API simulation.
+- **[Synthetic Email Generator](docs/development/synthetic-generator.md)**: Usage guide for synthetic email thread generation with NVIDIA LLM / Fallback templates.
 
 ---
 

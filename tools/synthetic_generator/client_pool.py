@@ -26,9 +26,11 @@ class ClientPool:
             with Path(path).open("r") as f:
                 data = json.load(f)
         except FileNotFoundError:
-            raise FileNotFoundError(f"Client pool JSON file not found at path: {path}")
+            raise FileNotFoundError(
+                f"Client pool JSON file not found at path: {path}"
+            ) from None
         except json.JSONDecodeError as e:
-            raise ValueError(f"Client pool JSON file contains invalid JSON: {e}")
+            raise ValueError(f"Client pool JSON file contains invalid JSON: {e}") from e
 
         if not isinstance(data, list):
             raise ValueError("Client pool JSON must be a list of objects.")

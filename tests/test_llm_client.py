@@ -48,9 +48,7 @@ def test_parse_response_valid_json_array():
 
 def test_parse_response_markdown_fences():
     raw_markdown = (
-        "```json\n"
-        '[{"sender": "client", "subject": "Hi", "body": "Hello"}]\n'
-        "```"
+        '```json\n[{"sender": "client", "subject": "Hi", "body": "Hello"}]\n```'
     )
     result = NvidiaClient._parse_response(raw_markdown)
     assert len(result) == 1
@@ -95,3 +93,39 @@ async def test_nvidia_client_generate_email_thread():
         assert len(messages) == 1
         assert messages[0]["subject"] == "Test"
         assert mock_create.called
+
+
+@pytest.mark.asyncio
+async def test_synthetic_generator_concurrency_and_delay():
+    from synthetic_generator.generator import (
+        AdvisorProfile,
+        EmailGenerationConfig,
+        SyntheticEmailGenerator,
+    )
+    from synthetic_generator.models import ClientProfile
+
+    advisor = AdvisorProfile(name="Adv", email="adv@example.com")
+    config = EmailGenerationConfig()
+    mock_client = MagicMock()
+    mock_client.generate_email_thread = AsyncMock(
+        return_value=[
+            {"sender": "client", "subject": "Test", "body": "Body 1"},
+            {"sender": "advisor", "subject": "Re: Test", "body": "Body 2"},
+        ]
+    )
+
+    generator = SyntheticEmailGenerator(
+        advisor=advisor,
+        config=config,
+        nvidia_client=mock_client,
+        max_concurrency=2,
+        request_delay=0.01,
+    )
+
+    client = ClientProfile(name="Cli", email="cli@example.com")
+    messages = await generator.generate_thread(
+        topic="Topic", client=client, thread_length=2, thread_format="modified"
+    )
+
+    assert len(messages) == 2
+    assert mock_client.generate_email_thread.called

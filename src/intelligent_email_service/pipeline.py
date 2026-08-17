@@ -1,12 +1,12 @@
 """End-to-end driver pipeline for Intelligent Email Service."""
 
 import asyncio
+import json
+import logging
 import sys
 import warnings
-
-warnings.filterwarnings("ignore", category=RuntimeWarning, module="runpy")
-
-import logging
+from dataclasses import asdict
+from pathlib import Path
 
 from .config import EmailQueryFilter, PipelineConfig
 from .email_connectors import EmailProvider, MockGraphProvider
@@ -14,7 +14,10 @@ from .exceptions import EmailProviderError
 from .logging_config import setup_logging
 from .preprocessing import EmailCleaner, EmailCompressor
 from .preprocessing.compressor import CompressedThread
-from .retrieval import EmailRetrievalService, ThreadProcessor
+from .retrieval import EmailRetrievalService, ThreadProcessor, process_node_attachments
+
+warnings.filterwarnings("ignore", category=RuntimeWarning, module="runpy")
+
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +55,12 @@ async def process_client_emails(
     )
 
     if provider is None:
-        provider = MockGraphProvider()
+        if config.app_env in ("test_prod", "prod", "production"):
+            from .email_connectors import MicrosoftGraphProvider
+
+            provider = MicrosoftGraphProvider.from_env(config=config.graph)
+        else:
+            provider = MockGraphProvider()
 
     # Step 1 & 2: Retrieval and Subject Grouping
     retrieval_service = EmailRetrievalService(provider=provider)
@@ -75,10 +83,14 @@ async def process_client_emails(
     )
     processed_threads = await processor.process_subject_groups(subject_groups)
 
-    # Step 4: Preprocessing & Cleaning (HTML stripping & signature removal)
+    # Step 4: Attachment Extraction & Preprocessing
     cleaner = EmailCleaner(config=config.cleaner)
     for thread in processed_threads:
-        thread.messages = [cleaner.clean_message(msg) for msg in thread.messages]
+        for node in thread.messages:
+            await process_node_attachments(
+                provider=provider, user_id=query.advisor_id, node=node
+            )
+        thread.messages = await cleaner.clean_messages_async(thread.messages)
 
     # Step 5: Context Compression (LLMLingua neural prompt compression / character truncation)
     compressor = EmailCompressor(config=config.compressor)
@@ -86,10 +98,17 @@ async def process_client_emails(
     return [compressor.compress_processed_thread(thread) for thread in processed_threads]
 
 
+ARGV_CLIENT_ID_INDEX: int = 2
+
+
 async def main() -> None:
     """Executable CLI entry point for running the pipeline in isolation."""
     advisor_id = sys.argv[1] if len(sys.argv) > 1 else "tst_ad-001"
-    client_id = sys.argv[2] if len(sys.argv) > 2 else "jane.household@example-clients.com"
+    client_id = (
+        sys.argv[ARGV_CLIENT_ID_INDEX]
+        if len(sys.argv) > ARGV_CLIENT_ID_INDEX
+        else "jane.household@example-clients.com"
+    )
 
     print(f"Executing pipeline for Advisor '{advisor_id}' & Client '{client_id}'...")
 
@@ -101,11 +120,15 @@ async def main() -> None:
 
         print(f"\nProcessing complete. Total Thread(s): {len(threads)}")
         for idx, thread in enumerate(threads, start=1):
-            print(f"\n--- Thread #{idx}: {thread.subject} ---")
+            print(f"\n--- Subject #{idx}: {thread.subject} ---")
             print(f"  Conversation ID: {thread.conversation_id}")
             print(f"  Total Messages:  {thread.total_messages}")
             print(f"  Est. Tokens:     {thread.estimated_tokens}")
             print(f"  Attachments:     {len(thread.attachments_summary)}")
+
+        with Path("compressed_threads.json").open("w") as f:
+            json.dump([asdict(thread) for thread in threads], f, indent=2, default=str)
+            print("\nCompressed threads saved to 'compressed_threads.json'.")
     except EmailProviderError as err:
         print(f"\n[Provider Error] {err}")
         print(

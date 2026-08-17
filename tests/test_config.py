@@ -23,7 +23,9 @@ async def test_process_client_emails_with_config_objects():
 
     config = PipelineConfig(
         cleaner=CleanerConfig(strip_signatures=True),
-        compressor=CompressorConfig(recent_full_count=1, max_full_body_chars=200, use_llmlingua=False),
+        compressor=CompressorConfig(
+            recent_full_count=1, max_full_body_chars=200, use_llmlingua=False
+        ),
         max_concurrency=5,
     )
 
@@ -35,7 +37,10 @@ async def test_process_client_emails_with_config_objects():
             "receivedDateTime": "2026-07-29T11:00:00Z",
             "from": {"emailAddress": {"address": "jane@client.com"}},
             "toRecipients": [{"emailAddress": {"address": "bob@advisor.com"}}],
-            "body": {"contentType": "text", "content": "Let's review tax strategies for 2026."},
+            "body": {
+                "contentType": "text",
+                "content": "Let's review tax strategies for 2026.",
+            },
         }
     ]
 
@@ -55,4 +60,4 @@ async def test_process_client_emails_with_config_objects():
 
         assert len(threads) == 1
         assert threads[0].subject == "Tax Planning 2026"
-        assert threads[0].compressed_messages[0]["compressed_body"] == "Let's review tax strategies for 2026."
+        assert threads[0].compressed_body == "Let's review tax strategies for 2026."

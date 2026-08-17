@@ -1,5 +1,7 @@
 """Custom exception hierarchy for Intelligent Email Service."""
 
+from typing import Any
+
 
 class EmailServiceError(Exception):
     """Base exception for all errors raised by Intelligent Email Service."""
@@ -13,10 +15,12 @@ class EmailProviderError(EmailServiceError):
         message: str,
         status_code: int | None = None,
         response_body: str | None = None,
+        partial_results: list[dict[str, Any]] | None = None,
     ):
         super().__init__(message)
         self.status_code = status_code
         self.response_body = response_body
+        self.partial_results = partial_results or []
 
 
 class ProviderAuthenticationError(EmailProviderError):
@@ -32,8 +36,14 @@ class ProviderRateLimitError(EmailProviderError):
         retry_after: int | None = None,
         status_code: int | None = 429,
         response_body: str | None = None,
+        partial_results: list[dict[str, Any]] | None = None,
     ):
-        super().__init__(message, status_code=status_code, response_body=response_body)
+        super().__init__(
+            message,
+            status_code=status_code,
+            response_body=response_body,
+            partial_results=partial_results,
+        )
         self.retry_after = retry_after
 
 

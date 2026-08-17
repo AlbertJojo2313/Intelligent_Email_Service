@@ -35,12 +35,15 @@ class SyntheticEmailGenerator:
         advisor: AdvisorProfile,
         config: EmailGenerationConfig,
         nvidia_client: "NvidiaClient | None" = None,
+        max_concurrency: int = 1,
+        request_delay: float = 0.5,
     ):
         self.advisor = advisor
         self.config = config
         self.nvidia_client = nvidia_client
         self.fallback_generator = FallbackGenerator(self.config.fallback_templates)
-        self._llm_semaphore = asyncio.Semaphore(3)
+        self._llm_semaphore = asyncio.Semaphore(max_concurrency)
+        self.request_delay = request_delay
 
     def _format_as_quoted_body(
         self, email_body: str, previous_messages: list[dict[str, Any]]
@@ -48,7 +51,9 @@ class SyntheticEmailGenerator:
         """
         Appends previous messages in standard email reply quote format with HTML tags.
         """
-        paragraphs = "".join(f"<p>{line}</p>" for line in email_body.split("\n\n") if line.strip())
+        paragraphs = "".join(
+            f"<p>{line}</p>" for line in email_body.split("\n\n") if line.strip()
+        )
         html_body = f"<div>{paragraphs or f'<p>{email_body}</p>'}</div>"
 
         for msg in reversed(previous_messages):
@@ -77,6 +82,8 @@ class SyntheticEmailGenerator:
         if self.nvidia_client:
             try:
                 async with self._llm_semaphore:
+                    if self.request_delay > 0:
+                        await asyncio.sleep(self.request_delay)
                     return await self.nvidia_client.generate_email_thread(
                         topic=topic,
                         advisor_name=self.advisor.name,
@@ -153,7 +160,9 @@ class SyntheticEmailGenerator:
             received_time = msg_time.isoformat().replace("+00:00", "Z")
 
             raw_body = item.get("body", "")
-            paragraphs = "".join(f"<p>{line}</p>" for line in raw_body.split("\n\n") if line.strip())
+            paragraphs = "".join(
+                f"<p>{line}</p>" for line in raw_body.split("\n\n") if line.strip()
+            )
             body_content = f"<div>{paragraphs or f'<p>{raw_body}</p>'}</div>"
 
             # If this is an unmodified thread, the last email has the quoted history of previous emails

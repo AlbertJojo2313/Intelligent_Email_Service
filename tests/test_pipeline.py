@@ -49,7 +49,12 @@ async def test_process_client_emails_end_to_end():
                 "content": "<p>Hi Bob, let's proceed with portfolio rebalancing.</p><br>Best regards,<br>Jane",
             },
             "attachments": [
-                {"id": "att-1", "name": "statement.pdf", "size": 2048, "contentType": "application/pdf"}
+                {
+                    "id": "att-1",
+                    "name": "statement.pdf",
+                    "size": 2048,
+                    "contentType": "application/pdf",
+                }
             ],
         }
     ]
@@ -72,10 +77,54 @@ async def test_process_client_emails_end_to_end():
         compressed_thread = threads[0]
         assert compressed_thread.subject == "Portfolio Review Q3"
         assert compressed_thread.total_messages == 1
-        assert len(compressed_thread.compressed_messages) == 1
-
-        msg = compressed_thread.compressed_messages[0]
-        assert msg["cleaned_body"] == "Hi Bob, let's proceed with portfolio rebalancing."
-        assert msg["compressed_body"] == "Hi Bob, let's proceed with portfolio rebalancing."
+        assert (
+            compressed_thread.compressed_body
+            == "Hi Bob, let's proceed with portfolio rebalancing."
+        )
         assert len(compressed_thread.attachments_summary) == 1
         assert compressed_thread.attachments_summary[0]["name"] == "statement.pdf"
+
+
+@pytest.mark.asyncio
+async def test_main_success(tmp_path, monkeypatch):
+    from intelligent_email_service.pipeline import main
+    from intelligent_email_service.preprocessing.compressor import CompressedThread
+
+    mock_threads = [
+        CompressedThread(
+            subject="Test Subject",
+            conversation_id="conv-123",
+            format="full_quoted",
+            total_messages=1,
+            compressed_body="Test compressed body",
+            attachments_summary=[],
+            estimated_tokens=50,
+            used_llmlingua=False,
+        )
+    ]
+
+    monkeypatch.chdir(tmp_path)
+    with patch(
+        "intelligent_email_service.pipeline.process_client_emails", new_callable=AsyncMock
+    ) as mock_process:
+        mock_process.return_value = mock_threads
+        await main()
+
+    output_file = tmp_path / "compressed_threads.json"
+    assert output_file.exists()
+
+
+@pytest.mark.asyncio
+async def test_main_email_provider_error(tmp_path, monkeypatch):
+    from intelligent_email_service.exceptions import EmailProviderError
+    from intelligent_email_service.pipeline import main
+
+    monkeypatch.chdir(tmp_path)
+    with patch(
+        "intelligent_email_service.pipeline.process_client_emails", new_callable=AsyncMock
+    ) as mock_process:
+        mock_process.side_effect = EmailProviderError("Connection failed")
+        await main()
+
+    output_file = tmp_path / "compressed_threads.json"
+    assert not output_file.exists()
