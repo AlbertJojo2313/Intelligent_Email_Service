@@ -2,9 +2,6 @@
 
 _Last updated: August 12, 2026_
 
-> [!NOTE]
-> **Implementation Status**: HTML cleaning (`EmailCleaner`), attachment processing (`process_node_attachments`), and context compression (`EmailCompressor`, `CompressedThread`) are fully implemented and exported in `intelligent_email_service.preprocessing` and `intelligent_email_service.retrieval`.
-
 ---
 
 ## Purpose
