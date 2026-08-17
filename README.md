@@ -17,17 +17,9 @@ This project is an email intelligence service that ingests mailbox data via Micr
 - **Unified Context Compression**: Applies character truncation and hybrid prompt compression via **LLMLingua** (`EmailCompressor`) to output a single top-level `compressed_body` per subject thread ([`docs/production/preprocessing.md`](docs/production/preprocessing.md)).
 - **Domain Exception Handling**: Uniform error handling mapping HTTP status codes (401/403 auth, 404, 429 rate limits with retry-after handling) into domain exceptions (`EmailServiceError`, `EmailProviderError`, `ProviderRateLimitError`).
 - **Environment-Driven Configuration**: Every parameter (`LOG_LEVEL`, `MAX_CONCURRENCY`, `GRAPH_API_BASE_URL`, `USE_LLMLINGUA`, `LLMLINGUA_MODEL`, `LLMLINGUA_DEVICE`) can be configured via `.env` or overridden programmatically.
-- **Multi-Modal Execution**: Run as a FastAPI REST server, programmatic Python module, or standalone CLI driver.
 - **Synthetic Email Generator**: Includes an asynchronous multi-client generator using the **NVIDIA AI Cloud / NIM API** (`deepseek-ai/deepseek-v4-flash`) and template fallbacks to build test datasets (*Note: Verify the LLM model is available on the NVIDIA AI platform*) ([`docs/development/synthetic-generator.md`](docs/development/synthetic-generator.md)).
 
 ---
-
-## 🟢 Integration Status: Fully Implemented
-
-Core processing modules (`EmailRetrievalService`, `ThreadProcessor`, `EmailCleaner`, `EmailCompressor`, `process_client_emails`), network provider integrations (`MicrosoftGraphProvider` and `MockGraphProvider`), and the **FastAPI REST API layer** (`intelligent_email_service.app`) are **fully implemented and covered by unit tests**.
-
----
-
 
 ## 🛠️ Step-by-Step Guide: Running & Deploying to Azure via Docker
 
