@@ -162,3 +162,40 @@ async def test_404_not_found_error_mapping(dummy_credentials):
         mock_get.return_value = resp_404
         with pytest.raises(ProviderNotFoundError):
             await provider.get_emails("nonexistent-user")
+
+
+@pytest.mark.asyncio
+async def test_get_emails_invalid_date_range(dummy_credentials):
+    provider = MicrosoftGraphProvider.with_token("test-token")
+    start = datetime(2026, 8, 15, tzinfo=UTC)
+    end = datetime(2026, 8, 1, tzinfo=UTC)  # start > end
+
+    with pytest.raises(ValueError, match="start_date must be before or equal to end_date"):
+        await provider.get_emails("user1", start_date=start, end_date=end)
+
+
+@pytest.mark.asyncio
+async def test_get_emails_pagination_with_next_link(dummy_credentials):
+    provider = MicrosoftGraphProvider.with_token("test-token")
+
+    page_1 = httpx.Response(
+        status_code=200,
+        json={
+            "value": [{"id": "msg-p1"}],
+            "@odata.nextLink": "https://graph.microsoft.com/v1.0/users/user1/messages?skip=1",
+        },
+        request=httpx.Request("GET", "https://graph.microsoft.com/v1.0/users/user1/messages"),
+    )
+    page_2 = httpx.Response(
+        status_code=200,
+        json={"value": [{"id": "msg-p2"}]},
+        request=httpx.Request("GET", "https://graph.microsoft.com/v1.0/users/user1/messages?skip=1"),
+    )
+
+    with patch.object(httpx.AsyncClient, "get", new_callable=AsyncMock) as mock_get:
+        mock_get.side_effect = [page_1, page_2]
+        emails = await provider.get_emails("user1")
+        assert len(emails) == 2
+        assert emails[0]["id"] == "msg-p1"
+        assert emails[1]["id"] == "msg-p2"
+

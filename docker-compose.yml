@@ -1,14 +1,16 @@
 name: intelligent-email-service
 services:
-    # --- Production Service
+  # --- Production Service
   app-prod:
     build:
       context: .
       dockerfile: Dockerfile.prod
     container_name: intelligent_email_service_prod
+    ports:
+      - "8001:8000"
     environment:
-      - PYTHONUNBUFFERED = 1
-      - APP_ENV = test_prod
+      - PYTHONUNBUFFERED=1
+      - APP_ENV=test_prod
       - EMAIL_PROVIDER=microsoft
       - AZURE_TENANT_ID=${AZURE_TENANT_ID:-}
       - AZURE_CLIENT_ID=${AZURE_CLIENT_ID:-}
@@ -16,14 +18,15 @@ services:
       - GRAPH_API_BASE_URL=${GRAPH_API_BASE_URL:-https://graph.microsoft.com/v1.0}
     env_file:
       - .env.test_prod
-    volumes:
-      - ./compressed_threads.json:/app/compressed_threads.json
+
   # --- Development Service
   app-dev:
     build:
       context: .
       dockerfile: Dockerfile.dev
     container_name: intelligent_email_service_dev
+    ports:
+      - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
       - APP_ENV=dev
@@ -36,6 +39,4 @@ services:
       - "host.docker.internal:host-gateway"
     env_file:
       - .env.dev
-    volumes:
-      - ./compressed_threads.json:/app/compressed_threads.json
   

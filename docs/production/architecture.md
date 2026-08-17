@@ -19,7 +19,7 @@ Given a financial advisor's mailbox and a target client (or household) email add
 5. Extracts readable attachment text via `process_node_attachments()`.
 6. Preprocesses email bodies (stripping HTML, signatures, and whitespace via `EmailCleaner`).
 7. Compresses historical thread context into a single unified `compressed_body` per subject via `EmailCompressor`.
-8. Emits structured `CompressedThread` JSON payloads tailored for LLM prompt context injection via `process_client_emails`.
+8. Emits structured `CompressedThread` JSON payloads tailored for LLM prompt context injection via `process_client_emails` and the FastAPI REST interface (`intelligent_email_service.app`).
 
 ---
 
@@ -27,8 +27,11 @@ Given a financial advisor's mailbox and a target client (or household) email add
 
 ```mermaid
 flowchart TD
+    Client["HTTP Client / LLM Agent"] -->|"POST /compress"| FastAPIApp["FastAPI Service (app.py)"]
+    FastAPIApp --> Pipeline["pipeline.py: process_client_emails"]
+    
     subgraph Core_Package["intelligent_email_service"]
-        Config["config.py: EmailQueryFilter & PipelineConfig"] --> Pipeline["pipeline.py: process_client_emails"]
+        Config["config.py: EmailQueryFilter & PipelineConfig"] --> Pipeline
         Provider{"EmailProvider Interface"} --> MGP["MockGraphProvider (dev)"]
         Provider --> MSGP["MicrosoftGraphProvider (prod)"]
 
@@ -55,6 +58,7 @@ flowchart TD
 
         Compressor --> Output["CompressedThread (Single compressed_body Payload)"]
     end
+    Output -->|"JSON Response"| FastAPIApp
 ```
 
 ---

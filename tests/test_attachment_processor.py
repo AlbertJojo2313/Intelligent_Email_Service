@@ -84,3 +84,45 @@ async def test_process_node_attachments_does_not_mutate_message_body():
     # Verify message body is left completely unpolluted for email body compression
     assert node.body_content == "Initial Body"
     assert node.cleaned_body == "Initial Body"
+
+
+@pytest.mark.asyncio
+async def test_fetch_attachment_empty_bytes():
+    mock_provider = MagicMock()
+    mock_provider.get_attachment_bytes = AsyncMock(return_value=b"")
+
+    attach = {"id": "att-empty", "name": "empty.txt", "contentType": "text/plain"}
+    result = await fetch_attachment_text(mock_provider, "u1", "m1", attach)
+    assert result is None
+
+
+@pytest.mark.asyncio
+async def test_fetch_attachment_latin1_fallback():
+    mock_provider = MagicMock()
+    mock_provider.get_attachment_bytes = AsyncMock(
+        return_value="Resum\xe9 details".encode("latin-1")
+    )
+
+    attach = {"id": "att-latin", "name": "doc.txt", "contentType": "text/plain"}
+    result = await fetch_attachment_text(mock_provider, "u1", "m1", attach)
+    assert result is not None
+    assert "Resum" in result
+
+
+@pytest.mark.asyncio
+async def test_process_node_attachments_provider_exception_resilience():
+    mock_provider = MagicMock()
+    mock_provider.get_attachment_bytes = AsyncMock(
+        side_effect=RuntimeError("Transient network drop")
+    )
+
+    node = EmailNode(
+        id="node-err",
+        subject="Test Error Handling",
+        attachments=[{"id": "att-err", "name": "notes.txt", "contentType": "text/plain"}],
+    )
+
+    summaries = await process_node_attachments(mock_provider, "u1", node)
+    assert len(summaries) == 1
+    assert "notes.txt" in summaries[0]
+    assert "content" not in node.attachments[0]

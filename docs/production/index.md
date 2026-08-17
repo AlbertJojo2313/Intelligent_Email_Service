@@ -8,7 +8,6 @@ This package ingests email correspondence from financial advisors' mailboxes via
 
 ## 📚 Documentation Index
 
-- **[Getting Started Guide](getting-started.md)** — Quickstart guide for setting up, configuring `.env`, and running the pipeline.
 - **[System Architecture](architecture.md)** — End-to-end component diagrams, DAG reconstruction logic, and execution stages.
 - **[Data Schemas & Output Specification](data-structure.md)** — Field-by-field definitions for `EmailNode` and `CompressedThread`.
 - **[Preprocessing & Compression Module](preprocessing.md)** — Specifications for `EmailCleaner`, `EmailCompressor`, and `process_node_attachments()`.

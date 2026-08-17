@@ -73,3 +73,40 @@ def test_clean_subject():
         == "Financial Statement"
     )
     assert EmailCompressor.clean_subject("Quarterly Planning") == "Quarterly Planning"
+    assert (
+        EmailCompressor.clean_subject("FW: Re: FW: Fwd: [EXTERNAL] Quarterly Meeting")
+        == "[EXTERNAL] Quarterly Meeting"
+    )
+
+
+def test_compress_empty_processed_thread():
+    compressor = EmailCompressor(config=CompressorConfig(use_llmlingua=False))
+    empty_thread = ProcessedThread(
+        subject="Re: Empty Discussion",
+        conversation_id="conv-empty",
+        format=ThreadFormat.MODIFIED,
+        reconstructed=True,
+        messages=[],
+    )
+    result = compressor.compress_processed_thread(empty_thread)
+    assert result.total_messages == 0
+    assert result.compressed_body == ""
+    assert result.subject == "Empty Discussion"
+
+
+def test_compress_massive_message_truncation():
+    compressor = EmailCompressor(
+        config=CompressorConfig(max_full_body_chars=80, use_llmlingua=False)
+    )
+    huge_body = "Important statement line. " * 100
+    msg = {"id": "m-huge", "cleaned_body": huge_body, "attachments": []}
+    thread = ProcessedThread(
+        subject="Huge Email",
+        conversation_id="conv-huge",
+        format=ThreadFormat.FULL_QUOTED,
+        reconstructed=False,
+        messages=[msg],
+    )
+    result = compressor.compress_processed_thread(thread)
+    assert len(result.compressed_body) <= 120
+    assert "[... truncated]" in result.compressed_body
