@@ -23,7 +23,7 @@ This project is an email intelligence service that ingests mailbox data via Micr
 
 ## 🛠️ Step-by-Step Guide: Running & Deploying to Azure via Docker
 
-Follow these industry-standard Docker steps to build, run, and deploy the service for Microsoft Azure.
+Follow these steps to build, run, and deploy the service for Microsoft Azure using Docker.
 
 > 💡 **Offline / Local Mock Testing**: If you want to run the service locally without Azure credentials using mock data, follow the **[Local Docker Development Guide](docs/development/local-docker-setup.md)**.
 
