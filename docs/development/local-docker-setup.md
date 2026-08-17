@@ -38,15 +38,22 @@ USE_LLMLINGUA=false
 
 ---
 
-### Step 2: Build & Start the Container
+### Step 2: Start Mockoon & Launch Docker Container
 
-Start the local development container with live reload using Docker Compose:
+1. **Start Mockoon (Required for `POST /compress` in Dev Mode)**:
+   Follow the **[Mock Setup Guide](mock-setup.md)** to start your Mockoon mock server on port `3000` with sample email data.
 
-```bash
-docker compose up app-dev --build
-```
+2. **Start the Development Container**:
+   ```bash
+   docker compose up app-dev --build
+   ```
 
 The service will start and bind to `http://localhost:8000`.
+
+> 💡 **Note on Testing**:
+> * `GET /health` and Swagger UI (`/docs`) work immediately.
+> * `POST /compress` requires Mockoon running on port `3000` (in `dev` mode) or Azure credentials (in `test_prod` mode).
+> * The test suite (`docker compose run --rm app-dev pytest`) uses internal fixtures and does **not** require Mockoon.
 
 ---
 
