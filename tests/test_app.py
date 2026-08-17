@@ -59,7 +59,7 @@ async def test_compress_endpoint_success():
             response = await client.post(
                 "/compress",
                 json={
-                    "advisor_id": "advisor@firm.com",
+                    "advisor_id": "tst_ad-001",
                     "client_id": "client@household.com",
                 },
             )
@@ -83,7 +83,7 @@ async def test_compress_endpoint_provider_error():
             response = await client.post(
                 "/compress",
                 json={
-                    "advisor_id": "advisor@firm.com",
+                    "advisor_id": "tst_ad-001",
                     "client_id": "client@household.com",
                 },
             )
@@ -104,7 +104,7 @@ async def test_compress_endpoint_empty_results():
             response = await client.post(
                 "/compress",
                 json={
-                    "advisor_id": "advisor@firm.com",
+                    "advisor_id": "tst_ad-001",
                     "client_id": "no_emails@household.com",
                 },
             )
@@ -117,7 +117,7 @@ async def test_compress_endpoint_missing_required_fields():
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:
-        response = await client.post("/compress", json={"advisor_id": "advisor@firm.com"})
+        response = await client.post("/compress", json={"advisor_id": "tst_ad-001"})
         assert response.status_code == 422  # Pydantic validation error for missing client_id
 
 
@@ -134,7 +134,7 @@ async def test_compress_endpoint_with_date_filters():
             response = await client.post(
                 "/compress",
                 json={
-                    "advisor_id": "advisor@firm.com",
+                    "advisor_id": "tst_ad-001",
                     "client_id": "client@household.com",
                     "start_date": "2026-01-01T00:00:00Z",
                     "end_date": "2026-08-16T23:59:59Z",

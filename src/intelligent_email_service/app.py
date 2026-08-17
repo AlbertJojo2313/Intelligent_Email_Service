@@ -21,11 +21,13 @@ app = FastAPI(
 class CompressRequest(BaseModel):
     advisor_id: str = Field(
         ...,
-        description="Advisor email or user ID in Microsoft Graph",
-        examples=["advisor@firm.com"],
+        description="Financial advisor ID / User ID in Microsoft Graph",
+        examples=["tst_ad-001"],
     )
     client_id: str = Field(
-        ..., description="Target client email address", examples=["advisor@firm.com"]
+        ...,
+        description="Target client email address",
+        examples=["client@household.com"],
     )
     start_date: datetime | None = Field(
         default=None,

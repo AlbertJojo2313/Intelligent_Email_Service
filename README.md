@@ -91,12 +91,12 @@ curl http://localhost:8001/health
 #### 3. Test Email Compression (`POST /compress`)
 > 💡 **Note**: Calling `POST /compress` in production mode queries live Microsoft Graph API and requires the valid Azure AD credentials configured in Step 1.
 
-Send a test request with an advisor and client email:
+Send a test request with a financial advisor ID and client email:
 ```bash
 curl -X POST http://localhost:8001/compress \
   -H "Content-Type: application/json" \
   -d '{
-    "advisor_id": "advisor@firm.com",
+    "advisor_id": "tst_ad-001",
     "client_id": "client@household.com"
   }'
 ```

@@ -11,7 +11,7 @@ The Intelligent Email Service is designed to ingest email mailbox data (via Micr
 
 ## Overview
 
-Given a financial advisor's mailbox and a target client (or household) email address, this service:
+Given a financial advisor's user ID (`advisor_id`) and a target client (or household) email address (`client_id`), this service:
 1. Connects to the mailbox via an extensible provider interface (`EmailProvider`).
 2. Queries historical email messages matching client identifiers (`from`, `toRecipients`, `ccRecipients`).
 3. Converts incoming message payloads into strongly-typed `EmailNode` domain objects.
