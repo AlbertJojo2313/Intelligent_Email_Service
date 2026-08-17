@@ -109,7 +109,7 @@ curl -X POST http://localhost:8000/compress \
 
 ### Step 4: Run Automated Tests Inside Docker
 
-To run the full 52-test suite inside the Docker container:
+To run the full 69-test suite inside the Docker container:
 
 ```bash
 docker compose run --rm app-dev pytest

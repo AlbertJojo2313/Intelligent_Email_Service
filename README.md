@@ -89,6 +89,8 @@ curl http://localhost:8001/health
 ```
 
 #### 3. Test Email Compression (`POST /compress`)
+> 💡 **Note**: Calling `POST /compress` in production mode queries live Microsoft Graph API and requires the valid Azure AD credentials configured in Step 1.
+
 Send a test request with an advisor and client email:
 ```bash
 curl -X POST http://localhost:8001/compress \
@@ -122,7 +124,7 @@ curl -X POST http://localhost:8001/compress \
 
 ### Step 4: Run Automated Tests Inside Docker
 
-To verify all 52 unit and integration tests inside Docker:
+To verify all 69 unit and integration tests inside Docker:
 
 ```bash
 docker compose run --rm app-prod pytest
