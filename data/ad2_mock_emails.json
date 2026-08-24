@@ -1,0 +1,2956 @@
+{
+  "value": [
+    {
+      "id": "AAMkAG6ea11551a5ce",
+      "createdDateTime": "2026-07-18T05:26:56.038690Z",
+      "lastModifiedDateTime": "2026-07-18T05:26:56.038690Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-18T05:26:56.038690Z",
+      "sentDateTime": "2026-07-18T05:26:56.038690Z",
+      "hasAttachments": false,
+      "conversation_id": "185a5556-4a9b-4225-80ac-7462289a175b",
+      "message_id": "AAMkAG6ea11551a5ce",
+      "subject": "Tax Document 1099 Request",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nAndrea May"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG7dc3617e3fbf",
+      "createdDateTime": "2026-07-18T03:26:56.038690Z",
+      "lastModifiedDateTime": "2026-07-18T03:26:56.038690Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-18T03:26:56.038690Z",
+      "sentDateTime": "2026-07-18T03:26:56.038690Z",
+      "hasAttachments": false,
+      "conversation_id": "185a5556-4a9b-4225-80ac-7462289a175b",
+      "message_id": "AAMkAG7dc3617e3fbf",
+      "subject": "Re: Tax Document 1099 Request",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Andrea May,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Andrea May",
+            "address": "andrea.may@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG59366b3c730e",
+      "createdDateTime": "2026-07-18T05:26:56.038690Z",
+      "lastModifiedDateTime": "2026-07-18T05:26:56.038690Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-18T05:26:56.038690Z",
+      "sentDateTime": "2026-07-18T05:26:56.038690Z",
+      "hasAttachments": false,
+      "conversation_id": "185a5556-4a9b-4225-80ac-7462289a175b",
+      "message_id": "AAMkAG59366b3c730e",
+      "subject": "Re: Tax Document 1099 Request",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nAndrea May"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGbff967133670",
+      "createdDateTime": "2026-07-11T05:26:56.038838Z",
+      "lastModifiedDateTime": "2026-07-11T05:26:56.038838Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-11T05:26:56.038838Z",
+      "sentDateTime": "2026-07-11T05:26:56.038838Z",
+      "hasAttachments": false,
+      "conversation_id": "e49ef367-22b0-4f41-8d96-b21fb484babf",
+      "message_id": "AAMkAGbff967133670",
+      "subject": "Onboarding Documents",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nI wanted to check what documents you still need from us to finish our onboarding. We sent the driver's licenses yesterday.\n\nBest,\nAlan Smith"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG5ef440e936f8",
+      "createdDateTime": "2026-07-11T07:26:56.038838Z",
+      "lastModifiedDateTime": "2026-07-11T07:26:56.038838Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-11T07:26:56.038838Z",
+      "sentDateTime": "2026-07-11T07:26:56.038838Z",
+      "hasAttachments": false,
+      "conversation_id": "e49ef367-22b0-4f41-8d96-b21fb484babf",
+      "message_id": "AAMkAG5ef440e936f8",
+      "subject": "Re: Onboarding Documents",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Alan Smith,\n\nThank you for the licenses. To finalize, we still need the signed advisory agreement and a copy of your most recent brokerage statement.\n\nRegards,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Alan Smith",
+            "address": "alan.smith@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGd9d1a6355bce",
+      "createdDateTime": "2026-07-11T08:26:56.038838Z",
+      "lastModifiedDateTime": "2026-07-11T08:26:56.038838Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-11T08:26:56.038838Z",
+      "sentDateTime": "2026-07-11T08:26:56.038838Z",
+      "hasAttachments": false,
+      "conversation_id": "e49ef367-22b0-4f41-8d96-b21fb484babf",
+      "message_id": "AAMkAGd9d1a6355bce",
+      "subject": "Re: Onboarding Documents",
+      "body": {
+        "content_type": "html",
+        "content": "Got it. I will upload those to the portal tonight.\n\nBest,\nAlan Smith\n\nOn 2026-07-11T07:26:56.038838Z, Sarah_Jones <sarah.jones@company.com> wrote:\n> Hi Alan Smith,\n> \n> Thank you for the licenses. To finalize, we still need the signed advisory agreement and a copy of your most recent brokerage statement.\n> \n> Regards,\n> Sarah_Jones\n\nOn 2026-07-11T05:26:56.038838Z, Alan Smith <alan.smith@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> I wanted to check what documents you still need from us to finish our onboarding. We sent the driver's licenses yesterday.\n> \n> Best,\n> Alan Smith"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGef09a1a0d04a",
+      "createdDateTime": "2026-06-26T04:26:56.038867Z",
+      "lastModifiedDateTime": "2026-06-26T04:26:56.038867Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-26T04:26:56.038867Z",
+      "sentDateTime": "2026-06-26T04:26:56.038867Z",
+      "hasAttachments": false,
+      "conversation_id": "c7ab06a7-42d6-4419-92e5-7b6a20fdbdee",
+      "message_id": "AAMkAGef09a1a0d04a",
+      "subject": "Wealth Transfer",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nJerry Harris"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Jerry Harris",
+          "address": "jerry.harris@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Jerry Harris",
+          "address": "jerry.harris@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGcd2db2367cfb",
+      "createdDateTime": "2026-06-26T07:26:56.038867Z",
+      "lastModifiedDateTime": "2026-06-26T07:26:56.038867Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-26T07:26:56.038867Z",
+      "sentDateTime": "2026-06-26T07:26:56.038867Z",
+      "hasAttachments": false,
+      "conversation_id": "c7ab06a7-42d6-4419-92e5-7b6a20fdbdee",
+      "message_id": "AAMkAGcd2db2367cfb",
+      "subject": "Re: Wealth Transfer",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Jerry Harris,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Jerry Harris",
+            "address": "jerry.harris@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG335fa09c7c07",
+      "createdDateTime": "2026-07-06T00:26:56.038882Z",
+      "lastModifiedDateTime": "2026-07-06T00:26:56.038882Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-06T00:26:56.038882Z",
+      "sentDateTime": "2026-07-06T00:26:56.038882Z",
+      "hasAttachments": false,
+      "conversation_id": "5405d92f-624b-4aa7-847e-e05cf13c179e",
+      "message_id": "AAMkAG335fa09c7c07",
+      "subject": "Tax Document 1099 Request",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nNicholas Flores"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG7fc588934a1f",
+      "createdDateTime": "2026-07-06T03:26:56.038882Z",
+      "lastModifiedDateTime": "2026-07-06T03:26:56.038882Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-06T03:26:56.038882Z",
+      "sentDateTime": "2026-07-06T03:26:56.038882Z",
+      "hasAttachments": false,
+      "conversation_id": "5405d92f-624b-4aa7-847e-e05cf13c179e",
+      "message_id": "AAMkAG7fc588934a1f",
+      "subject": "Re: Tax Document 1099 Request",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Nicholas Flores,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Nicholas Flores",
+            "address": "nicholas.flores@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGf47a3a88f138",
+      "createdDateTime": "2026-07-06T08:26:56.038882Z",
+      "lastModifiedDateTime": "2026-07-06T08:26:56.038882Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-06T08:26:56.038882Z",
+      "sentDateTime": "2026-07-06T08:26:56.038882Z",
+      "hasAttachments": false,
+      "conversation_id": "5405d92f-624b-4aa7-847e-e05cf13c179e",
+      "message_id": "AAMkAGf47a3a88f138",
+      "subject": "Re: Tax Document 1099 Request",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nNicholas Flores"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG000cc4cf35a5",
+      "createdDateTime": "2026-07-17T03:26:56.038900Z",
+      "lastModifiedDateTime": "2026-07-17T03:26:56.038900Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-17T03:26:56.038900Z",
+      "sentDateTime": "2026-07-17T03:26:56.038900Z",
+      "hasAttachments": false,
+      "conversation_id": "58633331-4a15-4078-9476-bc543bb06894",
+      "message_id": "AAMkAG000cc4cf35a5",
+      "subject": "Portfolio Rebalancing",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nI was looking at my portfolio and noticed we have a lot of cash. Should we rebalance it into the mutual funds we discussed?\n\nBest,\nPatricia Nguyen"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Patricia Nguyen",
+          "address": "patricia.nguyen@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Patricia Nguyen",
+          "address": "patricia.nguyen@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGf7496d493d42",
+      "createdDateTime": "2026-07-17T03:26:56.038900Z",
+      "lastModifiedDateTime": "2026-07-17T03:26:56.038900Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-17T03:26:56.038900Z",
+      "sentDateTime": "2026-07-17T03:26:56.038900Z",
+      "hasAttachments": false,
+      "conversation_id": "58633331-4a15-4078-9476-bc543bb06894",
+      "message_id": "AAMkAGf7496d493d42",
+      "subject": "Re: Portfolio Rebalancing",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Patricia Nguyen,\n\nThanks for reaching out. Yes, we should deploy that cash. I will prepare a rebalancing proposal and send it over for your signature today.\n\nBest,\nSarah_Jones\n\nOn 2026-07-17T03:26:56.038900Z, Patricia Nguyen <patricia.nguyen@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> I was looking at my portfolio and noticed we have a lot of cash. Should we rebalance it into the mutual funds we discussed?\n> \n> Best,\n> Patricia Nguyen"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Patricia Nguyen",
+            "address": "patricia.nguyen@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG6bd4e3bf7b0b",
+      "createdDateTime": "2026-06-25T02:26:56.038918Z",
+      "lastModifiedDateTime": "2026-06-25T02:26:56.038918Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-25T02:26:56.038918Z",
+      "sentDateTime": "2026-06-25T02:26:56.038918Z",
+      "hasAttachments": false,
+      "conversation_id": "43d3cf15-d97d-4491-a967-04a4740fd355",
+      "message_id": "AAMkAG6bd4e3bf7b0b",
+      "subject": "Ira Contributions",
+      "body": {
+        "content_type": "html",
+        "content": "Dear Sarah_Jones,\n\nCan you check how much I can still contribute to my Roth IRA for this year? I want to make sure I don't go over the limit.\n\nRegards,\nJavier Fuller"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Javier Fuller",
+          "address": "javier.fuller@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Javier Fuller",
+          "address": "javier.fuller@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGb5838583ef4f",
+      "createdDateTime": "2026-06-25T07:26:56.038918Z",
+      "lastModifiedDateTime": "2026-06-25T07:26:56.038918Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-25T07:26:56.038918Z",
+      "sentDateTime": "2026-06-25T07:26:56.038918Z",
+      "hasAttachments": false,
+      "conversation_id": "43d3cf15-d97d-4491-a967-04a4740fd355",
+      "message_id": "AAMkAGb5838583ef4f",
+      "subject": "Re: Ira Contributions",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Javier Fuller,\n\nFor 2026, the contribution limit is $7,000 (or $8,000 if you are 50 or older). You have contributed $4,500 so far, so you can add up to $2,500.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Javier Fuller",
+            "address": "javier.fuller@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG9ad1f6b9ecf4",
+      "createdDateTime": "2026-06-25T07:26:56.038918Z",
+      "lastModifiedDateTime": "2026-06-25T07:26:56.038918Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-25T07:26:56.038918Z",
+      "sentDateTime": "2026-06-25T07:26:56.038918Z",
+      "hasAttachments": false,
+      "conversation_id": "43d3cf15-d97d-4491-a967-04a4740fd355",
+      "message_id": "AAMkAG9ad1f6b9ecf4",
+      "subject": "Re: Ira Contributions",
+      "body": {
+        "content_type": "html",
+        "content": "Thank you! I will transfer the remaining $2,500 today.\n\nRegards,\nJavier Fuller\n\nOn 2026-06-25T07:26:56.038918Z, Sarah_Jones <sarah.jones@company.com> wrote:\n> Hi Javier Fuller,\n> \n> For 2026, the contribution limit is $7,000 (or $8,000 if you are 50 or older). You have contributed $4,500 so far, so you can add up to $2,500.\n> \n> Best,\n> Sarah_Jones\n\nOn 2026-06-25T02:26:56.038918Z, Javier Fuller <javier.fuller@example.com> wrote:\n> Dear Sarah_Jones,\n> \n> Can you check how much I can still contribute to my Roth IRA for this year? I want to make sure I don't go over the limit.\n> \n> Regards,\n> Javier Fuller"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Javier Fuller",
+          "address": "javier.fuller@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Javier Fuller",
+          "address": "javier.fuller@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG1333acdad382",
+      "createdDateTime": "2026-07-13T02:26:56.038939Z",
+      "lastModifiedDateTime": "2026-07-13T02:26:56.038939Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-13T02:26:56.038939Z",
+      "sentDateTime": "2026-07-13T02:26:56.038939Z",
+      "hasAttachments": false,
+      "conversation_id": "499702d2-d552-45ff-b811-4719a62d96dc",
+      "message_id": "AAMkAG1333acdad382",
+      "subject": "Inheritance",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nNancy Howe"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nancy Howe",
+          "address": "nancy.howe@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nancy Howe",
+          "address": "nancy.howe@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGc4df1a1ae5de",
+      "createdDateTime": "2026-07-13T04:26:56.038939Z",
+      "lastModifiedDateTime": "2026-07-13T04:26:56.038939Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-13T04:26:56.038939Z",
+      "sentDateTime": "2026-07-13T04:26:56.038939Z",
+      "hasAttachments": false,
+      "conversation_id": "499702d2-d552-45ff-b811-4719a62d96dc",
+      "message_id": "AAMkAGc4df1a1ae5de",
+      "subject": "Re: Inheritance",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Nancy Howe,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Nancy Howe",
+            "address": "nancy.howe@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG091a853a42fd",
+      "createdDateTime": "2026-07-16T04:26:56.038952Z",
+      "lastModifiedDateTime": "2026-07-16T04:26:56.038952Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-16T04:26:56.038952Z",
+      "sentDateTime": "2026-07-16T04:26:56.038952Z",
+      "hasAttachments": false,
+      "conversation_id": "6c2c71df-808e-4c55-8e13-7b0833f429f0",
+      "message_id": "AAMkAG091a853a42fd",
+      "subject": "Ira Contributions",
+      "body": {
+        "content_type": "html",
+        "content": "Dear Sarah_Jones,\n\nCan you check how much I can still contribute to my Roth IRA for this year? I want to make sure I don't go over the limit.\n\nRegards,\nAndrea May"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGaa0a7794ae96",
+      "createdDateTime": "2026-07-16T04:26:56.038952Z",
+      "lastModifiedDateTime": "2026-07-16T04:26:56.038952Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-16T04:26:56.038952Z",
+      "sentDateTime": "2026-07-16T04:26:56.038952Z",
+      "hasAttachments": false,
+      "conversation_id": "6c2c71df-808e-4c55-8e13-7b0833f429f0",
+      "message_id": "AAMkAGaa0a7794ae96",
+      "subject": "Re: Ira Contributions",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Andrea May,\n\nFor 2026, the contribution limit is $7,000 (or $8,000 if you are 50 or older). You have contributed $4,500 so far, so you can add up to $2,500.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Andrea May",
+            "address": "andrea.may@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG2301a2729122",
+      "createdDateTime": "2026-07-16T06:26:56.038952Z",
+      "lastModifiedDateTime": "2026-07-16T06:26:56.038952Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-16T06:26:56.038952Z",
+      "sentDateTime": "2026-07-16T06:26:56.038952Z",
+      "hasAttachments": false,
+      "conversation_id": "6c2c71df-808e-4c55-8e13-7b0833f429f0",
+      "message_id": "AAMkAG2301a2729122",
+      "subject": "Re: Ira Contributions",
+      "body": {
+        "content_type": "html",
+        "content": "Thank you! I will transfer the remaining $2,500 today.\n\nRegards,\nAndrea May"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG2b7a97bb6377",
+      "createdDateTime": "2026-07-01T04:26:56.038969Z",
+      "lastModifiedDateTime": "2026-07-01T04:26:56.038969Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-01T04:26:56.038969Z",
+      "sentDateTime": "2026-07-01T04:26:56.038969Z",
+      "hasAttachments": false,
+      "conversation_id": "7e40a9d2-c69e-43fc-b1d1-095375876f3e",
+      "message_id": "AAMkAG2b7a97bb6377",
+      "subject": "Quarterly Meeting Scheduling",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nAlan Smith"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG647803584bd8",
+      "createdDateTime": "2026-07-01T02:26:56.038969Z",
+      "lastModifiedDateTime": "2026-07-01T02:26:56.038969Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-01T02:26:56.038969Z",
+      "sentDateTime": "2026-07-01T02:26:56.038969Z",
+      "hasAttachments": false,
+      "conversation_id": "7e40a9d2-c69e-43fc-b1d1-095375876f3e",
+      "message_id": "AAMkAG647803584bd8",
+      "subject": "Re: Quarterly Meeting Scheduling",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Alan Smith,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones\n\nOn 2026-07-01T04:26:56.038969Z, Alan Smith <alan.smith@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> Just checking in regarding our conversation about my accounts. Is there any update on the setup?\n> \n> Best,\n> Alan Smith"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Alan Smith",
+            "address": "alan.smith@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG62c52bb3cc28",
+      "createdDateTime": "2026-07-06T02:26:56.038982Z",
+      "lastModifiedDateTime": "2026-07-06T02:26:56.038982Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-06T02:26:56.038982Z",
+      "sentDateTime": "2026-07-06T02:26:56.038982Z",
+      "hasAttachments": false,
+      "conversation_id": "681e4694-5e89-44b5-93c2-61449af2ba3f",
+      "message_id": "AAMkAG62c52bb3cc28",
+      "subject": "Wire Transfer Verification",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nJerry Harris"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Jerry Harris",
+          "address": "jerry.harris@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Jerry Harris",
+          "address": "jerry.harris@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG044732edb6fe",
+      "createdDateTime": "2026-07-06T02:26:56.038982Z",
+      "lastModifiedDateTime": "2026-07-06T02:26:56.038982Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-06T02:26:56.038982Z",
+      "sentDateTime": "2026-07-06T02:26:56.038982Z",
+      "hasAttachments": false,
+      "conversation_id": "681e4694-5e89-44b5-93c2-61449af2ba3f",
+      "message_id": "AAMkAG044732edb6fe",
+      "subject": "Re: Wire Transfer Verification",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Jerry Harris,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones\n\nOn 2026-07-06T02:26:56.038982Z, Jerry Harris <jerry.harris@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> Just checking in regarding our conversation about my accounts. Is there any update on the setup?\n> \n> Best,\n> Jerry Harris"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Jerry Harris",
+            "address": "jerry.harris@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG04499a870d4d",
+      "createdDateTime": "2026-07-18T02:26:56.038994Z",
+      "lastModifiedDateTime": "2026-07-18T02:26:56.038994Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-18T02:26:56.038994Z",
+      "sentDateTime": "2026-07-18T02:26:56.038994Z",
+      "hasAttachments": false,
+      "conversation_id": "4142f017-026f-4a8b-9f1b-073767e3a9b5",
+      "message_id": "AAMkAG04499a870d4d",
+      "subject": "Inheritance",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nNicholas Flores"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG3d0aadf39d41",
+      "createdDateTime": "2026-07-18T03:26:56.038994Z",
+      "lastModifiedDateTime": "2026-07-18T03:26:56.038994Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-18T03:26:56.038994Z",
+      "sentDateTime": "2026-07-18T03:26:56.038994Z",
+      "hasAttachments": false,
+      "conversation_id": "4142f017-026f-4a8b-9f1b-073767e3a9b5",
+      "message_id": "AAMkAG3d0aadf39d41",
+      "subject": "Re: Inheritance",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Nicholas Flores,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Nicholas Flores",
+            "address": "nicholas.flores@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG2759f35101f8",
+      "createdDateTime": "2026-07-18T08:26:56.038994Z",
+      "lastModifiedDateTime": "2026-07-18T08:26:56.038994Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-18T08:26:56.038994Z",
+      "sentDateTime": "2026-07-18T08:26:56.038994Z",
+      "hasAttachments": false,
+      "conversation_id": "4142f017-026f-4a8b-9f1b-073767e3a9b5",
+      "message_id": "AAMkAG2759f35101f8",
+      "subject": "Re: Inheritance",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nNicholas Flores\n\nOn 2026-07-18T03:26:56.038994Z, Sarah_Jones <sarah.jones@company.com> wrote:\n> Hello Nicholas Flores,\n> \n> Yes, the account setup is complete. You should receive a welcome email with login details shortly.\n> \n> Best,\n> Sarah_Jones\n\nOn 2026-07-18T02:26:56.038994Z, Nicholas Flores <nicholas.flores@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> Just checking in regarding our conversation about my accounts. Is there any update on the setup?\n> \n> Best,\n> Nicholas Flores"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG0262f319f315",
+      "createdDateTime": "2026-06-27T00:26:56.039011Z",
+      "lastModifiedDateTime": "2026-06-27T00:26:56.039011Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-27T00:26:56.039011Z",
+      "sentDateTime": "2026-06-27T00:26:56.039011Z",
+      "hasAttachments": false,
+      "conversation_id": "fabc6974-0581-454e-83cb-d1c38acefc91",
+      "message_id": "AAMkAG0262f319f315",
+      "subject": "Onboarding Documents",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nI wanted to check what documents you still need from us to finish our onboarding. We sent the driver's licenses yesterday.\n\nBest,\nPatricia Nguyen"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Patricia Nguyen",
+          "address": "patricia.nguyen@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Patricia Nguyen",
+          "address": "patricia.nguyen@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG6328998b9f90",
+      "createdDateTime": "2026-06-27T02:26:56.039011Z",
+      "lastModifiedDateTime": "2026-06-27T02:26:56.039011Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-27T02:26:56.039011Z",
+      "sentDateTime": "2026-06-27T02:26:56.039011Z",
+      "hasAttachments": false,
+      "conversation_id": "fabc6974-0581-454e-83cb-d1c38acefc91",
+      "message_id": "AAMkAG6328998b9f90",
+      "subject": "Re: Onboarding Documents",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Patricia Nguyen,\n\nThank you for the licenses. To finalize, we still need the signed advisory agreement and a copy of your most recent brokerage statement.\n\nRegards,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Patricia Nguyen",
+            "address": "patricia.nguyen@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG226dc48ed953",
+      "createdDateTime": "2026-06-26T02:26:56.039022Z",
+      "lastModifiedDateTime": "2026-06-26T02:26:56.039022Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-26T02:26:56.039022Z",
+      "sentDateTime": "2026-06-26T02:26:56.039022Z",
+      "hasAttachments": false,
+      "conversation_id": "d729d71b-be78-44b4-90e7-970c1d25fdd5",
+      "message_id": "AAMkAG226dc48ed953",
+      "subject": "Tax Document 1099 Request",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nJavier Fuller"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Javier Fuller",
+          "address": "javier.fuller@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Javier Fuller",
+          "address": "javier.fuller@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG715725a0fdc8",
+      "createdDateTime": "2026-06-26T05:26:56.039022Z",
+      "lastModifiedDateTime": "2026-06-26T05:26:56.039022Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-26T05:26:56.039022Z",
+      "sentDateTime": "2026-06-26T05:26:56.039022Z",
+      "hasAttachments": false,
+      "conversation_id": "d729d71b-be78-44b4-90e7-970c1d25fdd5",
+      "message_id": "AAMkAG715725a0fdc8",
+      "subject": "Re: Tax Document 1099 Request",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Javier Fuller,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Javier Fuller",
+            "address": "javier.fuller@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG465448d330a8",
+      "createdDateTime": "2026-06-30T03:26:56.039033Z",
+      "lastModifiedDateTime": "2026-06-30T03:26:56.039033Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-30T03:26:56.039033Z",
+      "sentDateTime": "2026-06-30T03:26:56.039033Z",
+      "hasAttachments": false,
+      "conversation_id": "12bdcc50-5869-4773-9e88-2309cca1c7c5",
+      "message_id": "AAMkAG465448d330a8",
+      "subject": "Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nNancy Howe"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nancy Howe",
+          "address": "nancy.howe@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nancy Howe",
+          "address": "nancy.howe@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG0e331cc72e19",
+      "createdDateTime": "2026-06-30T02:26:56.039033Z",
+      "lastModifiedDateTime": "2026-06-30T02:26:56.039033Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-30T02:26:56.039033Z",
+      "sentDateTime": "2026-06-30T02:26:56.039033Z",
+      "hasAttachments": false,
+      "conversation_id": "12bdcc50-5869-4773-9e88-2309cca1c7c5",
+      "message_id": "AAMkAG0e331cc72e19",
+      "subject": "Re: Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Nancy Howe,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Nancy Howe",
+            "address": "nancy.howe@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGd7e8cef06a8f",
+      "createdDateTime": "2026-06-29T03:26:56.039046Z",
+      "lastModifiedDateTime": "2026-06-29T03:26:56.039046Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-29T03:26:56.039046Z",
+      "sentDateTime": "2026-06-29T03:26:56.039046Z",
+      "hasAttachments": false,
+      "conversation_id": "8f836800-8c6d-4b5a-85a7-3ce705124d9f",
+      "message_id": "AAMkAGd7e8cef06a8f",
+      "subject": "Wire Transfer Verification",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nAndrea May"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG0c38682fba08",
+      "createdDateTime": "2026-06-29T02:26:56.039046Z",
+      "lastModifiedDateTime": "2026-06-29T02:26:56.039046Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-29T02:26:56.039046Z",
+      "sentDateTime": "2026-06-29T02:26:56.039046Z",
+      "hasAttachments": false,
+      "conversation_id": "8f836800-8c6d-4b5a-85a7-3ce705124d9f",
+      "message_id": "AAMkAG0c38682fba08",
+      "subject": "Re: Wire Transfer Verification",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Andrea May,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Andrea May",
+            "address": "andrea.may@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG0935de6b0dc0",
+      "createdDateTime": "2026-06-29T04:26:56.039046Z",
+      "lastModifiedDateTime": "2026-06-29T04:26:56.039046Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-29T04:26:56.039046Z",
+      "sentDateTime": "2026-06-29T04:26:56.039046Z",
+      "hasAttachments": false,
+      "conversation_id": "8f836800-8c6d-4b5a-85a7-3ce705124d9f",
+      "message_id": "AAMkAG0935de6b0dc0",
+      "subject": "Re: Wire Transfer Verification",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nAndrea May"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG7458ce6a208a",
+      "createdDateTime": "2026-06-29T07:26:56.039046Z",
+      "lastModifiedDateTime": "2026-06-29T07:26:56.039046Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-29T07:26:56.039046Z",
+      "sentDateTime": "2026-06-29T07:26:56.039046Z",
+      "hasAttachments": false,
+      "conversation_id": "8f836800-8c6d-4b5a-85a7-3ce705124d9f",
+      "message_id": "AAMkAG7458ce6a208a",
+      "subject": "Re: Wire Transfer Verification",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Andrea May,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Andrea May",
+            "address": "andrea.may@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG34c0575655a5",
+      "createdDateTime": "2026-06-27T01:26:56.039063Z",
+      "lastModifiedDateTime": "2026-06-27T01:26:56.039063Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-27T01:26:56.039063Z",
+      "sentDateTime": "2026-06-27T01:26:56.039063Z",
+      "hasAttachments": false,
+      "conversation_id": "c199e82f-71bc-4d1d-922c-890cbfb0c9f7",
+      "message_id": "AAMkAG34c0575655a5",
+      "subject": "Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nAlan Smith"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG0daeaaf756cf",
+      "createdDateTime": "2026-06-27T05:26:56.039063Z",
+      "lastModifiedDateTime": "2026-06-27T05:26:56.039063Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-27T05:26:56.039063Z",
+      "sentDateTime": "2026-06-27T05:26:56.039063Z",
+      "hasAttachments": false,
+      "conversation_id": "c199e82f-71bc-4d1d-922c-890cbfb0c9f7",
+      "message_id": "AAMkAG0daeaaf756cf",
+      "subject": "Re: Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Alan Smith,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Alan Smith",
+            "address": "alan.smith@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG898566bfb1b7",
+      "createdDateTime": "2026-06-27T08:26:56.039063Z",
+      "lastModifiedDateTime": "2026-06-27T08:26:56.039063Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-27T08:26:56.039063Z",
+      "sentDateTime": "2026-06-27T08:26:56.039063Z",
+      "hasAttachments": false,
+      "conversation_id": "c199e82f-71bc-4d1d-922c-890cbfb0c9f7",
+      "message_id": "AAMkAG898566bfb1b7",
+      "subject": "Re: Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nAlan Smith\n\nOn 2026-06-27T05:26:56.039063Z, Sarah_Jones <sarah.jones@company.com> wrote:\n> Hello Alan Smith,\n> \n> Yes, the account setup is complete. You should receive a welcome email with login details shortly.\n> \n> Best,\n> Sarah_Jones\n\nOn 2026-06-27T01:26:56.039063Z, Alan Smith <alan.smith@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> Just checking in regarding our conversation about my accounts. Is there any update on the setup?\n> \n> Best,\n> Alan Smith"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGf4eb46897f62",
+      "createdDateTime": "2026-06-26T00:26:56.039079Z",
+      "lastModifiedDateTime": "2026-06-26T00:26:56.039079Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-26T00:26:56.039079Z",
+      "sentDateTime": "2026-06-26T00:26:56.039079Z",
+      "hasAttachments": false,
+      "conversation_id": "38fd30e0-ee09-491d-bf5b-e47dd05b2df2",
+      "message_id": "AAMkAGf4eb46897f62",
+      "subject": "Wire Transfer Verification",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nJerry Harris"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Jerry Harris",
+          "address": "jerry.harris@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Jerry Harris",
+          "address": "jerry.harris@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG56540661c6ee",
+      "createdDateTime": "2026-06-26T02:26:56.039079Z",
+      "lastModifiedDateTime": "2026-06-26T02:26:56.039079Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-26T02:26:56.039079Z",
+      "sentDateTime": "2026-06-26T02:26:56.039079Z",
+      "hasAttachments": false,
+      "conversation_id": "38fd30e0-ee09-491d-bf5b-e47dd05b2df2",
+      "message_id": "AAMkAG56540661c6ee",
+      "subject": "Re: Wire Transfer Verification",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Jerry Harris,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Jerry Harris",
+            "address": "jerry.harris@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG26fba8a11161",
+      "createdDateTime": "2026-06-26T06:26:56.039079Z",
+      "lastModifiedDateTime": "2026-06-26T06:26:56.039079Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-26T06:26:56.039079Z",
+      "sentDateTime": "2026-06-26T06:26:56.039079Z",
+      "hasAttachments": false,
+      "conversation_id": "38fd30e0-ee09-491d-bf5b-e47dd05b2df2",
+      "message_id": "AAMkAG26fba8a11161",
+      "subject": "Re: Wire Transfer Verification",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nJerry Harris"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Jerry Harris",
+          "address": "jerry.harris@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Jerry Harris",
+          "address": "jerry.harris@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG5f7afb393855",
+      "createdDateTime": "2026-06-26T08:26:56.039079Z",
+      "lastModifiedDateTime": "2026-06-26T08:26:56.039079Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-26T08:26:56.039079Z",
+      "sentDateTime": "2026-06-26T08:26:56.039079Z",
+      "hasAttachments": false,
+      "conversation_id": "38fd30e0-ee09-491d-bf5b-e47dd05b2df2",
+      "message_id": "AAMkAG5f7afb393855",
+      "subject": "Re: Wire Transfer Verification",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Jerry Harris,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones\n\nOn 2026-06-26T06:26:56.039079Z, Jerry Harris <jerry.harris@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> Just checking in regarding our conversation about my accounts. Is there any update on the setup?\n> \n> Best,\n> Jerry Harris\n\nOn 2026-06-26T02:26:56.039079Z, Sarah_Jones <sarah.jones@company.com> wrote:\n> Hello Jerry Harris,\n> \n> Yes, the account setup is complete. You should receive a welcome email with login details shortly.\n> \n> Best,\n> Sarah_Jones\n\nOn 2026-06-26T00:26:56.039079Z, Jerry Harris <jerry.harris@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> Just checking in regarding our conversation about my accounts. Is there any update on the setup?\n> \n> Best,\n> Jerry Harris"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Jerry Harris",
+            "address": "jerry.harris@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG406af5f23c84",
+      "createdDateTime": "2026-07-08T00:26:56.039098Z",
+      "lastModifiedDateTime": "2026-07-08T00:26:56.039098Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-08T00:26:56.039098Z",
+      "sentDateTime": "2026-07-08T00:26:56.039098Z",
+      "hasAttachments": false,
+      "conversation_id": "6eeddbd4-36de-45e5-8e4e-cb2246f98049",
+      "message_id": "AAMkAG406af5f23c84",
+      "subject": "Family Health",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nNicholas Flores"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGb486e2dc7402",
+      "createdDateTime": "2026-07-08T02:26:56.039098Z",
+      "lastModifiedDateTime": "2026-07-08T02:26:56.039098Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-08T02:26:56.039098Z",
+      "sentDateTime": "2026-07-08T02:26:56.039098Z",
+      "hasAttachments": false,
+      "conversation_id": "6eeddbd4-36de-45e5-8e4e-cb2246f98049",
+      "message_id": "AAMkAGb486e2dc7402",
+      "subject": "Re: Family Health",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Nicholas Flores,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Nicholas Flores",
+            "address": "nicholas.flores@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG83ced1b38e2d",
+      "createdDateTime": "2026-07-08T07:26:56.039098Z",
+      "lastModifiedDateTime": "2026-07-08T07:26:56.039098Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-08T07:26:56.039098Z",
+      "sentDateTime": "2026-07-08T07:26:56.039098Z",
+      "hasAttachments": false,
+      "conversation_id": "6eeddbd4-36de-45e5-8e4e-cb2246f98049",
+      "message_id": "AAMkAG83ced1b38e2d",
+      "subject": "Re: Family Health",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nNicholas Flores"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGb9c955b98549",
+      "createdDateTime": "2026-06-22T04:26:56.039112Z",
+      "lastModifiedDateTime": "2026-06-22T04:26:56.039112Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-22T04:26:56.039112Z",
+      "sentDateTime": "2026-06-22T04:26:56.039112Z",
+      "hasAttachments": false,
+      "conversation_id": "0cb4b32d-ace1-4b65-97e7-c05f7ccad914",
+      "message_id": "AAMkAGb9c955b98549",
+      "subject": "Tax Document 1099 Request",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nPatricia Nguyen"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Patricia Nguyen",
+          "address": "patricia.nguyen@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Patricia Nguyen",
+          "address": "patricia.nguyen@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG0c3dffa12e5f",
+      "createdDateTime": "2026-06-22T03:26:56.039112Z",
+      "lastModifiedDateTime": "2026-06-22T03:26:56.039112Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-22T03:26:56.039112Z",
+      "sentDateTime": "2026-06-22T03:26:56.039112Z",
+      "hasAttachments": false,
+      "conversation_id": "0cb4b32d-ace1-4b65-97e7-c05f7ccad914",
+      "message_id": "AAMkAG0c3dffa12e5f",
+      "subject": "Re: Tax Document 1099 Request",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Patricia Nguyen,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Patricia Nguyen",
+            "address": "patricia.nguyen@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG22ba3e23f256",
+      "createdDateTime": "2026-06-22T05:26:56.039112Z",
+      "lastModifiedDateTime": "2026-06-22T05:26:56.039112Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-22T05:26:56.039112Z",
+      "sentDateTime": "2026-06-22T05:26:56.039112Z",
+      "hasAttachments": false,
+      "conversation_id": "0cb4b32d-ace1-4b65-97e7-c05f7ccad914",
+      "message_id": "AAMkAG22ba3e23f256",
+      "subject": "Re: Tax Document 1099 Request",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nPatricia Nguyen"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Patricia Nguyen",
+          "address": "patricia.nguyen@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Patricia Nguyen",
+          "address": "patricia.nguyen@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG8abc469198b1",
+      "createdDateTime": "2026-06-27T04:26:56.039126Z",
+      "lastModifiedDateTime": "2026-06-27T04:26:56.039126Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-27T04:26:56.039126Z",
+      "sentDateTime": "2026-06-27T04:26:56.039126Z",
+      "hasAttachments": false,
+      "conversation_id": "f11d1e00-c6c2-49f1-888a-8f7490b54157",
+      "message_id": "AAMkAG8abc469198b1",
+      "subject": "Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nJavier Fuller"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Javier Fuller",
+          "address": "javier.fuller@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Javier Fuller",
+          "address": "javier.fuller@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG2512268aa2c6",
+      "createdDateTime": "2026-06-27T02:26:56.039126Z",
+      "lastModifiedDateTime": "2026-06-27T02:26:56.039126Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-27T02:26:56.039126Z",
+      "sentDateTime": "2026-06-27T02:26:56.039126Z",
+      "hasAttachments": false,
+      "conversation_id": "f11d1e00-c6c2-49f1-888a-8f7490b54157",
+      "message_id": "AAMkAG2512268aa2c6",
+      "subject": "Re: Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Javier Fuller,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones\n\nOn 2026-06-27T04:26:56.039126Z, Javier Fuller <javier.fuller@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> Just checking in regarding our conversation about my accounts. Is there any update on the setup?\n> \n> Best,\n> Javier Fuller"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Javier Fuller",
+            "address": "javier.fuller@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGd398ebedadc8",
+      "createdDateTime": "2026-06-22T05:26:56.039138Z",
+      "lastModifiedDateTime": "2026-06-22T05:26:56.039138Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-22T05:26:56.039138Z",
+      "sentDateTime": "2026-06-22T05:26:56.039138Z",
+      "hasAttachments": false,
+      "conversation_id": "fa564415-b5b8-43cf-9412-e7271e70503a",
+      "message_id": "AAMkAGd398ebedadc8",
+      "subject": "Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nNancy Howe"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nancy Howe",
+          "address": "nancy.howe@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nancy Howe",
+          "address": "nancy.howe@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGf7167afe2ca1",
+      "createdDateTime": "2026-06-22T05:26:56.039138Z",
+      "lastModifiedDateTime": "2026-06-22T05:26:56.039138Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-22T05:26:56.039138Z",
+      "sentDateTime": "2026-06-22T05:26:56.039138Z",
+      "hasAttachments": false,
+      "conversation_id": "fa564415-b5b8-43cf-9412-e7271e70503a",
+      "message_id": "AAMkAGf7167afe2ca1",
+      "subject": "Re: Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Nancy Howe,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Nancy Howe",
+            "address": "nancy.howe@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGd1b1c8551f43",
+      "createdDateTime": "2026-06-22T06:26:56.039138Z",
+      "lastModifiedDateTime": "2026-06-22T06:26:56.039138Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-22T06:26:56.039138Z",
+      "sentDateTime": "2026-06-22T06:26:56.039138Z",
+      "hasAttachments": false,
+      "conversation_id": "fa564415-b5b8-43cf-9412-e7271e70503a",
+      "message_id": "AAMkAGd1b1c8551f43",
+      "subject": "Re: Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nNancy Howe"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nancy Howe",
+          "address": "nancy.howe@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nancy Howe",
+          "address": "nancy.howe@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG6af5d1261060",
+      "createdDateTime": "2026-06-22T06:26:56.039138Z",
+      "lastModifiedDateTime": "2026-06-22T06:26:56.039138Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-22T06:26:56.039138Z",
+      "sentDateTime": "2026-06-22T06:26:56.039138Z",
+      "hasAttachments": false,
+      "conversation_id": "fa564415-b5b8-43cf-9412-e7271e70503a",
+      "message_id": "AAMkAG6af5d1261060",
+      "subject": "Re: Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Nancy Howe,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Nancy Howe",
+            "address": "nancy.howe@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGb8927ad26636",
+      "createdDateTime": "2026-06-21T04:26:56.039157Z",
+      "lastModifiedDateTime": "2026-06-21T04:26:56.039157Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-21T04:26:56.039157Z",
+      "sentDateTime": "2026-06-21T04:26:56.039157Z",
+      "hasAttachments": false,
+      "conversation_id": "5748c732-32bc-4f5b-9350-640fdb35afc3",
+      "message_id": "AAMkAGb8927ad26636",
+      "subject": "Portfolio Rebalancing",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nI was looking at my portfolio and noticed we have a lot of cash. Should we rebalance it into the mutual funds we discussed?\n\nBest,\nAndrea May"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG22aaf958500a",
+      "createdDateTime": "2026-06-21T04:26:56.039157Z",
+      "lastModifiedDateTime": "2026-06-21T04:26:56.039157Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-21T04:26:56.039157Z",
+      "sentDateTime": "2026-06-21T04:26:56.039157Z",
+      "hasAttachments": false,
+      "conversation_id": "5748c732-32bc-4f5b-9350-640fdb35afc3",
+      "message_id": "AAMkAG22aaf958500a",
+      "subject": "Re: Portfolio Rebalancing",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Andrea May,\n\nThanks for reaching out. Yes, we should deploy that cash. I will prepare a rebalancing proposal and send it over for your signature today.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Andrea May",
+            "address": "andrea.may@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG6379be4f1606",
+      "createdDateTime": "2026-06-21T06:26:56.039157Z",
+      "lastModifiedDateTime": "2026-06-21T06:26:56.039157Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-21T06:26:56.039157Z",
+      "sentDateTime": "2026-06-21T06:26:56.039157Z",
+      "hasAttachments": false,
+      "conversation_id": "5748c732-32bc-4f5b-9350-640fdb35afc3",
+      "message_id": "AAMkAG6379be4f1606",
+      "subject": "Re: Portfolio Rebalancing",
+      "body": {
+        "content_type": "html",
+        "content": "Great, thanks! I'll keep an eye out for that document.\n\nBest,\nAndrea May"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG856e66b94458",
+      "createdDateTime": "2026-07-15T01:26:56.039170Z",
+      "lastModifiedDateTime": "2026-07-15T01:26:56.039170Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-15T01:26:56.039170Z",
+      "sentDateTime": "2026-07-15T01:26:56.039170Z",
+      "hasAttachments": false,
+      "conversation_id": "b57ebba8-09e8-4834-85c1-902e614cc6d7",
+      "message_id": "AAMkAG856e66b94458",
+      "subject": "Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nAlan Smith"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGfc6d4db4c6d1",
+      "createdDateTime": "2026-07-15T03:26:56.039170Z",
+      "lastModifiedDateTime": "2026-07-15T03:26:56.039170Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-15T03:26:56.039170Z",
+      "sentDateTime": "2026-07-15T03:26:56.039170Z",
+      "hasAttachments": false,
+      "conversation_id": "b57ebba8-09e8-4834-85c1-902e614cc6d7",
+      "message_id": "AAMkAGfc6d4db4c6d1",
+      "subject": "Re: Market Volatility Concerns",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Alan Smith,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Alan Smith",
+            "address": "alan.smith@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGf3e001c56a4b",
+      "createdDateTime": "2026-06-23T02:26:56.039181Z",
+      "lastModifiedDateTime": "2026-06-23T02:26:56.039181Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-23T02:26:56.039181Z",
+      "sentDateTime": "2026-06-23T02:26:56.039181Z",
+      "hasAttachments": false,
+      "conversation_id": "bcadebd2-8d53-41d1-984b-f4803a34547a",
+      "message_id": "AAMkAGf3e001c56a4b",
+      "subject": "Wealth Transfer",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nJerry Harris"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Jerry Harris",
+          "address": "jerry.harris@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Jerry Harris",
+          "address": "jerry.harris@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGed4827c7b731",
+      "createdDateTime": "2026-06-23T03:26:56.039181Z",
+      "lastModifiedDateTime": "2026-06-23T03:26:56.039181Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-23T03:26:56.039181Z",
+      "sentDateTime": "2026-06-23T03:26:56.039181Z",
+      "hasAttachments": false,
+      "conversation_id": "bcadebd2-8d53-41d1-984b-f4803a34547a",
+      "message_id": "AAMkAGed4827c7b731",
+      "subject": "Re: Wealth Transfer",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Jerry Harris,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Jerry Harris",
+            "address": "jerry.harris@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGcd3a5d11d7af",
+      "createdDateTime": "2026-06-23T04:26:56.039181Z",
+      "lastModifiedDateTime": "2026-06-23T04:26:56.039181Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-23T04:26:56.039181Z",
+      "sentDateTime": "2026-06-23T04:26:56.039181Z",
+      "hasAttachments": false,
+      "conversation_id": "bcadebd2-8d53-41d1-984b-f4803a34547a",
+      "message_id": "AAMkAGcd3a5d11d7af",
+      "subject": "Re: Wealth Transfer",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nJerry Harris"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Jerry Harris",
+          "address": "jerry.harris@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Jerry Harris",
+          "address": "jerry.harris@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGe18c36309ccf",
+      "createdDateTime": "2026-06-23T06:26:56.039181Z",
+      "lastModifiedDateTime": "2026-06-23T06:26:56.039181Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-23T06:26:56.039181Z",
+      "sentDateTime": "2026-06-23T06:26:56.039181Z",
+      "hasAttachments": false,
+      "conversation_id": "bcadebd2-8d53-41d1-984b-f4803a34547a",
+      "message_id": "AAMkAGe18c36309ccf",
+      "subject": "Re: Wealth Transfer",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Jerry Harris,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones\n\nOn 2026-06-23T04:26:56.039181Z, Jerry Harris <jerry.harris@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> Just checking in regarding our conversation about my accounts. Is there any update on the setup?\n> \n> Best,\n> Jerry Harris\n\nOn 2026-06-23T03:26:56.039181Z, Sarah_Jones <sarah.jones@company.com> wrote:\n> Hello Jerry Harris,\n> \n> Yes, the account setup is complete. You should receive a welcome email with login details shortly.\n> \n> Best,\n> Sarah_Jones\n\nOn 2026-06-23T02:26:56.039181Z, Jerry Harris <jerry.harris@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> Just checking in regarding our conversation about my accounts. Is there any update on the setup?\n> \n> Best,\n> Jerry Harris"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Jerry Harris",
+            "address": "jerry.harris@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG665b0517f299",
+      "createdDateTime": "2026-06-21T03:26:56.039203Z",
+      "lastModifiedDateTime": "2026-06-21T03:26:56.039203Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-21T03:26:56.039203Z",
+      "sentDateTime": "2026-06-21T03:26:56.039203Z",
+      "hasAttachments": false,
+      "conversation_id": "6580aee8-ee81-4106-afd5-8dd26ec92b0a",
+      "message_id": "AAMkAG665b0517f299",
+      "subject": "Onboarding Documents",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nI wanted to check what documents you still need from us to finish our onboarding. We sent the driver's licenses yesterday.\n\nBest,\nNicholas Flores"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG632b9a8b7240",
+      "createdDateTime": "2026-06-21T04:26:56.039203Z",
+      "lastModifiedDateTime": "2026-06-21T04:26:56.039203Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-21T04:26:56.039203Z",
+      "sentDateTime": "2026-06-21T04:26:56.039203Z",
+      "hasAttachments": false,
+      "conversation_id": "6580aee8-ee81-4106-afd5-8dd26ec92b0a",
+      "message_id": "AAMkAG632b9a8b7240",
+      "subject": "Re: Onboarding Documents",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Nicholas Flores,\n\nThank you for the licenses. To finalize, we still need the signed advisory agreement and a copy of your most recent brokerage statement.\n\nRegards,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Nicholas Flores",
+            "address": "nicholas.flores@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG6068bdb326e3",
+      "createdDateTime": "2026-06-21T07:26:56.039203Z",
+      "lastModifiedDateTime": "2026-06-21T07:26:56.039203Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-21T07:26:56.039203Z",
+      "sentDateTime": "2026-06-21T07:26:56.039203Z",
+      "hasAttachments": false,
+      "conversation_id": "6580aee8-ee81-4106-afd5-8dd26ec92b0a",
+      "message_id": "AAMkAG6068bdb326e3",
+      "subject": "Re: Onboarding Documents",
+      "body": {
+        "content_type": "html",
+        "content": "Got it. I will upload those to the portal tonight.\n\nBest,\nNicholas Flores"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nicholas Flores",
+          "address": "nicholas.flores@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGb77c9565dbbb",
+      "createdDateTime": "2026-06-21T10:26:56.039203Z",
+      "lastModifiedDateTime": "2026-06-21T10:26:56.039203Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-21T10:26:56.039203Z",
+      "sentDateTime": "2026-06-21T10:26:56.039203Z",
+      "hasAttachments": false,
+      "conversation_id": "6580aee8-ee81-4106-afd5-8dd26ec92b0a",
+      "message_id": "AAMkAGb77c9565dbbb",
+      "subject": "Re: Onboarding Documents",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nI wanted to check what documents you still need from us to finish our onboarding. We sent the driver's licenses yesterday.\n\nBest,\nNicholas Flores\n\nOn 2026-06-21T07:26:56.039203Z, Nicholas Flores <nicholas.flores@example.com> wrote:\n> Got it. I will upload those to the portal tonight.\n> \n> Best,\n> Nicholas Flores\n\nOn 2026-06-21T04:26:56.039203Z, Sarah_Jones <sarah.jones@company.com> wrote:\n> Hi Nicholas Flores,\n> \n> Thank you for the licenses. To finalize, we still need the signed advisory agreement and a copy of your most recent brokerage statement.\n> \n> Regards,\n> Sarah_Jones\n\nOn 2026-06-21T03:26:56.039203Z, Nicholas Flores <nicholas.flores@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> I wanted to check what documents you still need from us to finish our onboarding. We sent the driver's licenses yesterday.\n> \n> Best,\n> Nicholas Flores"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Nicholas Flores",
+            "address": "nicholas.flores@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGc403d1a5a7ee",
+      "createdDateTime": "2026-06-29T02:26:56.039223Z",
+      "lastModifiedDateTime": "2026-06-29T02:26:56.039223Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-29T02:26:56.039223Z",
+      "sentDateTime": "2026-06-29T02:26:56.039223Z",
+      "hasAttachments": false,
+      "conversation_id": "d6adf760-698e-4fbc-a41a-6a6f03a4474c",
+      "message_id": "AAMkAGc403d1a5a7ee",
+      "subject": "Quarterly Meeting Scheduling",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nPatricia Nguyen"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Patricia Nguyen",
+          "address": "patricia.nguyen@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Patricia Nguyen",
+          "address": "patricia.nguyen@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG73379271f425",
+      "createdDateTime": "2026-06-29T02:26:56.039223Z",
+      "lastModifiedDateTime": "2026-06-29T02:26:56.039223Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-29T02:26:56.039223Z",
+      "sentDateTime": "2026-06-29T02:26:56.039223Z",
+      "hasAttachments": false,
+      "conversation_id": "d6adf760-698e-4fbc-a41a-6a6f03a4474c",
+      "message_id": "AAMkAG73379271f425",
+      "subject": "Re: Quarterly Meeting Scheduling",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Patricia Nguyen,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Patricia Nguyen",
+            "address": "patricia.nguyen@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG73f54a108a91",
+      "createdDateTime": "2026-06-29T06:26:56.039223Z",
+      "lastModifiedDateTime": "2026-06-29T06:26:56.039223Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-29T06:26:56.039223Z",
+      "sentDateTime": "2026-06-29T06:26:56.039223Z",
+      "hasAttachments": false,
+      "conversation_id": "d6adf760-698e-4fbc-a41a-6a6f03a4474c",
+      "message_id": "AAMkAG73f54a108a91",
+      "subject": "Re: Quarterly Meeting Scheduling",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nPatricia Nguyen\n\nOn 2026-06-29T02:26:56.039223Z, Sarah_Jones <sarah.jones@company.com> wrote:\n> Hello Patricia Nguyen,\n> \n> Yes, the account setup is complete. You should receive a welcome email with login details shortly.\n> \n> Best,\n> Sarah_Jones\n\nOn 2026-06-29T02:26:56.039223Z, Patricia Nguyen <patricia.nguyen@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> Just checking in regarding our conversation about my accounts. Is there any update on the setup?\n> \n> Best,\n> Patricia Nguyen"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Patricia Nguyen",
+          "address": "patricia.nguyen@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Patricia Nguyen",
+          "address": "patricia.nguyen@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGcb00e26e1a55",
+      "createdDateTime": "2026-06-24T02:26:56.039238Z",
+      "lastModifiedDateTime": "2026-06-24T02:26:56.039238Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-24T02:26:56.039238Z",
+      "sentDateTime": "2026-06-24T02:26:56.039238Z",
+      "hasAttachments": false,
+      "conversation_id": "3aace4bc-8e51-43f9-853e-ed474063df86",
+      "message_id": "AAMkAGcb00e26e1a55",
+      "subject": "Family Health",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nJavier Fuller"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Javier Fuller",
+          "address": "javier.fuller@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Javier Fuller",
+          "address": "javier.fuller@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG630a1ed69886",
+      "createdDateTime": "2026-06-24T06:26:56.039238Z",
+      "lastModifiedDateTime": "2026-06-24T06:26:56.039238Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-24T06:26:56.039238Z",
+      "sentDateTime": "2026-06-24T06:26:56.039238Z",
+      "hasAttachments": false,
+      "conversation_id": "3aace4bc-8e51-43f9-853e-ed474063df86",
+      "message_id": "AAMkAG630a1ed69886",
+      "subject": "Re: Family Health",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Javier Fuller,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones\n\nOn 2026-06-24T02:26:56.039238Z, Javier Fuller <javier.fuller@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> Just checking in regarding our conversation about my accounts. Is there any update on the setup?\n> \n> Best,\n> Javier Fuller"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Javier Fuller",
+            "address": "javier.fuller@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG8c1c4a0eeffb",
+      "createdDateTime": "2026-07-19T00:26:56.039257Z",
+      "lastModifiedDateTime": "2026-07-19T00:26:56.039257Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-19T00:26:56.039257Z",
+      "sentDateTime": "2026-07-19T00:26:56.039257Z",
+      "hasAttachments": false,
+      "conversation_id": "32b705d7-8943-4b47-8b58-3246cffcabd8",
+      "message_id": "AAMkAG8c1c4a0eeffb",
+      "subject": "Ira Contributions",
+      "body": {
+        "content_type": "html",
+        "content": "Dear Sarah_Jones,\n\nCan you check how much I can still contribute to my Roth IRA for this year? I want to make sure I don't go over the limit.\n\nRegards,\nNancy Howe"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Nancy Howe",
+          "address": "nancy.howe@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Nancy Howe",
+          "address": "nancy.howe@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG7ff2e177d573",
+      "createdDateTime": "2026-07-19T03:26:56.039257Z",
+      "lastModifiedDateTime": "2026-07-19T03:26:56.039257Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-19T03:26:56.039257Z",
+      "sentDateTime": "2026-07-19T03:26:56.039257Z",
+      "hasAttachments": false,
+      "conversation_id": "32b705d7-8943-4b47-8b58-3246cffcabd8",
+      "message_id": "AAMkAG7ff2e177d573",
+      "subject": "Re: Ira Contributions",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Nancy Howe,\n\nFor 2026, the contribution limit is $7,000 (or $8,000 if you are 50 or older). You have contributed $4,500 so far, so you can add up to $2,500.\n\nBest,\nSarah_Jones\n\nOn 2026-07-19T00:26:56.039257Z, Nancy Howe <nancy.howe@example.com> wrote:\n> Dear Sarah_Jones,\n> \n> Can you check how much I can still contribute to my Roth IRA for this year? I want to make sure I don't go over the limit.\n> \n> Regards,\n> Nancy Howe"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Nancy Howe",
+            "address": "nancy.howe@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG86460bfc7e6d",
+      "createdDateTime": "2026-07-11T05:26:56.039270Z",
+      "lastModifiedDateTime": "2026-07-11T05:26:56.039270Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-11T05:26:56.039270Z",
+      "sentDateTime": "2026-07-11T05:26:56.039270Z",
+      "hasAttachments": false,
+      "conversation_id": "0f6c45ce-b670-4ac8-aad5-0a22b0e9d27a",
+      "message_id": "AAMkAG86460bfc7e6d",
+      "subject": "Portfolio Rebalancing",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nI was looking at my portfolio and noticed we have a lot of cash. Should we rebalance it into the mutual funds we discussed?\n\nBest,\nAndrea May"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG1271a63f17f7",
+      "createdDateTime": "2026-07-11T03:26:56.039270Z",
+      "lastModifiedDateTime": "2026-07-11T03:26:56.039270Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-11T03:26:56.039270Z",
+      "sentDateTime": "2026-07-11T03:26:56.039270Z",
+      "hasAttachments": false,
+      "conversation_id": "0f6c45ce-b670-4ac8-aad5-0a22b0e9d27a",
+      "message_id": "AAMkAG1271a63f17f7",
+      "subject": "Re: Portfolio Rebalancing",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Andrea May,\n\nThanks for reaching out. Yes, we should deploy that cash. I will prepare a rebalancing proposal and send it over for your signature today.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Andrea May",
+            "address": "andrea.may@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG4962bebb632a",
+      "createdDateTime": "2026-07-11T06:26:56.039270Z",
+      "lastModifiedDateTime": "2026-07-11T06:26:56.039270Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-11T06:26:56.039270Z",
+      "sentDateTime": "2026-07-11T06:26:56.039270Z",
+      "hasAttachments": false,
+      "conversation_id": "0f6c45ce-b670-4ac8-aad5-0a22b0e9d27a",
+      "message_id": "AAMkAG4962bebb632a",
+      "subject": "Re: Portfolio Rebalancing",
+      "body": {
+        "content_type": "html",
+        "content": "Great, thanks! I'll keep an eye out for that document.\n\nBest,\nAndrea May\n\nOn 2026-07-11T03:26:56.039270Z, Sarah_Jones <sarah.jones@company.com> wrote:\n> Hello Andrea May,\n> \n> Thanks for reaching out. Yes, we should deploy that cash. I will prepare a rebalancing proposal and send it over for your signature today.\n> \n> Best,\n> Sarah_Jones\n\nOn 2026-07-11T05:26:56.039270Z, Andrea May <andrea.may@example.com> wrote:\n> Hi Sarah_Jones,\n> \n> I was looking at my portfolio and noticed we have a lot of cash. Should we rebalance it into the mutual funds we discussed?\n> \n> Best,\n> Andrea May"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Andrea May",
+          "address": "andrea.may@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG47673e6f092d",
+      "createdDateTime": "2026-06-22T05:26:56.039284Z",
+      "lastModifiedDateTime": "2026-06-22T05:26:56.039284Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-22T05:26:56.039284Z",
+      "sentDateTime": "2026-06-22T05:26:56.039284Z",
+      "hasAttachments": false,
+      "conversation_id": "a521b8b7-8189-4131-a5ff-37978faa7e67",
+      "message_id": "AAMkAG47673e6f092d",
+      "subject": "Wealth Transfer",
+      "body": {
+        "content_type": "html",
+        "content": "Hi Sarah_Jones,\n\nJust checking in regarding our conversation about my accounts. Is there any update on the setup?\n\nBest,\nAlan Smith"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Alan Smith",
+          "address": "alan.smith@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Sarah_Jones",
+            "address": "sarah.jones@company.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGcd0652e72f3e",
+      "createdDateTime": "2026-06-22T05:26:56.039284Z",
+      "lastModifiedDateTime": "2026-06-22T05:26:56.039284Z",
+      "categories": [],
+      "receivedDateTime": "2026-06-22T05:26:56.039284Z",
+      "sentDateTime": "2026-06-22T05:26:56.039284Z",
+      "hasAttachments": false,
+      "conversation_id": "a521b8b7-8189-4131-a5ff-37978faa7e67",
+      "message_id": "AAMkAGcd0652e72f3e",
+      "subject": "Re: Wealth Transfer",
+      "body": {
+        "content_type": "html",
+        "content": "Hello Alan Smith,\n\nYes, the account setup is complete. You should receive a welcome email with login details shortly.\n\nBest,\nSarah_Jones"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Sarah_Jones",
+          "address": "sarah.jones@company.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Alan Smith",
+            "address": "alan.smith@example.com"
+          }
+        }
+      ]
+    }
+  ]
+}
