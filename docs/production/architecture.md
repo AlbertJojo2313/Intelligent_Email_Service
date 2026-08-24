@@ -2,8 +2,6 @@
 
 _Last updated: August 12, 2026_
 
-> [!NOTE]
-> **Implementation Status**: All core service components — mailbox retrieval (`EmailRetrievalService`), Microsoft Graph API provider (`MicrosoftGraphProvider`), mock provider (`MockGraphProvider`), DAG thread reconstruction (`GraphConversationReconstructor`), attachment text extraction (`process_node_attachments`), email body cleaning (`EmailCleaner`), context compression (`EmailCompressor`), and driver pipeline (`process_client_emails`) — are fully implemented in `intelligent_email_service`.
 
 The Intelligent Email Service is designed to ingest email mailbox data (via Microsoft Graph API or local mock servers), resolve and filter thread history using an in-memory Directed Acyclic Graph (DAG), extract readable attachment text, preprocess and clean email bodies, and output streamlined `CompressedThread` JSON payloads optimized for downstream LLM context windows.
 

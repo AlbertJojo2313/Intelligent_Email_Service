@@ -1,0 +1,394 @@
+{
+  "value": [
+    {
+      "id": "AAMkAG260873fb538f",
+      "createdDateTime": "2026-07-23T18:45:40.236012Z",
+      "lastModifiedDateTime": "2026-07-23T18:45:40.236012Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-23T18:45:40.236012Z",
+      "sentDateTime": "2026-07-23T18:45:40.236012Z",
+      "hasAttachments": false,
+      "attachments": [],
+      "conversationId": "8f9bf41f-adcb-42d5-86c0-9d2f48ff0c47",
+      "conversation_id": "8f9bf41f-adcb-42d5-86c0-9d2f48ff0c47",
+      "message_id": "AAMkAG260873fb538f",
+      "subject": "401k Rollover Inquiry",
+      "body": {
+        "contentType": "html",
+        "content_type": "html",
+        "content": "<div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div>"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Debra Williams",
+          "address": "debra.williams@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Debra Williams",
+          "address": "debra.williams@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "John Advisor",
+            "address": "advisor@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG018abbe3967e",
+      "createdDateTime": "2026-07-23T22:45:40.236012Z",
+      "lastModifiedDateTime": "2026-07-23T22:45:40.236012Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-23T22:45:40.236012Z",
+      "sentDateTime": "2026-07-23T22:45:40.236012Z",
+      "hasAttachments": false,
+      "attachments": [],
+      "conversationId": "8f9bf41f-adcb-42d5-86c0-9d2f48ff0c47",
+      "conversation_id": "8f9bf41f-adcb-42d5-86c0-9d2f48ff0c47",
+      "message_id": "AAMkAG018abbe3967e",
+      "subject": "Re: 401k Rollover Inquiry",
+      "body": {
+        "contentType": "html",
+        "content_type": "html",
+        "content": "<div><p>Hi Debra, thanks for reaching out. Rolling over your 401k into an IRA often gives you more investment options and lower fees. I'd recommend we set up a traditional IRA to keep the tax benefits. Would you like to schedule a call this week to discuss the details?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div>"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "John Advisor",
+          "address": "advisor@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "John Advisor",
+          "address": "advisor@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Debra Williams",
+            "address": "debra.williams@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGee3bce23cc87",
+      "createdDateTime": "2026-07-23T23:45:40.236012Z",
+      "lastModifiedDateTime": "2026-07-23T23:45:40.236012Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-23T23:45:40.236012Z",
+      "sentDateTime": "2026-07-23T23:45:40.236012Z",
+      "hasAttachments": false,
+      "attachments": [],
+      "conversationId": "8f9bf41f-adcb-42d5-86c0-9d2f48ff0c47",
+      "conversation_id": "8f9bf41f-adcb-42d5-86c0-9d2f48ff0c47",
+      "message_id": "AAMkAGee3bce23cc87",
+      "subject": "Re: 401k Rollover Inquiry",
+      "body": {
+        "contentType": "html",
+        "content_type": "html",
+        "content": "<div><p>That sounds good, John. I'm free on Thursday afternoon around 2 PM. Can we talk then? Also, are there any tax implications I should be aware of if I do the rollover?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-23T22:45:40.236012Z<br><b>To:</b> Debra Williams<br><b>Subject:</b> Re: 401k Rollover Inquiry<br><br><div><div><p>Hi Debra, thanks for reaching out. Rolling over your 401k into an IRA often gives you more investment options and lower fees. I'd recommend we set up a traditional IRA to keep the tax benefits. Would you like to schedule a call this week to discuss the details?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div>"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Debra Williams",
+          "address": "debra.williams@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Debra Williams",
+          "address": "debra.williams@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "John Advisor",
+            "address": "advisor@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG7c8c782a972c",
+      "createdDateTime": "2026-07-24T02:45:40.236012Z",
+      "lastModifiedDateTime": "2026-07-24T02:45:40.236012Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-24T02:45:40.236012Z",
+      "sentDateTime": "2026-07-24T02:45:40.236012Z",
+      "hasAttachments": false,
+      "attachments": [],
+      "conversationId": "8f9bf41f-adcb-42d5-86c0-9d2f48ff0c47",
+      "conversation_id": "8f9bf41f-adcb-42d5-86c0-9d2f48ff0c47",
+      "message_id": "AAMkAG7c8c782a972c",
+      "subject": "Re: 401k Rollover Inquiry",
+      "body": {
+        "contentType": "html",
+        "content_type": "html",
+        "content": "<div><p>Thursday at 2 PM works perfectly. Regarding taxes, a direct rollover from a 401k to a traditional IRA is typically tax-free since the funds stay in a tax-deferred account. I'll explain everything in more detail during our call. Please have your latest 401k statement handy.</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T23:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Re: 401k Rollover Inquiry<br><br><div><div><p>That sounds good, John. I'm free on Thursday afternoon around 2 PM. Can we talk then? Also, are there any tax implications I should be aware of if I do the rollover?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-23T22:45:40.236012Z<br><b>To:</b> Debra Williams<br><b>Subject:</b> Re: 401k Rollover Inquiry<br><br><div><div><p>Hi Debra, thanks for reaching out. Rolling over your 401k into an IRA often gives you more investment options and lower fees. I'd recommend we set up a traditional IRA to keep the tax benefits. Would you like to schedule a call this week to discuss the details?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-23T22:45:40.236012Z<br><b>To:</b> Debra Williams<br><b>Subject:</b> Re: 401k Rollover Inquiry<br><br><div><div><p>Hi Debra, thanks for reaching out. Rolling over your 401k into an IRA often gives you more investment options and lower fees. I'd recommend we set up a traditional IRA to keep the tax benefits. Would you like to schedule a call this week to discuss the details?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div>"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "John Advisor",
+          "address": "advisor@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "John Advisor",
+          "address": "advisor@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Debra Williams",
+            "address": "debra.williams@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGe3410b4a060d",
+      "createdDateTime": "2026-07-24T05:45:40.236012Z",
+      "lastModifiedDateTime": "2026-07-24T05:45:40.236012Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-24T05:45:40.236012Z",
+      "sentDateTime": "2026-07-24T05:45:40.236012Z",
+      "hasAttachments": false,
+      "attachments": [],
+      "conversationId": "8f9bf41f-adcb-42d5-86c0-9d2f48ff0c47",
+      "conversation_id": "8f9bf41f-adcb-42d5-86c0-9d2f48ff0c47",
+      "message_id": "AAMkAGe3410b4a060d",
+      "subject": "Re: 401k Rollover Inquiry",
+      "body": {
+        "contentType": "html",
+        "content_type": "html",
+        "content": "<div><p>Great, I'll have the statement ready. Thanks for clarifying about the taxes\u2014that puts my mind at ease. See you Thursday at 2 PM!</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-24T02:45:40.236012Z<br><b>To:</b> Debra Williams<br><b>Subject:</b> Re: 401k Rollover Inquiry<br><br><div><div><p>Thursday at 2 PM works perfectly. Regarding taxes, a direct rollover from a 401k to a traditional IRA is typically tax-free since the funds stay in a tax-deferred account. I'll explain everything in more detail during our call. Please have your latest 401k statement handy.</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T23:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Re: 401k Rollover Inquiry<br><br><div><div><p>That sounds good, John. I'm free on Thursday afternoon around 2 PM. Can we talk then? Also, are there any tax implications I should be aware of if I do the rollover?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-23T22:45:40.236012Z<br><b>To:</b> Debra Williams<br><b>Subject:</b> Re: 401k Rollover Inquiry<br><br><div><div><p>Hi Debra, thanks for reaching out. Rolling over your 401k into an IRA often gives you more investment options and lower fees. I'd recommend we set up a traditional IRA to keep the tax benefits. Would you like to schedule a call this week to discuss the details?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-23T22:45:40.236012Z<br><b>To:</b> Debra Williams<br><b>Subject:</b> Re: 401k Rollover Inquiry<br><br><div><div><p>Hi Debra, thanks for reaching out. Rolling over your 401k into an IRA often gives you more investment options and lower fees. I'd recommend we set up a traditional IRA to keep the tax benefits. Would you like to schedule a call this week to discuss the details?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T23:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Re: 401k Rollover Inquiry<br><br><div><div><p>That sounds good, John. I'm free on Thursday afternoon around 2 PM. Can we talk then? Also, are there any tax implications I should be aware of if I do the rollover?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-23T22:45:40.236012Z<br><b>To:</b> Debra Williams<br><b>Subject:</b> Re: 401k Rollover Inquiry<br><br><div><div><p>Hi Debra, thanks for reaching out. Rolling over your 401k into an IRA often gives you more investment options and lower fees. I'd recommend we set up a traditional IRA to keep the tax benefits. Would you like to schedule a call this week to discuss the details?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-23T22:45:40.236012Z<br><b>To:</b> Debra Williams<br><b>Subject:</b> Re: 401k Rollover Inquiry<br><br><div><div><p>Hi Debra, thanks for reaching out. Rolling over your 401k into an IRA often gives you more investment options and lower fees. I'd recommend we set up a traditional IRA to keep the tax benefits. Would you like to schedule a call this week to discuss the details?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Debra Williams &lt;debra.williams@example.com&gt;<br><b>Sent:</b> 2026-07-23T18:45:40.236012Z<br><b>To:</b> John Advisor<br><b>Subject:</b> 401k Rollover Inquiry<br><br><div><div><p>Hi John, I recently left my job at TechCorp and have about $50,000 in my old 401k plan. I'm not sure what to do with it\u2014should I roll it over into an IRA or leave it where it is? I'd appreciate your advice.</p></div></div></div>"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Debra Williams",
+          "address": "debra.williams@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Debra Williams",
+          "address": "debra.williams@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "John Advisor",
+            "address": "advisor@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG5d8a8b363195",
+      "createdDateTime": "2026-07-02T22:45:45.465085Z",
+      "lastModifiedDateTime": "2026-07-02T22:45:45.465085Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-02T22:45:45.465085Z",
+      "sentDateTime": "2026-07-02T22:45:45.465085Z",
+      "hasAttachments": false,
+      "attachments": [],
+      "conversationId": "0b77e49d-b25c-478e-bdb3-d3acef8286bd",
+      "conversation_id": "0b77e49d-b25c-478e-bdb3-d3acef8286bd",
+      "message_id": "AAMkAG5d8a8b363195",
+      "subject": "Wealth Transfer Planning",
+      "body": {
+        "contentType": "html",
+        "content_type": "html",
+        "content": "<div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div>"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Kevin Burton",
+          "address": "kevin.burton@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Kevin Burton",
+          "address": "kevin.burton@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "John Advisor",
+            "address": "advisor@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG4612c4532d19",
+      "createdDateTime": "2026-07-03T00:45:45.465085Z",
+      "lastModifiedDateTime": "2026-07-03T00:45:45.465085Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-03T00:45:45.465085Z",
+      "sentDateTime": "2026-07-03T00:45:45.465085Z",
+      "hasAttachments": false,
+      "attachments": [],
+      "conversationId": "0b77e49d-b25c-478e-bdb3-d3acef8286bd",
+      "conversation_id": "0b77e49d-b25c-478e-bdb3-d3acef8286bd",
+      "message_id": "AAMkAG4612c4532d19",
+      "subject": "Re: Wealth Transfer Planning",
+      "body": {
+        "contentType": "html",
+        "content_type": "html",
+        "content": "<div><p>Hi Kevin, great to hear you're thinking ahead. I'd recommend we start with a review of your estate and goals. Would you like to schedule a call to discuss trusts, tax implications, and gifting strategies?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div>"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "John Advisor",
+          "address": "advisor@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "John Advisor",
+          "address": "advisor@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Kevin Burton",
+            "address": "kevin.burton@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG8f00a4e8c5a0",
+      "createdDateTime": "2026-07-03T02:45:45.465085Z",
+      "lastModifiedDateTime": "2026-07-03T02:45:45.465085Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-03T02:45:45.465085Z",
+      "sentDateTime": "2026-07-03T02:45:45.465085Z",
+      "hasAttachments": false,
+      "attachments": [],
+      "conversationId": "0b77e49d-b25c-478e-bdb3-d3acef8286bd",
+      "conversation_id": "0b77e49d-b25c-478e-bdb3-d3acef8286bd",
+      "message_id": "AAMkAG8f00a4e8c5a0",
+      "subject": "Re: Wealth Transfer Planning",
+      "body": {
+        "contentType": "html",
+        "content_type": "html",
+        "content": "<div><p>That sounds good. I'm free next Tuesday afternoon. Also, I'm worried about estate taxes eating into what I leave behind. Can we minimize that?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-03T00:45:45.465085Z<br><b>To:</b> Kevin Burton<br><b>Subject:</b> Re: Wealth Transfer Planning<br><br><div><div><p>Hi Kevin, great to hear you're thinking ahead. I'd recommend we start with a review of your estate and goals. Would you like to schedule a call to discuss trusts, tax implications, and gifting strategies?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div>"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Kevin Burton",
+          "address": "kevin.burton@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Kevin Burton",
+          "address": "kevin.burton@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "John Advisor",
+            "address": "advisor@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAGe70a617676bc",
+      "createdDateTime": "2026-07-03T04:45:45.465085Z",
+      "lastModifiedDateTime": "2026-07-03T04:45:45.465085Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-03T04:45:45.465085Z",
+      "sentDateTime": "2026-07-03T04:45:45.465085Z",
+      "hasAttachments": false,
+      "attachments": [],
+      "conversationId": "0b77e49d-b25c-478e-bdb3-d3acef8286bd",
+      "conversation_id": "0b77e49d-b25c-478e-bdb3-d3acef8286bd",
+      "message_id": "AAMkAGe70a617676bc",
+      "subject": "Re: Wealth Transfer Planning",
+      "body": {
+        "contentType": "html",
+        "content_type": "html",
+        "content": "<div><p>Absolutely, Kevin. We can use strategies like annual gifting, irrevocable trusts, or a family limited partnership to reduce estate tax exposure. I'll prepare some scenarios for our meeting.</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-03T02:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Re: Wealth Transfer Planning<br><br><div><div><p>That sounds good. I'm free next Tuesday afternoon. Also, I'm worried about estate taxes eating into what I leave behind. Can we minimize that?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-03T00:45:45.465085Z<br><b>To:</b> Kevin Burton<br><b>Subject:</b> Re: Wealth Transfer Planning<br><br><div><div><p>Hi Kevin, great to hear you're thinking ahead. I'd recommend we start with a review of your estate and goals. Would you like to schedule a call to discuss trusts, tax implications, and gifting strategies?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-03T00:45:45.465085Z<br><b>To:</b> Kevin Burton<br><b>Subject:</b> Re: Wealth Transfer Planning<br><br><div><div><p>Hi Kevin, great to hear you're thinking ahead. I'd recommend we start with a review of your estate and goals. Would you like to schedule a call to discuss trusts, tax implications, and gifting strategies?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div>"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "John Advisor",
+          "address": "advisor@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "John Advisor",
+          "address": "advisor@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "Kevin Burton",
+            "address": "kevin.burton@example.com"
+          }
+        }
+      ]
+    },
+    {
+      "id": "AAMkAG9cbbb30b8806",
+      "createdDateTime": "2026-07-03T05:45:45.465085Z",
+      "lastModifiedDateTime": "2026-07-03T05:45:45.465085Z",
+      "categories": [],
+      "receivedDateTime": "2026-07-03T05:45:45.465085Z",
+      "sentDateTime": "2026-07-03T05:45:45.465085Z",
+      "hasAttachments": false,
+      "attachments": [],
+      "conversationId": "0b77e49d-b25c-478e-bdb3-d3acef8286bd",
+      "conversation_id": "0b77e49d-b25c-478e-bdb3-d3acef8286bd",
+      "message_id": "AAMkAG9cbbb30b8806",
+      "subject": "Re: Wealth Transfer Planning",
+      "body": {
+        "contentType": "html",
+        "content_type": "html",
+        "content": "<div><p>Perfect, thanks John. I'll bring a list of my assets and any questions. Looking forward to it.</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-03T04:45:45.465085Z<br><b>To:</b> Kevin Burton<br><b>Subject:</b> Re: Wealth Transfer Planning<br><br><div><div><p>Absolutely, Kevin. We can use strategies like annual gifting, irrevocable trusts, or a family limited partnership to reduce estate tax exposure. I'll prepare some scenarios for our meeting.</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-03T02:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Re: Wealth Transfer Planning<br><br><div><div><p>That sounds good. I'm free next Tuesday afternoon. Also, I'm worried about estate taxes eating into what I leave behind. Can we minimize that?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-03T00:45:45.465085Z<br><b>To:</b> Kevin Burton<br><b>Subject:</b> Re: Wealth Transfer Planning<br><br><div><div><p>Hi Kevin, great to hear you're thinking ahead. I'd recommend we start with a review of your estate and goals. Would you like to schedule a call to discuss trusts, tax implications, and gifting strategies?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-03T00:45:45.465085Z<br><b>To:</b> Kevin Burton<br><b>Subject:</b> Re: Wealth Transfer Planning<br><br><div><div><p>Hi Kevin, great to hear you're thinking ahead. I'd recommend we start with a review of your estate and goals. Would you like to schedule a call to discuss trusts, tax implications, and gifting strategies?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-03T02:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Re: Wealth Transfer Planning<br><br><div><div><p>That sounds good. I'm free next Tuesday afternoon. Also, I'm worried about estate taxes eating into what I leave behind. Can we minimize that?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-03T00:45:45.465085Z<br><b>To:</b> Kevin Burton<br><b>Subject:</b> Re: Wealth Transfer Planning<br><br><div><div><p>Hi Kevin, great to hear you're thinking ahead. I'd recommend we start with a review of your estate and goals. Would you like to schedule a call to discuss trusts, tax implications, and gifting strategies?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> John Advisor &lt;advisor@example.com&gt;<br><b>Sent:</b> 2026-07-03T00:45:45.465085Z<br><b>To:</b> Kevin Burton<br><b>Subject:</b> Re: Wealth Transfer Planning<br><br><div><div><p>Hi Kevin, great to hear you're thinking ahead. I'd recommend we start with a review of your estate and goals. Would you like to schedule a call to discuss trusts, tax implications, and gifting strategies?</p></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div></div></div><div id=\"divRplyFwdMsg\" style=\"border-top:1px solid #e1e1e1; margin-top:15px; padding-top:10px;\"><b>From:</b> Kevin Burton &lt;kevin.burton@example.com&gt;<br><b>Sent:</b> 2026-07-02T22:45:45.465085Z<br><b>To:</b> John Advisor<br><b>Subject:</b> Wealth Transfer Planning<br><br><div><div><p>Hi John, I've been thinking about how to pass on my assets to my kids and grandkids. I'm not sure where to start. Can we discuss options?</p></div></div></div>"
+      },
+      "sender": {
+        "emailAddress": {
+          "name": "Kevin Burton",
+          "address": "kevin.burton@example.com"
+        }
+      },
+      "from": {
+        "emailAddress": {
+          "name": "Kevin Burton",
+          "address": "kevin.burton@example.com"
+        }
+      },
+      "toRecipients": [
+        {
+          "emailAddress": {
+            "name": "John Advisor",
+            "address": "advisor@example.com"
+          }
+        }
+      ]
+    }
+  ]
+}
